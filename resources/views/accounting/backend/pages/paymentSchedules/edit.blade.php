@@ -36,9 +36,9 @@
                             <div class="col-md-3">
                                 <label for="company_id"><strong>Company:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="company_id" id="company_id" class="form-control rounded">
-                                        @foreach($companies as $key => $company)
-                                            <option value="{{ $company->id }}" {{ $schedule->company_id == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="window.open('{{ url('accounting/payment-schedules/'.$schedule->id.'/edit') }}?company_id='+$('#company_id').val(), '_parent')">
+                                        @foreach($companies as $key => $c)
+                                            <option value="{{ $c->id }}" {{ $c->id == request()->get('company_id') ? 'selected' : '' }}>[{{ $c->code }}] {{ $c->name }}</option>
                                        @endforeach
                                     </select>
                                 </div>
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-12 mb-4">
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="row">
@@ -91,13 +91,19 @@
                                         @if($schedule->ledgers->where('type', 'D')->count() > 0)
                                         @foreach($schedule->ledgers->where('type', 'D') as $key => $ledger)
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="debit_cost_centres"><strong>Cost Centre</strong></label>
+                                                    <select name="debit_cost_centres[]" class="form-control choose-me" data-selected="{{ $ledger->cost_centre_id }}">{!! $costCentres !!}</select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="debit_ledgers"><strong>Ledger</strong></label>
                                                     <select name="debit_ledgers[]" class="form-control choose-me" data-selected="{{ $ledger->chart_of_account_id }}">{!! $chartOfAccountsOptions !!}</select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="debit_ledger_amounts"><strong>Amount</strong></label>
                                                     <input type="number" name="debit_ledger_amounts[]" id="debit_ledger_amounts" value="{{ $ledger->amount }}" class="debit_ledger_amounts form-control">
@@ -112,7 +118,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12 mb-4">
                                 <div class="card">
                                     <div class="card-header">
                                         <div class="row">
@@ -128,13 +134,19 @@
                                         @if($schedule->ledgers->where('type', 'C')->count() > 0)
                                         @foreach($schedule->ledgers->where('type', 'C') as $key => $ledger)
                                         <div class="row">
-                                            <div class="col-md-8">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="credit_cost_centres"><strong>Cost Centre</strong></label>
+                                                    <select name="credit_cost_centres[]" class="form-control choose-me" data-selected="{{ $ledger->cost_centre_id }}">{!! $costCentres !!}</select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="credit_ledgers"><strong>Ledger</strong></label>
                                                     <select name="credit_ledgers[]" class="form-control choose-me" data-selected="{{ $ledger->chart_of_account_id }}">{!! $chartOfAccountsOptions !!}</select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="credit_ledger_amounts"><strong>Amount</strong></label>
                                                     <input type="number" name="credit_ledger_amounts[]" id="credit_ledger_amounts" value="{{ $ledger->amount }}" class="credit_ledger_amounts form-control">
@@ -168,13 +180,19 @@
 <script type="text/javascript">
     function addDebitLedger(select2 = true) {
         $('.debit-ledgers').append('<div class="row">'+
-                                        '<div class="col-md-8">'+
+                                        '<div class="col-md-4">'+
+                                            '<div class="form-group">'+
+                                                '<label for="debit_cost_centres"><strong>Cost Centre</strong></label>'+
+                                                '<select name="debit_cost_centres[]" class="form-control">{!! $costCentres !!}</select>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="col-md-5">'+
                                             '<div class="form-group">'+
                                                 '<label for="debit_ledgers"><strong>Ledger</strong></label>'+
                                                 '<select name="debit_ledgers[]" class="form-control">{!! $chartOfAccountsOptions !!}</select>'+
                                             '</div>'+
                                         '</div>'+
-                                        '<div class="col-md-3">'+
+                                        '<div class="col-md-2">'+
                                             '<div class="form-group">'+
                                                 '<label for="debit_ledger_amounts"><strong>Percentage</strong></label>'+
                                                 '<input type="number" name="debit_ledger_amounts[]" id="debit_ledger_amounts" value="0" class="debit_ledger_amounts form-control">'+
@@ -191,13 +209,19 @@
 
     function addCreditLedger(select2 = true) {
         $('.credit-ledgers').append('<div class="row">'+
-                                        '<div class="col-md-8">'+
+                                        '<div class="col-md-4">'+
+                                            '<div class="form-group">'+
+                                                '<label for="credit_cost_centres"><strong>Cost Centre</strong></label>'+
+                                                '<select name="credit_cost_centres[]" class="form-control">{!! $costCentres !!}</select>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<div class="col-md-5">'+
                                             '<div class="form-group">'+
                                                 '<label for="credit_ledgers"><strong>Ledger</strong></label>'+
                                                 '<select name="credit_ledgers[]" class="form-control">{!! $chartOfAccountsOptions !!}</select>'+
                                             '</div>'+
                                         '</div>'+
-                                        '<div class="col-md-3">'+
+                                        '<div class="col-md-2">'+
                                             '<div class="form-group">'+
                                                 '<label for="credit_ledger_amounts"><strong>Percentage</strong></label>'+
                                                 '<input type="number" name="credit_ledger_amounts[]" id="credit_ledger_amounts" value="0" class="credit_ledger_amounts form-control">'+

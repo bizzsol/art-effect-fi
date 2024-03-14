@@ -57,28 +57,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="debit_ledgers"><strong>{{ __('Debit Ledgers') }}:</strong></label>
-                                <div class="input-group input-group-md mb-3 d-">
-                                    <select name="debit_ledgers[]" class="form-control debit_ledgers select2" multiple data-placeholder="Choose Debit Ledgers...">
-                                        {!! $chartOfAccountsOptions !!}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="credit_ledgers"><strong>{{ __('Debit Ledgers') }}:</strong></label>
-                                <div class="input-group input-group-md mb-3 d-">
-                                    <select name="credit_ledgers[]" class="form-control credit_ledgers select2" multiple data-placeholder="Choose Credit Ledgers...">
-                                        {!! $chartOfAccountsOptions !!}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                             
                         <div class="row">
                             <div class="col-md-12 text-right">

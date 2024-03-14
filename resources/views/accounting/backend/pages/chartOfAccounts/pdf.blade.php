@@ -181,7 +181,7 @@
         <tr>
             <td style="width: 20%"><strong>{{__('Account Code')}}</strong></td>
             <td style="width: 35%"><strong>{{__('Account Name')}}</strong></td>
-            <td class="text-center" style="width: 10%"><strong>{{__('Range')}}</strong></td>
+            {{-- <td class="text-center" style="width: 10%"><strong>{{__('Range')}}</strong></td> --}}
             <td class="text-center" style="width: 10%"><strong>{{__('Type')}}</strong></td>
             <td class="text-center" style="width: 10%"><strong>{{__('Class')}}</strong></td>
             <td class="text-center" style="width: 15%"><strong>{{__('Status')}}</strong></td>

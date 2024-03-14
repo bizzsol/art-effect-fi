@@ -56,7 +56,7 @@
                             <div class="col-md-2">
                                 <label for="code"><strong>{{ __('Group Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <input type="text" name="code" id="code" value="{{ old('code') }}" class="form-control rounded" readonly>
+                                    <input type="text" name="code" id="code" value="{{ old('code') }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="row pr-3">
-                            <div class="col-md-2">
+                            {{-- <div class="col-md-2">
                                 <label for="group_code_starts_at"><strong>{{ __('Group Code Starts From') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="group_code_starts_at" id="group_code_starts_at" value="{{ old('group_code_starts_at', 0) }}" class="form-control rounded">
@@ -90,8 +90,8 @@
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="coa_code_ends_at" id="coa_code_ends_at" value="{{ old('coa_code_ends_at', 0) }}" class="form-control rounded">
                                 </div>
-                            </div>
-                            <div class="col-md-4 text-right pt-4">
+                            </div> --}}
+                            <div class="col-md-4 text-right offset-md-8">
                                 <a class="btn btn-dark btn-md mt-2" href="{{ url('accounting/chart-of-accounts') }}"><i class="la la-times"></i>&nbsp;Cancel</a>
                                 <button type="submit" class="btn btn-success btn-md mt-2"><i class="la la-save"></i>&nbsp;Save Account Group</button>
                             </div>
@@ -107,14 +107,14 @@
 <script type="text/javascript">
     getCode();
     function getCode() {
-        $.ajax({
-            url: '{{ url('accounting/account-groups') }}/'+$('#parent_id').val(),
-            type: 'GET',
-            data: {},
-        })
-        .done(function(code) {
-            $('#code').val(code);
-        });
+        // $.ajax({
+        //     url: '{{ url('accounting/account-groups') }}/'+$('#parent_id').val(),
+        //     type: 'GET',
+        //     data: {},
+        // })
+        // .done(function(code) {
+        //     $('#code').val(code);
+        // });
     }
 </script>
 @endsection

@@ -149,7 +149,7 @@
                                             @foreach($schedule->ledgers as $key => $item)
                                                 <tr>
                                                     <td>
-                                                        <select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>
+                                                        <select name="cost_centre_id[]" class="form-control cost_centre_id select2 choose-me" data-selected="{{ $item->cost_centre_id }}">{!! $costCentres !!}</select>
                                                     </td>
                                                     <td>
                                                         <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 choose-me" onchange="Entries()" data-selected="{{ $item->chart_of_account_id }}">{!! $chartOfAccountsOptions !!}</select>

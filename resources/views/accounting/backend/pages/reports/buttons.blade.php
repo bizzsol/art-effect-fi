@@ -14,10 +14,18 @@
     <div class="col-md-{{ !(!isset($searchHide) || !$searchHide) ? 4 : 2 }} pt-1 pl-0">
         <button class="btn btn-sm btn-block btn-success" type="button" onclick="viewPDFReport('{{ isset($url) ? $url : '' }}')"><i class="lar la-file-pdf"></i>&nbsp;PDF</button>
     </div>
-
-    <div class="col-md-{{ !(!isset($searchHide) || !$searchHide) ? 4 : 2 }} pt-1 pl-0">
-        <button class="btn btn-sm btn-block btn-primary" type="button" onclick="exportReportToExcel('{{ $title }}')"><i class="lar la-file-excel"></i>&nbsp;Excel</button>
-    </div>
+    @php
+        $normalExcel = isset($normalExcel) && $normalExcel ? true : false;
+    @endphp
+    @if($normalExcel)
+        <div class="col-md-{{ !(!isset($searchHide) || !$searchHide) ? 4 : 2 }} pt-1 pl-0">
+            <button class="btn btn-sm btn-block btn-primary" type="button" onclick="viewExcelReport('{{ isset($url) ? $url : '' }}')"><i class="lar la-file-excel"></i>&nbsp;Excel</button>
+        </div>
+    @else
+        <div class="col-md-{{ !(!isset($searchHide) || !$searchHide) ? 4 : 2 }} pt-1 pl-0">
+            <button class="btn btn-sm btn-block btn-primary" type="button" onclick="exportReportToExcel('{{ $title }}')"><i class="lar la-file-excel"></i>&nbsp;Excel</button>
+        </div>
+    @endif
 </div>
 
 @section('page-script')

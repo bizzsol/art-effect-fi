@@ -32,11 +32,10 @@
                 @endcan
             </div>
         </div>
+   </div>
+   <div class="panel panel-info mt-2 p-2">
        @include('yajra.datatable')
    </div>
-
-</div>
-</div>
 </div>
 @endsection
 

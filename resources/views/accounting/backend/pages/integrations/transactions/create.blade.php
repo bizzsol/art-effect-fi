@@ -155,7 +155,7 @@
         .done(function(costCentres) {
             var data = '';
             $.each(costCentres, function(index, costCentre) {
-                data += '<option value="'+costCentre.id+'">'+costCentre.name+'</option>';
+                data += '<option value="'+costCentre.id+'">['+costCentre.code+'] '+costCentre.name+'</option>';
             });
             $('#cost_centre_id').html(data);
         });

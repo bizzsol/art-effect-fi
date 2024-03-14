@@ -75,7 +75,7 @@
 
                             <div class="col-md-2">
                                 <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
-                                <input type="text" name="code" id="code" class="form-control" readonly>
+                                <input type="text" name="code" id="code" class="form-control" value="{{ $costCentre->code }}">
                             </div>
                             <div class="col-md-4">
                                 <label for="name"><strong>{{ __('Cost Centre Name') }}:<span class="text-danger">&nbsp;*</span></strong></label>
@@ -146,14 +146,14 @@
 <script type="text/javascript">
     getCode();
     function getCode() {
-        $.ajax({
-            url: '{{ url('accounting/cost-centres') }}/'+$('#profit_centre_id').val()+"?profit_centre_id="+$('#profit_centre_id').val()+"&cost_centre_id={{ $costCentre->id }}",
-            type: 'GET',
-            data: {},
-        })
-        .done(function(code) {
-            $('#code').val(code);
-        });
+        // $.ajax({
+        //     url: '{{ url('accounting/cost-centres') }}/'+$('#profit_centre_id').val()+"?profit_centre_id="+$('#profit_centre_id').val()+"&cost_centre_id={{ $costCentre->id }}",
+        //     type: 'GET',
+        //     data: {},
+        // })
+        // .done(function(code) {
+        //     $('#code').val(code);
+        // });
     }
 
     function showAlert(status, error){

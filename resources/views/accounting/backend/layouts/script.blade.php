@@ -467,6 +467,22 @@
         }
     }
 
+    function viewExcelReport(url = '') {
+        var form = $('#report-form');
+        if(form.attr('action')){
+            $('#report_type').val('excel');
+
+            var link = form.attr('action')+'?';
+            $.each(form.serializeArray(), function(index, val) {
+                link += val['name']+'='+val['value']+'&';
+            });
+
+            window.open(link, '_blank');  
+        }else{
+            window.open(url+"?excel", '_blank');
+        }
+    }
+
     function exportReportToExcel(filename = '') {
         var downloadLink;
         var dataType = 'application/vnd.ms-excel';

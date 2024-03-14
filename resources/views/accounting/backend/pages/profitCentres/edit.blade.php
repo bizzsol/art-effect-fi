@@ -43,19 +43,25 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-2">
+                                <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <input type="text" name="code" id="code" value="{{ old('code', $profitCentre->code) }}" class="form-control rounded">
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <label for="name"><strong>{{ __('Profit Centre Name') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="name" id="name" value="{{ old('name', $profitCentre->name) }}" class="form-control rounded">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="phone"><strong>{{ __('Phone') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="phone" id="phone" value="{{ old('phone', $profitCentre->phone) }}" class="form-control rounded">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label for="email"><strong>{{ __('Email') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="email" name="email" id="email" value="{{ old('email', $profitCentre->email) }}" class="form-control rounded">

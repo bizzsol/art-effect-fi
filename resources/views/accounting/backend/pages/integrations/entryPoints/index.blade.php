@@ -40,4 +40,17 @@
 
 @section('page-script')
 @include('yajra.js')
+
+<script type="text/javascript">
+    function edit(element) {
+        $.dialog({
+            title: 'Edit Entry Point',
+            content: 'url:'+element.attr('data-src'),
+            animation: 'scale',
+            columnClass: 'large',
+            closeAnimation: 'scale',
+            backgroundDismiss: true,
+        });
+    }
+</script>
 @endsection
