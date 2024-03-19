@@ -1,2 +1,0 @@
-<a class="btn btn-xs btn-success mb-1" onclick="inspectItem('{{ $item->id }}', '{{ $item->asset_code }}')"><i class="las la-check-double"></i>&nbsp;Inspect</a>
-<a class="btn btn-xs btn-primary" onclick="inspectionHistory('{{ $item->id }}', '{{ $item->asset_code }}')"><i class="las la-file-medical-alt"></i>&nbsp;History</a>
