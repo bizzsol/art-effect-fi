@@ -32,80 +32,70 @@
                     <form action="{{ route('accounting.cost-centres.store') }}" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     @csrf
                         <div class="row pr-3">
-                            <div class="col-md-2">
-                                <label for="profit_centre_id"><strong>{{ __('Profit Centre') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="company_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="profit_centre_id" id="profit_centre_id" class="form-control rounded" onchange="getCode()">
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="getProfitCentres()">
                                         @foreach($companies as $key => $company)
-                                           <optgroup label="[{{ $company->code }}] {{ $company->name }}">
-                                               @if($company->profitCentres->count() > 0)
-                                               @foreach($company->profitCentres as $profitCentre)
-                                               <option value="{{ $profitCentre->id }}">&nbsp;&nbsp;{{ $profitCentre->name }}</option>
-                                               @endforeach
-                                               @endif
-                                           </optgroup>
+                                            <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
                                        @endforeach
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="hr_unit_id"><strong>{{ __('Unit') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="profit_centre_id"><strong>{{ __('Profit Centre') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="hr_unit_id" id="hr_unit_id" class="form-control rounded">
-                                        @foreach($units as $key => $unit)
-                                        <option value="{{ $unit->hr_unit_id }}">{{ $unit->hr_unit_name }}</option>
-                                        @endforeach
+                                    <select name="profit_centre_id" id="profit_centre_id" class="form-control rounded">
+                                        
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="hr_department_id"><strong>{{ __('Department') }}:</strong></label>
+                            <div class="col-md-3">
+                                <label for="hr_department_id"><strong>{{ __('Department') }}:</strong><span class="text-danger">&nbsp;*</span></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="hr_department_id" id="hr_department_id" class="form-control rounded" onchange="checkUnitDepartment()">
-                                        <option value="0">N/A</option>
-                                        @foreach($departments as $key => $department)
-                                        <option value="{{ $department->hr_department_id }}">{{ $department->hr_department_name }}</option>
-                                        @endforeach
+                                    <select name="hr_department_id" id="hr_department_id" class="form-control rounded">
+                                       
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="code"><strong>{{ __('Cost Centre Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <input type="text" name="code" id="code" class="form-control">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="name"><strong>{{ __('Cost Centre Name') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label for="phone"><strong>{{ __('Phone') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="phone"><strong>{{ __('Phone') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label for="email"><strong>{{ __('Email') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="email"><strong>{{ __('Email') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control rounded">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="chart_of_account_id"><strong>{{ __('Ledger') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="is_profit_centre"><strong>Is Profit Centre ?:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="chart_of_account_id" id="chart_of_account_id" class="form-control select-me rounded">
-                                        {!! chartOfAccountsOptions([], accountDefaultSettings()['cogs_account'], 0, getAllGroupAndLedgers()) !!}
+                                    <select name="is_profit_centre" id="is_profit_centre" class="form-control">
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row pr-3">
                             <div class="col-md-7">
-                                <label for="address"><strong>{{ __('Address') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="address"><strong>{{ __('Address') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <textarea name="address" id="address" class="form-control rounded" style="min-height: 130px">{{ old('address') }}</textarea>
                                 </div>
@@ -113,13 +103,13 @@
                             <div class="col-md-5">
                                 <div class="row">
                                     <div class="col-md-12 mb-2">
-                                        <label for="logo_file"><strong>{{ __('Logo') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="logo_file"><strong>{{ __('Logo') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="logo_file" id="logo_file" class="form-control rounded"/>
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-2">
-                                        <label for="banner_file"><strong>{{ __('Banner') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="banner_file"><strong>{{ __('Banner') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="banner_file" id="banner_file" class="form-control rounded"/>
                                         </div>
@@ -143,49 +133,27 @@
 
 @section('page-script')
 <script type="text/javascript">
-    getCode();
-    function getCode() {
-        // $.ajax({
-        //     url: '{{ url('accounting/cost-centres') }}/'+$('#profit_centre_id').val()+"?profit_centre_id="+$('#profit_centre_id').val(),
-        //     type: 'GET',
-        //     data: {},
-        // })
-        // .done(function(code) {
-        //     $('#code').val(code);
-        // });
-    }
-
-    function showAlert(status, error){
-        swal({
-            icon: status,
-            text: error,
-            dangerMode: true,
-            buttons: {
-                cancel: false,
-                confirm: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    closeModal: true
-                },
-            },
-        }).then((value) => {
-                // if(value) form.reset();
-            });
-    }
-
-    function checkUnitDepartment() {
+    getProfitCentres();
+    function getProfitCentres() {
         $.ajax({
-            url: '{{ url('accounting/cost-centres/check-unit-department') }}/'+$('#profit_centre_id').val()+'/'+$('#hr_unit_id').val()+'/'+$('#hr_department_id').val(),
+            url: "{{ url('accounting/cost-centres/create') }}?get-company-information&company_id="+$('#company_id').val(),
             type: 'GET',
-            data: {},
             dataType: 'json',
-            success:function (response) {
-                if(!response.success){
-                    showAlert('error', 'Sorry! This Company, Unit & Department have already been added. Try another combination.');
-                    return;
-                }
-            },
+            data: {},
+        })
+        .done(function(response) {
+            var profit_centres = '<option value="{{ null }}">Choose Profit Centre</option>';
+            $.each(response.profit_centres, function(index, val) {
+                profit_centres += '<option value="'+val.id+'">['+val.code+'] '+val.name+'</option>';
+            });
+
+            $('#profit_centre_id').html(profit_centres).select2();
+
+            var departments = '<option value="{{ null }}">Choose Department</option>';
+            $.each(response.departments, function(index, val) {
+                departments += '<option value="'+val.hr_department_id+'">['+val.hr_department_code+'] '+val.hr_department_name+'</option>';
+            });
+            $('#hr_department_id').html(departments).select2();
         });
     }
 </script>

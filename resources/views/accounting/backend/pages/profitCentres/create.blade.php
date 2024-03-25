@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="code"><strong>{{ __('Profit Centre Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="code" id="code" value="{{ old('code') }}" class="form-control rounded">
                                 </div>
@@ -55,13 +55,13 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label for="phone"><strong>{{ __('Phone') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="phone"><strong>{{ __('Phone') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <label for="email"><strong>{{ __('Email') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="email"><strong>{{ __('Email') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control rounded">
                                 </div>
@@ -69,7 +69,7 @@
                         </div>
                         <div class="row pr-3">
                             <div class="col-md-7">
-                                <label for="address"><strong>{{ __('Address') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="address"><strong>{{ __('Address') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <textarea name="address" id="address" class="form-control rounded" style="min-height: 130px">{{ old('address') }}</textarea>
                                 </div>
@@ -77,13 +77,13 @@
                             <div class="col-md-5">
                                 <div class="row">
                                     <div class="col-md-12 mb-2">
-                                        <label for="logo_file"><strong>{{ __('Logo') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="logo_file"><strong>{{ __('Logo') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="logo_file" id="logo_file" class="form-control rounded"/>
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-2">
-                                        <label for="banner_file"><strong>{{ __('Banner') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="banner_file"><strong>{{ __('Banner') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="banner_file" id="banner_file" class="form-control rounded"/>
                                         </div>

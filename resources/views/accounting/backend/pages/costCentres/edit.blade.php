@@ -33,80 +33,78 @@
                     @csrf
                     @method('PUT')
                         <div class="row pr-3">
-                            <div class="col-md-2">
-                                <label for="profit_centre_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="company_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="profit_centre_id" id="profit_centre_id" class="form-control rounded" onchange="getCode()">
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="getProfitCentres()">
                                         @foreach($companies as $key => $company)
-                                           <optgroup label="[{{ $company->code }}] {{ $company->name }}">
-                                               @if($company->profitCentres->count() > 0)
-                                               @foreach($company->profitCentres as $profitCentre)
-                                               <option value="{{ $profitCentre->id }}" {{ $costCentre->profit_centre_id == $profitCentre->id ? 'selected' : '' }}>&nbsp;&nbsp;{{ $profitCentre->name }}</option>
-                                               @endforeach
-                                               @endif
-                                           </optgroup>
+                                            <option value="{{ $company->id }}" {{ $costCentre->profitCentre->company_id == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
                                        @endforeach
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="hr_unit_id"><strong>{{ __('Unit') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="profit_centre_id"><strong>{{ __('Profit Centre') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="hr_unit_id" id="hr_unit_id" class="form-control rounded">
-                                        @foreach($units as $key => $unit)
-                                        <option value="{{ $unit->hr_unit_id }}" {{ $unit->hr_unit_id == $costCentre->hr_unit_id ? 'selected' : '' }}>{{ $unit->hr_unit_name }}</option>
-                                        @endforeach
+                                    <select name="profit_centre_id" id="profit_centre_id" class="form-control rounded">
+                                        
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="hr_department_id"><strong>{{ __('Department') }}:</strong></label>
+                            <div class="col-md-3">
+                                <label for="hr_department_id"><strong>{{ __('Department') }}:</strong><span class="text-danger">&nbsp;*</span></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="hr_department_id" id="hr_department_id" class="form-control rounded" onchange="checkUnitDepartment()">
-                                        <option value="0" {{ $costCentre->hr_department_id == 0 ? 'selected' : '' }}>N/A</option>
-                                        @foreach($departments as $key => $department)
-                                        <option value="{{ $department->hr_department_id }}" {{ $department->hr_department_id == $costCentre->hr_department_id ? 'selected' : '' }}>{{ $department->hr_department_name }}</option>
-                                        @endforeach
+                                    <select name="hr_department_id" id="hr_department_id" class="form-control rounded">
+                                       
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
-                                <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="code"><strong>{{ __('Cost Centre Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <input type="text" name="code" id="code" class="form-control" value="{{ $costCentre->code }}">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="name"><strong>{{ __('Cost Centre Name') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="name" id="name" value="{{ old('name', $costCentre->name) }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label for="phone"><strong>{{ __('Phone') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="phone"><strong>{{ __('Phone') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="text" name="phone" id="phone" value="{{ old('phone', $costCentre->phone) }}" class="form-control rounded">
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label for="email"><strong>{{ __('Email') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="email"><strong>{{ __('Email') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <input type="email" name="email" id="email" value="{{ old('email', $costCentre->email) }}" class="form-control rounded">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="chart_of_account_id"><strong>{{ __('Ledger') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-3">
+                                <label for="is_profit_centre"><strong>Is Profit Centre ?:</strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="is_profit_centre" id="is_profit_centre" class="form-control">
+                                        <option value="0" {{ $costCentre->is_profit_centre == 0 ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ $costCentre->is_profit_centre == 1 ? 'selected' : '' }}>Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            {{-- <div class="col-md-6">
+                                <label for="chart_of_account_id"><strong>{{ __('Ledger') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <select name="chart_of_account_id" id="chart_of_account_id" class="form-control select-me rounded">
                                         {!! chartOfAccountsOptions([], $costCentre->chart_of_account_id, 0, getAllGroupAndLedgers()) !!}
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="row pr-3">
                             <div class="col-md-7">
-                                <label for="address"><strong>{{ __('Address') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="address"><strong>{{ __('Address') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <textarea name="address" id="address" class="form-control rounded" style="min-height: 130px">{{ old('address', $costCentre->address) }}</textarea>
                                 </div>
@@ -114,13 +112,13 @@
                             <div class="col-md-5">
                                 <div class="row">
                                     <div class="col-md-12 mb-2">
-                                        <label for="logo_file"><strong>{{ __('Logo') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="logo_file"><strong>{{ __('Logo') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="logo_file" id="logo_file" class="form-control rounded"/>
                                         </div>
                                     </div>
                                     <div class="col-md-12 mb-2">
-                                        <label for="banner_file"><strong>{{ __('Banner') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="banner_file"><strong>{{ __('Banner') }}:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <input type="file" name="banner_file" id="banner_file" class="form-control rounded"/>
                                         </div>
@@ -144,49 +142,29 @@
 
 @section('page-script')
 <script type="text/javascript">
-    getCode();
-    function getCode() {
-        // $.ajax({
-        //     url: '{{ url('accounting/cost-centres') }}/'+$('#profit_centre_id').val()+"?profit_centre_id="+$('#profit_centre_id').val()+"&cost_centre_id={{ $costCentre->id }}",
-        //     type: 'GET',
-        //     data: {},
-        // })
-        // .done(function(code) {
-        //     $('#code').val(code);
-        // });
-    }
-
-    function showAlert(status, error){
-        swal({
-            icon: status,
-            text: error,
-            dangerMode: true,
-            buttons: {
-                cancel: false,
-                confirm: {
-                    text: "OK",
-                    value: true,
-                    visible: true,
-                    closeModal: true
-                },
-            },
-        }).then((value) => {
-                // if(value) form.reset();
-            });
-    }
-    
-     function checkUnitDepartment() {
+    getProfitCentres();
+    function getProfitCentres() {
         $.ajax({
-            url: '{{ url('accounting/cost-centres/check-unit-department') }}/'+$('#profit_centre_id').val()+'/'+$('#hr_unit_id').val()+'/'+$('#hr_department_id').val(),
+            url: "{{ url('accounting/cost-centres/create') }}?get-company-information&company_id="+$('#company_id').val(),
             type: 'GET',
-            data: {},
             dataType: 'json',
-            success:function (response) {
-                if(!response.success){
-                    showAlert('error', 'Sorry! This Company, This Unit & Department have already been added. Try another combination.');
-                    return;
-                }
-            },
+            data: {},
+        })
+        .done(function(response) {
+            var profit_centre_id = "{{ $costCentre->profit_centre_id }}";
+            var profit_centres = '<option value="{{ null }}">Choose Profit Centre</option>';
+            $.each(response.profit_centres, function(index, val) {
+                profit_centres += '<option value="'+val.id+'" '+(profit_centre_id == val.id ? 'selected' : '')+'>['+val.code+'] '+val.name+'</option>';
+            });
+
+            $('#profit_centre_id').html(profit_centres).select2();
+
+            var hr_department_id = "{{ $costCentre->hr_department_id }}";
+            var departments = '<option value="{{ null }}">Choose Department</option>';
+            $.each(response.departments, function(index, val) {
+                departments += '<option value="'+val.hr_department_id+'" '+(hr_department_id == val.hr_department_id ? 'selected' : '')+'>['+val.hr_department_code+'] '+val.hr_department_name+'</option>';
+            });
+            $('#hr_department_id').html(departments).select2();
         });
     }
 </script>

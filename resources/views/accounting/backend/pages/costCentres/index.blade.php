@@ -25,7 +25,7 @@
         </div>
 
         <div class="page-content">
-            <div class="panel panel-info mt-2 p-3" style="padding-bottom: 0 !important;">
+{{--             <div class="panel panel-info mt-2 p-3" style="padding-bottom: 0 !important;">
                 <form action="{{ url('accounting/cost-centres') }}" method="get" accept-charset="utf-8">
                     <div class="row mb-0">
                         <div class="col-md-3">
@@ -36,7 +36,7 @@
                                        <optgroup label="[{{ $company->code }}] {{ $company->name }}">
                                            @if($company->profitCentres->count() > 0)
                                            @foreach($company->profitCentres as $profitCentre)
-                                           <option value="{{ $profitCentre->id }}" {{ request()->get('profit_centre_id') == $profitCentre->id ? 'selected' : '' }}>&nbsp;&nbsp;{{ $profitCentre->name }}</option>
+                                           <option value="{{ $profitCentre->id }}" {{ request()->get('profit_centre_id') == $profitCentre->id ? 'selected' : '' }}>&nbsp;&nbsp;[{{ $profitCentre->code }}] {{ $profitCentre->name }}</option>
                                            @endforeach
                                            @endif
                                        </optgroup>
@@ -73,10 +73,18 @@
                         <a class="btn btn-sm btn-success pull-right" href="{{ url('accounting/cost-centres/create') }}" style="float: right"><i class="la la-plus"></i>&nbsp;New Cost Centre</a>
                         @endcan
                     </div>
-            </div>
+            </div> --}}
         </form>
     </div>
     <div class="panel panel-info mt-2 p-2">
+        <div class="row mb-3">
+            <div class="col-md-2 offset-md-10">
+                @can('cost-centre-create')
+                <a class="btn btn-sm btn-success pull-right" href="{{ url('accounting/cost-centres/create') }}" style="float: right"><i class="la la-plus"></i>&nbsp;New Cost Centre</a>
+                @endcan
+            </div>
+        </div>
+        
        @include('yajra.datatable')
    </div>
 
