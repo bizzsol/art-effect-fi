@@ -363,6 +363,28 @@
         </tbody>
     </table>
 
+    @if($entry->attachments->count() > 0)
+    <table>
+        <tbody>
+        <tr>
+            <td style="padding-left: 0px !important"><strong>Attachments:</strong></td>
+        </tr>
+        <tr>
+            <td style="padding-left: 0px !important">
+                <br>
+                <ol>
+                @foreach($entry->attachments as $attachment)
+                <li>
+                    <a href="{{ asset($attachment->path) }}" target="_blank" style="text-decoration: none">{{ $attachment->name }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ $attachment->type}}&nbsp;&nbsp;|&nbsp;&nbsp;{{ formatBytes($attachment->size) }}</a>
+                </li>
+                @endforeach
+                </ol>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    @endif
+
     <table style="margin-top: 50px">
         <tbody>
             @include('accounting.backend.pages.entries.authors', [

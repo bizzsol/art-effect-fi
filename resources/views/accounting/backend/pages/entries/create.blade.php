@@ -326,7 +326,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <label for="files"><strong>Attachments:</strong></label>
+                                    <div class="input-group input-group-md mb-3 d-">
+                                        <input type="file" name="files[]" id="files" multiple class="form-control rounded"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
                                 <div class="col-md-12 text-right">
                                     <a class="btn btn-dark btn-md" href="{{ url('accounting/entries') }}"><i
                                                 class="la la-times"></i>&nbsp;Cancel</a>
@@ -505,7 +513,9 @@
                                     url: form.attr('action'),
                                     type: form.attr('method'),
                                     dataType: 'json',
-                                    data: form.serializeArray(),
+                                    processData: false,
+                                    contentType: false,
+                                    data: new FormData(form[0]),
                                 })
                                     .done(function (response) {
                                         if (response.success) {

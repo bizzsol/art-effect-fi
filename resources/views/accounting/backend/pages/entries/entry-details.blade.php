@@ -214,6 +214,31 @@
                         </table>
                     </div>
                 </div>
+
+                @if($entry->attachments->count() > 0)
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Attachments:</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <ol>
+                                        @foreach($entry->attachments as $attachment)
+                                        <li>
+                                            <a href="{{ asset($attachment->path) }}" target="_blank">{{ $attachment->name }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ $attachment->type}}&nbsp;&nbsp;|&nbsp;&nbsp;{{ formatBytes($attachment->size) }}</a>
+                                        </li>
+                                        @endforeach
+                                        </ol>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                @endif
             </div>
         </div>
 

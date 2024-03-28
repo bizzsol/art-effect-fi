@@ -161,6 +161,18 @@
                 <h6><strong>Narration</strong></h6>
                 <p>{{ $entry->notes }}</p>
 
+                @if($entry->attachments->count() > 0)
+                <h6><strong>Attachments</strong></h6>
+                <ol>
+                @foreach($entry->attachments as $attachment)
+                <li>
+                    <a href="{{ asset($attachment->path) }}" target="_blank" style="text-decoration: none">{{ $attachment->name }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ $attachment->type}}&nbsp;&nbsp;|&nbsp;&nbsp;{{ formatBytes($attachment->size) }}</a>
+                </li>
+                @endforeach
+                </ol>
+                @endif
+                
+
                 <table class="table mt-5">
                     <tbody>
                         @include('accounting.backend.pages.entries.authors', [

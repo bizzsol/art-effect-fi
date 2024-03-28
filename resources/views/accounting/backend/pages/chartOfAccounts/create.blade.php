@@ -35,7 +35,7 @@
                             <div class="col-md-4">
                                 <label for="account_group_id"><strong>{{ __('Account Group') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="account_group_id" id="account_group_id" class="form-control rounded" onchange="getCode()">
+                                    <select name="account_group_id" id="account_group_id" class="form-control rounded">
                                         {!! $groups !!}
                                     </select>
                                 </div>
@@ -226,7 +226,7 @@
 @endsection
 @section('page-script')
 <script type="text/javascript">
-    getCode();
+    // getCode();
     function getCode() {
         $.ajax({
             url: '{{ url('accounting/chart-of-accounts') }}/'+$('#account_group_id').val(),
