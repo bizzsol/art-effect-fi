@@ -225,6 +225,16 @@
                                 </div>
                             </div>
                             <div class="row mt-3">
+                                @if(isset(session()->get('entries-errors')[0]))
+                                <div class="col-md-12 mb-3">
+                                    <ol>
+                                        @foreach(session()->get('entries-errors') as $error)
+                                        <li class="text-danger">{!! $error !!}</li>
+                                        @endforeach
+                                    </ol>
+                                </div>
+                                @endif
+
                                 <div class="col-md-12">
                                     <table class="table">
                                         <thead>
