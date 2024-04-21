@@ -4,7 +4,6 @@
 		@php
 			$pay_now = $paymentDetails['payment-bill-amount']-$paymentDetails['payment-payment-paid'];
 			$max_pay = $pay_now;
-			$vat_percentage = 0;
 			$vat = 0;
 			$pay_now = systemDoubleValue($pay_now-$vat, 4);
 			$currency_gain_loss = ($paymentDetails['bill-amount']-$paymentDetails['payment-paid'])-($paymentDetails['payment-bill-amount']-$paymentDetails['payment-payment-paid']);
@@ -101,17 +100,7 @@
 			$max_pay = $pay_now;
 
 
-			$vat_percentage = ($payment->relPurchaseOrder->vat > 0 ? (($payment->relPurchaseOrder->vat*100)/$payment->relPurchaseOrder->total_price-$payment->relPurchaseOrder->discount) : 0);
-			/*
-			if($payment->bill_type == 'po-advance' && $payment->pay_amount != $payment->relPurchaseOrder->gross_price){
-				$vat = systemDoubleValue($pay_now > 0 && $vat_percentage > 0 ? ($pay_now*($vat_percentage/100)) : 0, 4);
-			}else{
-				$vat = ($pay_now/(100+$vat_percentage))*$vat_percentage;
-			}
-			*/
-
-			$vat = $pay_now > 0 ? ($pay_now/(100+$vat_percentage))*$vat_percentage : 0;
-
+			$vat = $payment->relPurchaseOrder->vat;
 			$pay_now = systemDoubleValue($pay_now-$vat, 4);
 			
 			$currency_gain_loss = ((in_array($payment->bill_type, ['po-advance', 'grn']) ? $paymentDetails['bill-amount']-$paymentDetails['payment-paid'] : $poDetails['po-due']))-((in_array($payment->bill_type, ['po-advance', 'grn']) ? $paymentDetails['payment-bill-amount']-$paymentDetails['payment-payment-paid'] : $poDetails['payment-po-due']));
