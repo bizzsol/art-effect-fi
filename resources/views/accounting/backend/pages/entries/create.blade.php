@@ -299,8 +299,6 @@
                                                 class="text-right total-credit"></td>
 
                                             <td></td>
-                                            {{--                                            <td></td>--}}
-
                                             <td class="text-center">
                                                 <a onclick="add();" class="action-buttons"><i
                                                             class="text-success las la-plus-circle"
@@ -317,8 +315,6 @@
                                                 class="text-right credit-difference"></td>
 
                                             <td></td>
-                                            {{--                                            <td></td>--}}
-
                                             <td class="text-center">
 
                                             </td>
@@ -424,7 +420,6 @@
                 '<td>' +
                 '<input type="text" name="narration[]" class="form-control narration">' +
                 '</td>' +
-                // '<td class="text-right closing-balance"></td>'+
                 '<td class="text-center">' +
                 '<a onclick="remove($(this))" class="action-buttons"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>' +
                 '</td>' +
@@ -440,10 +435,6 @@
         function Entries() {
             $('.cost_centre_id').select2();
             $('.chart_of_account_id').select2();
-
-            $.each($('.entries').find('tr'), function (index, tr) {
-                $(this).find('.closing-balance').html($(this).find('.chart_of_account_id :selected').attr('data-closing-balance'));
-            });
 
             calculation();
         }
@@ -589,7 +580,6 @@
         }
 
         printAmount();
-
         function printAmount() {
             if ($('#form_type').find(':selected').val() == 'with_po') {
                 var purchaseOrder = $('#purchase_order_id').find(':selected');

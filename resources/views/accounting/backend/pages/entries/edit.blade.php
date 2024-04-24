@@ -44,56 +44,71 @@
                     @method('PUT')
                         <div class="row pr-3">
                             <div class="col-md-3">
-                                <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="number"><strong>{{ __('Reference') }}:</strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <input type="text" name="code" id="code" value="{{ $entry->code }}" readonly class="form-control rounded">
+                                    <input type="text" name="number" id="number" value="{{ $entry->number }}" class="form-control rounded">
+                                </div>
+                            </div>
+                            <div class="col-md-2" id="currency-choose">
+                                <label for="currency_id"><strong>{{ __('Currency') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="currency_id" id="currency_id" class="form-control rounded">
+                                        @if(isset($currencyTypes[0]))
+                                            @foreach($currencyTypes as $key => $currencyType)
+                                                <optgroup label="{{ $currencyType->name }}">
+                                                    @if($currencyType->currencies->count() > 0)
+                                                        @foreach($currencyType->currencies as $key => $currency)
+                                                            <option value="{{ $currency->id }}" {{ $entry->exchangeRate->currency_id == $currency->id ? 'selected' : '' }}>
+                                                                &nbsp;&nbsp;{{ $currency->name }}
+                                                                ({{ $currency->code }}
+                                                                &nbsp;|&nbsp;{{ $currency->symbol }})
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </optgroup>
+                                            @endforeach
+                                        @endif
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <label for="number"><strong>{{ __('Receipt Number') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <label for="datetime"><strong>{{ __('Date & Time') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <input type="text" name="number" id="number" value="{{ old('number', $entry->number) }}" class="form-control rounded">
+                                    <input type="datetime-local" name="datetime" id="datetime" value="{{ date('Y-m-d H:i:s', strtotime($entry->date.' '.$entry->time)) }}" class="form-control rounded">
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <label for="date"><strong>{{ __('Date') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-4">
+                                <label for="fiscal_year_id"><strong>{{ __('Fiscal Year') }}:<span
+                                                class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <input type="date" name="date" id="date" value="{{ old('date', $entry->date) }}" min="{{ $fiscalYear->start }}" max="{{ $fiscalYear->end }}" class="form-control rounded">
-                                </div>
-                            </div>
-                            {{-- <div class="col-md-2">
-                                <label for="tag_id"><strong>{{ __('Tag') }}:<span class="text-danger">&nbsp;*</span></strong></label>
-                                <div class="input-group input-group-md mb-3 d-">
-                                    <select name="tag_id" id="tag_id" class="form-control rounded">
-                                        @if(isset($tags[0]))
-                                        @foreach($tags as $key => $tag)
-                                        <option value="{{ $tag->id }}" {{ $tag->id == $entry->tag_id ? 'selected' : '' }}>{{ $tag->title }}</option>
+                                    <select name="fiscal_year_id" id="fiscal_year_id" class="form-control rounded">
+                                        <option value="{{ $fiscalYear->id }}" {{ $entry->fiscal_year_id == $fiscalYear->id ? 'selected' : '' }}>{{ $fiscalYear->title }}
+                                            &nbsp;|&nbsp;{{ date('d-M-y', strtotime($fiscalYear->start)).' to '.date('d-M-y', strtotime($fiscalYear->end)) }}
+                                        </option>
+
+                                        @if(isset($fiscalYears[0]))
+                                        @foreach($fiscalYears as $fiscalYear)
+                                        <option value="{{ $fiscalYear->id }}" {{ $entry->fiscal_year_id == $fiscalYear->id ? 'selected' : '' }}>{{ $fiscalYear->title }}
+                                            &nbsp;|&nbsp;{{ date('d-M-y', strtotime($fiscalYear->start)).' to '.date('d-M-y', strtotime($fiscalYear->end)) }}
+                                        </option>
                                         @endforeach
                                         @endif
                                     </select>
                                 </div>
-                            </div> --}}
-                            <div class="col-md-4">
-                                <label for="fiscal_year_id"><strong>{{ __('Fiscal Year') }}:<span class="text-danger">&nbsp;*</span></strong></label>
-                                <div class="input-group input-group-md mb-3 d-">
-                                    <select name="fiscal_year_id" id="fiscal_year_id" class="form-control rounded">
-                                        <option value="{{ $entry->fiscalYear->id }}">{{ $entry->fiscalYear->title }}&nbsp;|&nbsp;{{ date('d-M-y', strtotime($entry->fiscalYear->start)).' to '.date('d-M-y', strtotime($entry->fiscalYear->end)) }})</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
+
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 20%">Cost Centre</th>
-                                            <th style="width: 30%">Ledger</th>
+                                            <th style="width: 25%">Cost Centre</th>
+                                            <th style="width: 35%">Ledger</th>
                                             <th style="width: 15%">Debit</th>
                                             <th style="width: 15%">Credit</th>
                                             <th style="width: 10%">Narration</th>
-                                            <th style="width: 10%">Balance</th>
-                                            <th style="width: 15%">Actions</th>
+                                            <th style="width: 5%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="entries">
@@ -109,15 +124,14 @@
                                                 <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>
                                             </td>
                                             <td>
-                                                <input type="number" name="debit[]" class="form-control debit text-right" @if($item->debit_credit == "D") value="{{ $item->amount }}" @else value="0" @endif onchange="Entries()" onkeyup="Entries()" onclick="debitClicked($(this))">
+                                                <input type="number" name="debit[]" class="form-control debit text-right" @if($item->debit_credit == "D") value="{{ $item->amount }}" @else value="0" @endif onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187">
                                             </td>
                                             <td>
-                                                <input type="number" name="credit[]" class="form-control credit text-right" @if($item->debit_credit == "C") value="{{ $item->amount }}" @else value="0" @endif onchange="Entries()" onkeyup="Entries()" onclick="creditClicked($(this))">
+                                                <input type="number" name="credit[]" class="form-control credit text-right" @if($item->debit_credit == "C") value="{{ $item->amount }}" @else value="0" @endif onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">
                                             </td>
                                              <td>
                                                 <input type="text" name="narration[]" class="form-control narration" value="{{ $item->narration }}">
                                             </td>
-                                            <td class="text-right closing-balance"></td>
                                             <td class="text-center">
                                                 <a onclick="remove($(this))"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>
                                             </td>
@@ -160,6 +174,30 @@
                                 </div>
                             </div>
                         </div>
+
+                        @if($entry->attachments->count() > 0)
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <label for="files"><strong>Uploaded Attachments:</strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    &nbsp;
+                                    @foreach($entry->attachments as $attachment)
+                                    <label>
+                                        <input type="checkbox" name="old_files[]" value="{{ $attachment->id }}" checked style="transform: scale(1.5, 1.5);cursor: pointer">&nbsp;&nbsp;<a href="{{ asset($attachment->path) }}" target="_blank" style="text-decoration: none">{{ $attachment->name }}&nbsp;&nbsp;|&nbsp;&nbsp;{{ $attachment->type}}&nbsp;&nbsp;|&nbsp;&nbsp;{{ formatBytes($attachment->size) }}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <label for="files"><strong>New Attachments:</strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <input type="file" name="files[]" id="files" multiple class="form-control rounded"/>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12 text-right">
                                 <a class="btn btn-dark btn-md" href="{{ url('accounting/entries') }}"><i class="la la-times"></i>&nbsp;Cancel</a>
@@ -195,15 +233,14 @@
                                     '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>'+
                                 '</td>'+
                                 '<td>'+
-                                    '<input type="number" name="debit[]" class="form-control debit text-right" onchange="Entries()" onkeyup="Entries()" onclick="debitClicked($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
+                                    '<input type="number" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
                                 '</td>'+
                                 '<td>'+
-                                    '<input type="number" name="credit[]" class="form-control credit text-right" onchange="Entries()" onkeyup="Entries()" onclick="creditClicked($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
+                                    '<input type="number" name="credit[]" class="form-control credit text-right" onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
                                 '</td>'+
                                 '<td>'+
                                     '<input type="text" name="narration[]" class="form-control narration">'+
                                 '</td>'+
-                                '<td class="text-right closing-balance"></td>'+
                                 '<td class="text-center">'+
                                     '<a onclick="remove($(this))"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>'+
                                 '</td>'+
@@ -220,20 +257,22 @@
         $('.cost_centre_id').select2();
         $('.chart_of_account_id').select2();
 
-        $.each($('.entries').find('tr'), function(index, tr) {
-            $(this).find('.closing-balance').html($(this).find('.chart_of_account_id :selected').attr('data-closing-balance'));
-        });
-
         calculation();
     }
 
-    function debitClicked(element) {
-        element.parent().parent().find('.credit').val(0);
+    function debitChanged(element) {
+        var debit = (element.val() != "" ? parseFloat(element.val()) : parseFloat(0));
+        if (debit > 0) {
+            element.parent().parent().find('.credit').val(0);
+        }
         calculation();
     }
 
-    function creditClicked(element) {
-        element.parent().parent().find('.debit').val(0);
+    function creditChanged(element) {
+        var credit = (element.val() != "" ? parseFloat(element.val()) : parseFloat(0));
+        if (credit > 0) {
+            element.parent().parent().find('.debit').val(0);
+        }
         calculation();
     }
 
@@ -241,64 +280,85 @@
         var total_debit = 0;
         var total_credit = 0;
 
-        $.each($('.debit'), function(index, val) {
-            total_debit += parseFloat($(this).val());
+        $.each($('.debit'), function (index, val) {
+            total_debit += parseFloat($(this).val() != "" ? $(this).val() : 0);
         });
 
-        $.each($('.credit'), function(index, val) {
-            total_credit += parseFloat($(this).val());
+        $.each($('.credit'), function (index, val) {
+            total_credit += parseFloat($(this).val() != "" ? $(this).val() : 0);
         });
 
         $('.total-debit').html(total_debit.toFixed(2));
         $('.total-credit').html(total_credit.toFixed(2));
 
-        if(total_debit == total_credit){
+        if (total_debit == total_credit) {
             $('.total-debit').removeClass('bg-danger').addClass('bg-success');
             $('.total-credit').removeClass('bg-danger').addClass('bg-success');
             $('.debit-difference').html('-');
             $('.credit-difference').html('');
-        }else{
+        } else {
             $('.total-debit').removeClass('bg-success').addClass('bg-danger');
             $('.total-credit').removeClass('bg-success').addClass('bg-danger');
-            if(total_debit > total_credit){
+            if (total_debit > total_credit) {
                 $('.debit-difference').html('');
-                $('.credit-difference').html((total_debit-total_credit).toFixed(2));
-            }else{
+                $('.credit-difference').html((total_debit - total_credit).toFixed(2));
+            } else {
                 $('.credit-difference').html('');
-                $('.debit-difference').html((total_credit-total_debit).toFixed(2));
+                $('.debit-difference').html((total_credit - total_debit).toFixed(2));
             }
         }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         var form = $('.entry-form');
-        var button = $('.btn-submit');
-        form.on('submit', function(e){
-          e.preventDefault();
+        var button = $('.entry-button');
+        content = button.html();
+        form.on('submit', function (e) {
+            e.preventDefault();
+            button.html('<i class="las la-spinner la-spin"></i>&nbsp;Please wait...').prop('disabled', true);
+            $.confirm({
+                title: 'Confirm!',
+                content: '<hr class="pt-0 mt-0"><h5>Are you sure to save the transactions ?</h5>',
+                buttons: {
+                    no: {
+                        text: '<i class="la la-times"></i>&nbsp;No',
+                        btnClass: 'btn-red',
+                        action: function () {
+                            button.html(content).prop('disabled', false);
+                        }
+                    },
+                    yes: {
+                        text: '<i class="la la-check"></i>&nbsp;Yes',
+                        btnClass: 'btn-success',
+                        action: function () {
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: form.attr('method'),
+                                dataType: 'json',
+                                processData: false,
+                                contentType: false,
+                                data: new FormData(form[0]),
+                            })
+                            .done(function (response) {
+                                if (response.success) {
+                                    window.open("{{ url('accounting/entries') }}", "_parent");
+                                } else {
+                                    toastr.error(response.message);
+                                }
 
-          button.prop('disabled', true);
-          $.ajax({
-              url: form.attr('action'),
-              type: form.attr('method'),
-              dataType: 'json',
-              data: form.serializeArray(),
-          })
-          .done(function(response) {
-              if(response.success){
-                location.reload();
-              }else{
-                toastr.error(response.message);
-              }
+                                button.html(content).prop('disabled', false);
+                            })
+                            .fail(function (response) {
+                                $.each(response.responseJSON.errors, function (index, error) {
+                                    toastr.error(error[0]);
+                                });
 
-              button.prop('disabled', false);
-          })
-          .fail(function(response) {
-              $.each(response.responseJSON.errors, function(index, error) {
-                   toastr.error(error[0]);
-              });
-
-              button.prop('disabled', false);
-          });
+                                button.html(content).prop('disabled', false);
+                            });
+                        }
+                    }
+                }
+            });
         });
     });
 </script>

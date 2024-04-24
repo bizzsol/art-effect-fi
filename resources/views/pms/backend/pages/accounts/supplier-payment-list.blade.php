@@ -208,22 +208,19 @@
 		return true;
 	}
 
-	function checkClearing(element, due) {
+	function checkClearing(element) {
 		if(element.val() == 1){
-			element.parent().parent().parent().find('.clearing_amounts').val(due).attr('readonly', 'readonly').change();
+			element.parent().parent().parent().find('.clearing_amounts').val(parseFloat(element.attr('data-clearing-amount')).toFixed(2)).attr('readonly', 'readonly').change();
 		}else{
 			element.parent().parent().parent().find('.clearing_amounts').val(0).attr('readonly', 'readonly').change();
 		}
 	}
 
-	function deductTaxVat(element, max_pay){
+	function deductTaxVat(element){
+		var max_pay = element.parent().parent().parent().find('.payments').val();
 		var vat = parseFloat(element.parent().parent().parent().find('.vat_amount').val() != "" ? element.parent().parent().parent().find('.vat_amount').val() : 0);
 		var tax = parseFloat(element.parent().parent().parent().find('.tax_amount').val() != "" ? element.parent().parent().parent().find('.tax_amount').val() : 0);
 		var new_payment = parseFloat(max_pay)-(tax+vat);
-
-		console.log(vat);
-		console.log(tax);
-		console.log(new_payment);
 
 		if(new_payment <= 0){
 			element.parent().parent().parent().find('.vat_amount').val(0);
@@ -329,6 +326,38 @@
 
 		var symbol = "{{ isset($currency->symbol) ? $currency->symbol : '' }}";
 		$('#pay-amounts').html('<strong>'+(symbol)+'&nbsp;'+(pay_amount.toFixed(2))+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong>');
+	}
+
+	function distributePayments(element) {
+		var parent = element.parent().parent().parent();
+		var value = parseFloat(element.val());
+		var due = parseFloat(element.attr('data-due'));
+		var min = parseFloat(element.attr('min'));
+		var max = parseFloat(element.attr('max'));
+
+		if(value < min){
+			element.val(min);
+			value = min;
+		}
+
+		if(value > max){
+			element.val(max);
+			value = max;
+		}
+
+		var percentage = value > 0 && due > 0 ? (value/due)*100 : 0;
+
+		parent.find('.vat_amount').val(parseFloat(parseFloat(parent.find('.vat_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value-1);
+
+		parent.find('.tax_amount').val(parseFloat(parseFloat(parent.find('.tax_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value-1);
+
+		parent.find('.pay-amounts').val(parseFloat(parseFloat(parent.find('.pay-amounts').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4));
+
+		parent.find('.currency-gain-loss').val(parseFloat(parseFloat(parent.find('.currency-gain-loss').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4));
+		parent.find('.system-gain-loss').val(parseFloat(parseFloat(parent.find('.system-gain-loss').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4));
+
+		parent.find('.advance_clearings').attr('data-clearing-amount', parseFloat(parseFloat(parent.find('.advance_clearings').attr('data-clearing-amount'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4));
+		checkClearing(parent.find('.advance_clearings'));
 	}
 </script>
 @endsection
