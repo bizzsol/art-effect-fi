@@ -30,87 +30,113 @@
                               accept-charset="utf-8" id="transfer-form">
                             @csrf
                             <div class="row pr-3 mb-3">
-                                <div class="col-md-12 mb-2">
-                                    <div class="row">
-                                        <div class="col-md-8">
+                                <div class="col-md-12 mb-3">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="text-white">Sending Bank Account</h5>
+                                        </div>
+                                        <div class="card-body" style="border: 1px solid #ccc;">
                                             <div class="row">
-                                                <div class="col-md-5">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <label for="from_bank_account_id"><strong>Sending Bank Account
+                                                        <label for="from_company_id"><strong>Sending Company 
                                                                 <span class="text-danger">*</span></strong></label>
-                                                        <select name="from_bank_account_id" id="from_bank_account_id"
-                                                                class="form-control" onchange="getCurrencies()">
-                                                            <option value="0">Choose Bank Account</option>
-                                                            @if(isset($bankAccounts[0]))
-                                                                @foreach($bankAccounts as $key => $bankAccount)
-                                                                    <option value="{{ $bankAccount->id }}">{{ $bankAccount->name }}
-                                                                        ({{$bankAccount->number}})
-                                                                        ({{ $bankAccount->currency ? $bankAccount->currency->code : '' }}
-                                                                        )
-                                                                    </option>
-                                                                @endforeach
+                                                        <select class="form-control" name="from_company_id" id="from_company_id" onchange="getBankAccounts('from')">
+                                                            @if(isset($companies[0]))
+                                                            @foreach($companies as $company)
+                                                            <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
+                                                            @endforeach
                                                             @endif
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label for="sending_amount"><strong>Sending Amount <span
-                                                                        class="text-danger">*</span></strong></label>
+                                                        <label for="from_cost_centre_id"><strong>Sending Cost Centre 
+                                                                <span class="text-danger">*</span></strong></label>
+                                                        <select class="form-control" name="from_cost_centre_id" id="from_cost_centre_id">
+                                                            
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="from_bank_account_id"><strong>Sending Bank Account 
+                                                                <span class="text-danger">*</span></strong></label>
+                                                        <select class="form-control" name="from_bank_account_id" id="from_bank_account_id" onchange="getCurrencies()">
+                                                            
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="sending_amount"><strong>Sending Amount 
+                                                                <span class="text-danger">*</span></strong></label>
                                                         <input type="number" name="sending_amount" id="sending_amount"
                                                                value="0.00" step="any" min="0"
                                                                class="form-control text-right"
                                                                onchange="getCurrencies()">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="text-white">Receiving Bank Account</h5>
+                                        </div>
+                                        <div class="card-body" style="border: 1px solid #ccc;">
+                                            <div class="row">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <label for="to_bank_account_id"><strong>Receiving Bank Account
+                                                        <label for="to_company_id"><strong>Receiving Company 
                                                                 <span class="text-danger">*</span></strong></label>
-                                                        <select name="to_bank_account_id" id="to_bank_account_id"
-                                                                class="form-control" onchange="getCurrencies()">
-                                                            <option value="0">Choose Bank Account</option>
-                                                            @if(isset($bankAccounts[0]))
-                                                                @foreach($bankAccounts as $key => $bankAccount)
-                                                                    <option value="{{ $bankAccount->id }}">{{ $bankAccount->name }}
-                                                                        ({{$bankAccount->number}})
-                                                                        ({{ $bankAccount->currency ? $bankAccount->currency->code : '' }}
-                                                                        )
-                                                                    </option>
-                                                                @endforeach
+                                                        <select class="form-control" name="to_company_id" id="to_company_id" onchange="getBankAccounts('to')">
+                                                            @if(isset($companies[0]))
+                                                            @foreach($companies as $company)
+                                                            <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
+                                                            @endforeach
                                                             @endif
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label for="estimated_amount"><strong>Estimated Amount <span
-                                                                        class="text-danger">*</span></strong></label>
-                                                        <input type="number" name="estimated_amount"
-                                                               id="estimated_amount" value="0.00" step="any" min="0"
-                                                               class="form-control text-right" readonly>
+                                                        <label for="to_cost_centre_id"><strong>Receiving Cost Centre 
+                                                                <span class="text-danger">*</span></strong></label>
+                                                        <select class="form-control" name="to_cost_centre_id" id="to_cost_centre_id">
+                                                            
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label for="receiving_amount"><strong>Receiving Amount <span class="text-danger">*</span></strong></label>
-                                                        <input type="number" name="receiving_amount"
-                                                               id="receiving_amount" value="0.00" step="any" min="0"
-                                                               class="form-control text-right" readonly>
+                                                        <label for="to_bank_account_id"><strong>Receiving Bank Account 
+                                                                <span class="text-danger">*</span></strong></label>
+                                                        <select class="form-control" name="to_bank_account_id" id="to_bank_account_id" onchange="getCurrencies()">
+                                                            
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="receiving_amount"><strong>Receiving Amount 
+                                                                <span class="text-danger">*</span></strong></label>
+                                                        <input type="number" name="receiving_amount" id="receiving_amount"
+                                                               value="0.00" step="any" min="0"
+                                                               class="form-control text-right">
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <button type="submit" class="btn btn-success btn-md transfer-button"><i
-                                                        class="la la-save"></i>&nbsp;Transfer Currency
-                                            </button>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-success btn-md transfer-button"><i
+                                                class="la la-save"></i>&nbsp;Transfer Currency
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -123,7 +149,37 @@
 
 @section('page-script')
     <script type="text/javascript">
-        getCurrencies();
+        getBankAccounts('from');
+        getBankAccounts('to');
+        function getBankAccounts(where) {
+            $.ajax({
+                url: "{{ url('accounting/bank-currency-transfer/create') }}?bank-accounts&company_id="+$('#'+where+'_company_id').val(),
+                type: 'GET',
+                dataType: 'json',
+                data: {},
+            })
+            .done(function (response) {
+                var bankAccounts = '';
+                $.each(response, function(index, val) {
+                    bankAccounts += '<option value="'+val.id+'">'+val.name+' | '+val.number+' | '+val.bank_branch.bank.name+' | '+val.currency.code+'</option>';
+                });
+
+                $('#'+where+'_bank_account_id').html(bankAccounts).change();
+            });
+
+            getCostCentres(where);
+        }
+
+        function getCostCentres(where) {
+            $.ajax({
+                url: "{{ url('accounting/bank-currency-transfer/create') }}?cost-centres&company_id="+$('#'+where+'_company_id').val(),
+                type: 'GET',
+                data: {},
+            })
+            .done(function (response) {
+                $('#'+where+'_cost_centre_id').html(response).change();
+            });
+        }
 
         function getCurrencies() {
             $.ajax({
@@ -135,24 +191,13 @@
                 .done(function (response) {
                     $('#receiving_amount').val(response.receiving_amount);
                     $('#estimated_amount').val(response.receiving_amount);
-                    $('#gain_loss').val(response.gain_loss);
 
                     if (response.same == 1) {
                         $('#receiving_amount').attr('readonly', 'readonly');
                     } else {
                         $('#receiving_amount').removeAttr('readonly');
                     }
-
-                    // calculateGainLoss();
                 });
-        }
-
-
-        function calculateGainLoss() {
-            var estimated_amount = parseFloat($('#estimated_amount').val() != "" ? $('#estimated_amount').val() : 0);
-            var receiving_amount = parseFloat($('#receiving_amount').val() != "" ? $('#receiving_amount').val() : 0);
-
-            $('#gain_loss').val(parseFloat(receiving_amount - estimated_amount).toFixed(4));
         }
 
         $(document).ready(function () {
