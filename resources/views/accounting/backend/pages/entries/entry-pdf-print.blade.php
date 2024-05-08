@@ -11,7 +11,7 @@
             header: page-header;
             footer: page-footer;
 
-            background: url('assets/idcard/letterhead/{{ getUnitCode(isset($entry->purchaseOrder->purchase_order_id) ? $entry->purchaseOrder->purchase_order_id : 0) }}.png') no-repeat 0 0;
+            background: url({{ getUnitPad(isset($entry->purchaseOrder->id) ? $entry->purchaseOrder->purchaseOrder->unit : 0) }}) no-repeat 0 0;
             background-image-resize: 6;
         }
 

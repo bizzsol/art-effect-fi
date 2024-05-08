@@ -42,15 +42,15 @@
                         </div>
                     </div>
                     <div class="col-md-4 pt-3">
-                        <div class="form-group" id="search-div" style="display: none">
+                        <div class="form-group" id="search-div">
                             <input type="text" name="search" id="search" placeholder="Search Chart of Accounts here..."
                                    class="form-control" onkeyup="searchCOA($(this))" onchange="searchCOA($(this))">
                         </div>
                     </div>
                     <div class="col-md-4 pt-3">
-                        <a class="btn btn-sm btn-info pull-right ml-2 show-ledger-details"
+                        <a class="btn btn-sm btn-info pull-right ml-2 show-ledger-details" style="display: none"
                            onclick="showLedgerDetails()"><i class="las la-plus-square"></i>&nbsp;Ledger Details</a>
-                        <a class="btn btn-sm btn-danger pull-right ml-2 hide-ledger-details" style="display: none"
+                        <a class="btn btn-sm btn-danger pull-right ml-2 hide-ledger-details"
                            onclick="hideLedgerDetails()"><i class="las la-minus-square"></i>&nbsp;Ledger Details</a>
 
                         @can('chart-of-accounts-create')
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="panel panel-info mt-3 pt-4 pb-4 pl-3 chart-of-accounts-tree">
+                <div class="panel panel-info mt-3 pt-4 pb-4 pl-3 chart-of-accounts-tree" style="display: none">
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <strong>Levels >> </strong>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-info mt-3 export-table chart-of-accounts-details" style="display: none">
+                <div class="panel panel-info mt-3 export-table chart-of-accounts-details">
                     <table class="table table-head" cellspacing="0" width="100%" id="dataTable">
                         <thead>
                         <tr>

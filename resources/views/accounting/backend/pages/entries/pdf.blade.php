@@ -11,7 +11,7 @@
                 header: page-header;
                 footer: page-footer;
 
-                background: url('assets/idcard/letterhead/{{ getUnitCode(0) }}.png') no-repeat 0 0;
+                background: url({{ getCompanyPad(auth()->user()->costCentre->profitCentre->company) }}) no-repeat 0 0;
                 background-image-resize: 6;
             }
             

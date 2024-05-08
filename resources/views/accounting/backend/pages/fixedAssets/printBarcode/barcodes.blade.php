@@ -11,7 +11,7 @@
                 header: page-header;
                 footer: page-footer;
 
-                background: url('assets/idcard/letterhead/{{ getUnitCode(isset($batch->requisitionDeliveryItem->relRequisitionDelivery->relRequisition->purchaseOrders[0]->id) ? $batch->requisitionDeliveryItem->relRequisitionDelivery->relRequisition->purchaseOrders[0]->id : 0) }}.png') no-repeat 0 0;
+                background: url({{ getUnitPad(isset($batch->requisitionDeliveryItem->relRequisitionDelivery->relRequisition->purchaseOrders[0]->id) ? $batch->requisitionDeliveryItem->relRequisitionDelivery->relRequisition->purchaseOrders[0]->purchaseOrder->Unit : 0) }}) no-repeat 0 0;
                 background-image-resize: 6;
             }
             

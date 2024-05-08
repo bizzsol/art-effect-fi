@@ -124,10 +124,10 @@
                                                 <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>
                                             </td>
                                             <td>
-                                                <input type="number" name="debit[]" class="form-control debit text-right" @if($item->debit_credit == "D") value="{{ $item->amount }}" @else value="0" @endif onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187">
+                                                <input type="number" step="any" min="0" name="debit[]" class="form-control debit text-right" @if($item->debit_credit == "D") value="{{ $item->amount }}" @else value="0" @endif onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187">
                                             </td>
                                             <td>
-                                                <input type="number" name="credit[]" class="form-control credit text-right" @if($item->debit_credit == "C") value="{{ $item->amount }}" @else value="0" @endif onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">
+                                                <input type="number" step="any" min="0" name="credit[]" class="form-control credit text-right" @if($item->debit_credit == "C") value="{{ $item->amount }}" @else value="0" @endif onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">
                                             </td>
                                              <td>
                                                 <input type="text" name="narration[]" class="form-control narration" value="{{ $item->narration }}">
@@ -233,10 +233,10 @@
                                     '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>'+
                                 '</td>'+
                                 '<td>'+
-                                    '<input type="number" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
+                                    '<input type="number" step="any" min="0" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
                                 '</td>'+
                                 '<td>'+
-                                    '<input type="number" name="credit[]" class="form-control credit text-right" onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
+                                    '<input type="number" step="any" min="0" name="credit[]" class="form-control credit text-right" onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
                                 '</td>'+
                                 '<td>'+
                                     '<input type="text" name="narration[]" class="form-control narration">'+
