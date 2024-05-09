@@ -11,7 +11,7 @@
             header: page-header;
             footer: page-footer;
 
-            background: url({{ getUnitPad(isset($entry->purchaseOrder->id) ? $entry->purchaseOrder->purchaseOrder->unit : 0) }}) no-repeat 0 0;
+            background: url({{ getCompanyPad($entry->items[0]->costCentre->profitCentre->company) }}) no-repeat 0 0;
             background-image-resize: 6;
         }
 
@@ -277,8 +277,8 @@
         @php
             $total_debit = $entry->items->where('debit_credit', 'D')->sum('amount');
             $total_credit = $entry->items->where('debit_credit', 'C')->sum('amount');
-            $d_deference = $total_credit > $total_debit ? ($total_credit-$total_debit) : 0;
-            $c_deference = $total_debit > $total_credit ? ($total_debit-$total_credit) : 0;
+            $d_deference = $total_credit > $total_debit ? (systemDoubleValue($total_credit, 2)-systemDoubleValue($total_debit, 2)) : 0;
+            $c_deference = $total_debit > $total_credit ? (systemDoubleValue($total_debit, 2)-systemDoubleValue($total_credit, 2)) : 0;
         @endphp
         <tfoot>
         <tr>

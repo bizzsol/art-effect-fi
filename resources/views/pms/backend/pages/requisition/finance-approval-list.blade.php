@@ -1,4 +1,4 @@
-@extends('pms.backend.layouts.master-layout')
+@extends('accounting.backend.layouts.master-layout')
 @section('title', session()->get('system-information')['name']. ' | '.$title)
 @section('page-css')
     <style type="text/css">

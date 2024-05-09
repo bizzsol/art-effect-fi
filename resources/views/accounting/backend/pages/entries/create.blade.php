@@ -470,7 +470,7 @@
             $('.total-debit').html(total_debit.toFixed(2));
             $('.total-credit').html(total_credit.toFixed(2));
 
-            if (total_debit == total_credit) {
+            if (parseFloat(total_debit).toFixed(2) == parseFloat(total_credit).toFixed(2)) {
                 $('.total-debit').removeClass('bg-danger').addClass('bg-success');
                 $('.total-credit').removeClass('bg-danger').addClass('bg-success');
                 $('.debit-difference').html('-');

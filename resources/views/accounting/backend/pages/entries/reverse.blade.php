@@ -169,8 +169,8 @@
                                             @php
                                                 $total_debit = $entry->items->where('debit_credit', 'D')->sum('amount');
                                                 $total_credit = $entry->items->where('debit_credit', 'C')->sum('amount');
-                                                $d_deference = $total_credit > $total_debit ? ($total_credit-$total_debit) : 0;
-                                                $c_deference = $total_debit > $total_credit ? ($total_debit-$total_credit) : 0;
+                                                $d_deference = $total_credit > $total_debit ? (systemDoubleValue($total_credit, 2)-systemDoubleValue($total_debit, 2)) : 0;
+                                                $c_deference = $total_debit > $total_credit ? (systemDoubleValue($total_debit, 2)-systemDoubleValue($total_credit, 2)) : 0;
                                             @endphp
                                             <tfoot>
                                             <tr>
@@ -318,8 +318,8 @@
                                                 @php
                                                     $total_debit = $entry->items->where('debit_credit', 'D')->sum('amount');
                                                     $total_credit = $entry->items->where('debit_credit', 'C')->sum('amount');
-                                                    $d_deference = $total_credit > $total_debit ? ($total_credit-$total_debit) : 0;
-                                                    $c_deference = $total_debit > $total_credit ? ($total_debit-$total_credit) : 0;
+                                                    $d_deference = $total_credit > $total_debit ? (systemDoubleValue($total_credit, 2)-systemDoubleValue($total_debit, 2)) : 0;
+                                                    $c_deference = $total_debit > $total_credit ? (systemDoubleValue($total_debit, 2)-systemDoubleValue($total_credit, 2)) : 0;
                                                 @endphp
                                                 <tfoot>
                                                 <tr>
