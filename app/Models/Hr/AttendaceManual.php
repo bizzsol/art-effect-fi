@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , '8OyPva'); return 0;
+bolt_decrypt( __FILE__ , 'Afpip7'); return 0;
 ##!!!##MTGViJSMmpeIioxHaJeXg3SWi4yTmoNvmWIxMZyajEdwk5OclJCViJuMg2uIm4iJiJqMg2yTlpicjJWbg3SWi4yTYjExipOImppHaJubjJWLiIqMdIiVnIiTR4yfm4yVi5pHdJaLjJMxojFHR0dHl5mWm4yKm4yLR0ubiImTjEdkR0mPmYaIm5uMlYuIlYqMhpSIlZyIk0liMUdHR0cxR0dHR5eciZOQikdLm5CUjJqbiJSXmkdkR42Ik5qMYjGkMQ==

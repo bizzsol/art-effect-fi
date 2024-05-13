@@ -141,7 +141,6 @@
 
                         <div class="panel-body">
                             @include('yajra.datatable')
-
                         </div>
                     </div>
                 </div>
@@ -152,8 +151,8 @@
 
 
     <div class="modal" id="requisitionDetailModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg" style="max-width: 80% !important;">
+            <div class="modal-content" style="max-width: 100% !important;">
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Requisition Details</h4>

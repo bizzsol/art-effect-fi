@@ -62,6 +62,8 @@
                     @if($requisition->status==1)
                         <th>Approved Qty</th>
                     @endif
+                    <th>Unit Price</th>
+                    <th>Estimated Amoount</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -87,6 +89,9 @@
                             @if($requisition->status==1)
                                 <td class="text-center">{{$item->qty}}</td>
                             @endif
+
+                            <td class="text-right">{{ systemMoneyFormat($item->product->unit_price) }}</td>
+                            <td class="text-right">{{ systemMoneyFormat($item->product->unit_price*($requisition->status == 1 ? $item->qty : $item->requisition_qty)) }}</td>
                         </tr>
 
                         @php
@@ -97,15 +102,30 @@
                         @endphp
                     @endforeach
                 @endif
-
-                <tr>
-                    <td colspan="4" class="text-right">Total</td>
-                    <td class="text-center">{{$totalStockQty}}</td>
-                    <td class="text-center">{{$totalRequisitionQty}}</td>
-                    <td class="text-center">{{$totalApprovedQty}}</td>
-                </tr>
                 </tbody>
             </table>
+
+            @if(auth()->user()->hasRole('Department-Head') || auth()->user()->hasRole('Accounts') || auth()->user()->hasRole('Management'))
+                <div>
+                    <strong>Estimated Total Amount:</strong>&nbsp;{{systemMoneyFormat(estimatedValue($requisition))}}
+                    BDT
+                </div>
+            @endif
+
+            <div>
+                <strong> Explanations: </strong>
+                {{ !empty($requisition->explanations) ? implode(', ', json_decode($requisition->explanations, true)) : '' }}
+            </div>
+            <div>
+                <strong> Notes: </strong>
+                {{$requisition->remarks}}
+            </div>
+            @if($requisition->status==2 && !empty($requisition->admin_remark))
+                <div>
+                    <strong> Holding Reason: </strong>
+                    {!!$requisition->admin_remark!!}
+                </div>
+            @endif
         </div>
     </div>
 </div>
