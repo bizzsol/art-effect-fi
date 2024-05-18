@@ -54,16 +54,16 @@
                 <thead>
                 <tr class="text-center">
                     <th>SL</th>
-                    <th>Category</th>
                     <th>Product</th>
+                    <th>Attributes</th>
                     <th>UOM</th>
                     <th>Stock Qty</th>
                     <th>Requisition Qty</th>
                     @if($requisition->status==1)
                         <th>Approved Qty</th>
                     @endif
-                    <th>Unit Price</th>
-                    <th>Estimated Amoount</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Estimated Amoount</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,17 +72,19 @@
                         $totalStockQty = 0;
                         $totalRequisitionQty = 0;
                         $totalApprovedQty = 0;
+                        $totalEstimation = 0;
                     @endphp
                     @foreach($requisition->items as $key=>$item)
                         @php
                             $stockQty = isset($item->product->relInventoryDetails)? collect($item->product->relInventoryDetails)->when(isset(auth()->user()->employee->as_unit_id), function($query){
                                     return $query->where('hr_unit_id',auth()->user()->employee->as_unit_id);
                                 })->sum('qty'):0;
+                            $totalEstimation += $item->unit_price*($requisition->status == 1 ? $item->qty : $item->requisition_qty);
                         @endphp
                         <tr>
                             <td class="text-center">{{$key+1}}</td>
-                            <td>{{isset($item->product->category->name)?$item->product->category->name:''}}</td>
                             <td>{{isset($item->product->name)?$item->product->name:''}} {{ getProductAttributesFaster(isset($item->product)?$item->product:'') }}</td>
+                            <td>{{ getProductAttributesFaster($item) }}</td>
                             <td>{{isset($item->product->productUnit->unit_name)?$item->product->productUnit->unit_name:''}}</td>
                             <td class="text-center">{{$stockQty}}</td>
                             <td class="text-center">{{number_format($item->requisition_qty,0)}}</td>
@@ -90,8 +92,8 @@
                                 <td class="text-center">{{$item->qty}}</td>
                             @endif
 
-                            <td class="text-right">{{ systemMoneyFormat($item->product->unit_price) }}</td>
-                            <td class="text-right">{{ systemMoneyFormat($item->product->unit_price*($requisition->status == 1 ? $item->qty : $item->requisition_qty)) }}</td>
+                            <td class="text-right">{{ systemMoneyFormat($item->unit_price) }}</td>
+                            <td class="text-right">{{ systemMoneyFormat($item->unit_price*($requisition->status == 1 ? $item->qty : $item->requisition_qty)) }}</td>
                         </tr>
 
                         @php
@@ -105,12 +107,12 @@
                 </tbody>
             </table>
 
-            @if(auth()->user()->hasRole('Department-Head') || auth()->user()->hasRole('Accounts') || auth()->user()->hasRole('Management'))
+            {{-- @if(auth()->user()->hasRole('Department-Head') || auth()->user()->hasRole('Accounts') || auth()->user()->hasRole('Management')) --}}
                 <div>
-                    <strong>Estimated Total Amount:</strong>&nbsp;{{systemMoneyFormat(estimatedValue($requisition))}}
+                    <strong>Estimated Total Amount:</strong>&nbsp;{{systemMoneyFormat($totalEstimation)}}
                     BDT
                 </div>
-            @endif
+            {{-- @endif --}}
 
             <div>
                 <strong> Explanations: </strong>
