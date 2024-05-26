@@ -9,7 +9,7 @@
             <select name="cost_centre_id" id="cost_centre_id" class="form-control rounded select2">
             	@if(isset($costCentres[0]))
                 @foreach($costCentres as $key => $costCentre)
-                <option value="{{ $costCentre->id }}">[{{ $costCentre->code }}] {{ $costCentre->name }} ({{ $costCentre->company->name }})</option>
+                <option value="{{ $costCentre->id }}">[{{ $costCentre->code }}] {{ $costCentre->name }} ({{ $costCentre->profitCentre->company->name }})</option>
                 @endforeach
                 @endif
             </select>
