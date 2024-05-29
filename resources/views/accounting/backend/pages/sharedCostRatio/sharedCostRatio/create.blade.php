@@ -31,7 +31,7 @@
                 <div class="panel-boby p-3">
                     <form action="{{ route('accounting.shared-cost-ratios.create') }}" method="get">
                         <div class="row mb-2">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="name"><strong>Cost Centre Allocation <span class="text-danger">*</span></strong></label>
                                     <select name="cost_centre_allocation_id" id="cost_centre_allocation_id" class="form-control">
@@ -40,6 +40,28 @@
                                         @foreach($costCentreAllocations as $allocation)
                                         <option value="{{ $allocation->id }}" {{ request()->get('cost_centre_allocation_id') == $allocation->id ? 'selected' : '' }}>{{ $allocation->name }} | [{{ $allocation->costCentre->code }}] {{ $allocation->costCentre->name }} | [{{ $allocation->chartOfAccount->code }}] {{ $allocation->chartOfAccount->name }}</option>
                                         @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="name"><strong>Currency <span class="text-danger">*</span></strong></label>
+                                    <select name="currency_id" id="currency_id" class="form-control rounded">
+                                        @if(isset($currencyTypes[0]))
+                                            @foreach($currencyTypes as $key => $currencyType)
+                                                <optgroup label="{{ $currencyType->name }}">
+                                                    @if($currencyType->currencies->count() > 0)
+                                                        @foreach($currencyType->currencies as $key => $currency)
+                                                            <option value="{{ $currency->id }}" {{ $currency_id == $currency->id ? 'selected' : '' }}>
+                                                                &nbsp;&nbsp;{{ $currency->name }}
+                                                                ({{ $currency->code }}
+                                                                &nbsp;|&nbsp;{{ $currency->symbol }})
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </optgroup>
+                                            @endforeach
                                         @endif
                                     </select>
                                 </div>
@@ -65,14 +87,20 @@
                     @if(isset($costCentreAllocation->id))
                         <form action="{{ route('accounting.shared-cost-ratios.store') }}" method="post" accept-charset="utf-8" enctype="multipart/form-data" id="share-cost-ratio-form">
                         @csrf
+                        <input type="hidden" name="cost_centre_allocation_id" value="{{ $costCentreAllocation->id }}" />
+                        <input type="hidden" name="currency_id" value="{{ $currency_id }}" />
+                        <input type="hidden" name="from" value="{{ $from }}" />
+                        <input type="hidden" name="to" value="{{ $to }}" />
+
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th class="text-center" style="width: 10%">Type</th>
-                                    <th style="width: 25%">Company</th>
-                                    <th style="width: 30%">Cost Centre</th>
-                                    <th style="width: 25%">Chart of Account</th>
-                                    <th class="text-right" style="width: 10%">Allocation</th>
+                                    <th style="width: 20%">Company</th>
+                                    <th style="width: 25%">Cost Centre</th>
+                                    <th style="width: 20%">Chart of Account</th>
+                                    <th class="text-right" style="width: 7.5%">Allocation</th>
+                                    <th class="text-right" style="width: 17.5%">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -82,6 +110,7 @@
                                     <td>[{{ $costCentreAllocation->costCentre->code }}] {{ $costCentreAllocation->costCentre->name }}</td>
                                     <td>[{{ $costCentreAllocation->chartOfAccount->code }}] {{ $costCentreAllocation->chartOfAccount->name }}</td>
                                     <td class="text-right"><strong>{{ $costCentreAllocation->allocation }}%</strong></td>
+                                    <td class="text-right"><strong>{{ systemMoneyFormat($balance) }}</strong></td>
                                 </tr>
 
                                 @if(isset($costCentreAllocation->targets[0]))
@@ -92,17 +121,20 @@
                                     <td>[{{ $target->costCentre->code }}] {{ $target->costCentre->name }}</td>
                                     <td>[{{ $target->chartOfAccount->code }}] {{ $target->chartOfAccount->name }}</td>
                                     <td class="text-right"><strong>{{ $target->allocation }}%</strong></td>
+                                    <td class="text-right"><strong>{{ systemMoneyFormat($balance != 0 && $target->allocation > 0 ? $balance*($target->allocation/100) : 0) }}</strong></td>
                                 </tr>
                                 @endforeach
                                 @endif
                             </tbody>
                         </table>
+                        @if($balance != 0)
                             <div class="row">
                                 <div class="col-md-12 text-right">
                                     <a class="btn btn-dark btn-md" href="{{ url('accounting/shared-cost-ratios') }}"><i class="la la-times"></i>&nbsp;Cancel</a>
                                     <button type="submit" class="btn btn-success btn-md share-cost-ratio-button"><i class="la la-save"></i>&nbsp;Process Cost Centre Ratio Share</button>
                                 </div>
                             </div>
+                        @endif
                         </form>
                     @endif
                     
@@ -134,7 +166,7 @@
             })
             .done(function(response) {
                 if(response.success){
-                    location.reload();
+                    window.open("{{ url('accounting/shared-cost-ratios') }}", "_parent");
                 }else{
                     toastr.error(response.message);
                 }
