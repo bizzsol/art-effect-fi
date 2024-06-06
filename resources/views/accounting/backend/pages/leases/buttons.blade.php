@@ -1,0 +1,1 @@
+<a class="btn btn-xs btn-primary" href="{{ url('accounting/leases/'.$lease->id) }}">Installments</a>

@@ -28,7 +28,7 @@
 							$amount = 0;
 							if($items->where('asset_code', $finalAsset->asset_code)->count() > 0){
 								foreach($items->where('asset_code', $finalAsset->asset_code) as $key => $item){
-									$total_rate += $item->batch->depreciation_rate;
+									$total_rate += $item->depreciation_rate;
 									$amount += calculateDepreciationAmount($item, $from, $to);
 								}
 							}
@@ -45,7 +45,7 @@
 								<td class="text-right">
 									{{ $finalAsset->batch->goodsReceivedItemsStockIn->relPurchaseOrder->relQuotation->exchangeRate->currency->code }}
 								</td>
-								<td class="text-right">{{ systemMoneyFormat($finalAsset->batch->depreciation_rate) }}%</td>
+								<td class="text-right">{{ systemMoneyFormat($finalAsset->depreciation_rate) }}%</td>
 								<td class="text-right">{{ systemMoneyFormat($amount) }}</td>
 								<td>
 									<input type="text" name="remarks[{{ $finalAsset->asset_code }}]" class="form-control">
@@ -72,7 +72,7 @@
 							<td>{{ isset($item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct->name) ? $item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct->name.' '.getProductAttributesFaster($item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct) : '' }}</td>
 							<td>{{ $item->batch->batch }}</td>
 							<td>{{ $item->asset_code }}</td>
-							<td class="text-right">{{ $item->batch->depreciation_rate }}%</td>
+							<td class="text-right">{{ $item->depreciation_rate }}%</td>
 							<td class="text-center">{{ $item->batch->goodsReceivedItemsStockIn->relPurchaseOrder->relQuotation->exchangeRate->currency->code }}</td>
 							<td class="text-right">
 								<input type="hidden" name="amount[{{ $item->id }}]" value="{{ $amount }}">

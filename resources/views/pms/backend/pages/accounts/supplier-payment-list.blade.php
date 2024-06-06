@@ -148,7 +148,8 @@
 	            	<div class="row">
 						<div class="col-md-10">
 							@include('payment', [
-								'currency_id' => request()->get('payment_currency_id')
+								'currency_id' => request()->get('payment_currency_id'),
+								'company_id' => false
 							])
 						</div>
 						<div class="col-md-2 pt-5 mt-2">

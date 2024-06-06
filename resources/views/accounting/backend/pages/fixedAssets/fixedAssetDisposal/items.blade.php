@@ -110,7 +110,8 @@
 	<div class="col-md-10">
 		@include('payment', [
 			'currency_id' => $currency_id,
-			'select2' => true
+			'select2' => true,
+			'company_id' => false
 		])
 	</div>
 	<div class="col-md-2 pt-5 mt-2">

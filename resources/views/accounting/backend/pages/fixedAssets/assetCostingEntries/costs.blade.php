@@ -83,7 +83,8 @@
     	@include('payment', [
 			'currency_id' => $purchaseOrder->relQuotation->exchangeRate->currency_id,
 			'ap' => true,
-			'select2' => true
+			'select2' => true,
+			'company_id' => false
 		])
     </div>
     <div class="col-md-4">

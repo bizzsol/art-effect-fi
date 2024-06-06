@@ -39,7 +39,7 @@
 					<td>{{ isset($item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct->name) ? $item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct->name.' '.getProductAttributesFaster($item->batch->goodsReceivedItemsStockIn->relGoodsReceivedItems->relProduct) : '' }}</td>
 					<td>{{ $item->batch->batch }}</td>
 					<td>{{ $item->asset_code }}</td>
-					<td class="text-right">{{ $item->batch->depreciation_rate }}%</td>
+					<td class="text-right">{{ $item->depreciation_rate }}%</td>
 					<td class="text-center">{{ $item->batch->goodsReceivedItemsStockIn->relPurchaseOrder->relQuotation->exchangeRate->currency->code }}</td>
 					<td class="text-right">
 						<input type="hidden" name="amount[{{ $item->id }}]" value="{{ $amount }}">

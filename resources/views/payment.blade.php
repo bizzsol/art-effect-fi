@@ -2,13 +2,28 @@
 	$bankAccounts = \App\Models\PmsModels\Accounts\BankAccount::with([
 		'currency'
 	])
+	->whereHas('chartOfAccount.companies', function($query){
+        return $query->whereIn('company_id', auth()->user()->companies->pluck('company_id')->toArray());
+    })
+    ->whereHas('chartOfAccount.users', function($query){
+        return $query->where('user_id', auth()->user()->id);
+    })
 	->when(isset($currency_id), function($query) use($currency_id){
 		return $query->where('currency_id', $currency_id);
+	})
+	->when(isset($company_id), function($query) use($company_id){
+		return $query->whereHas('chartOfAccount.companies', function($query) use($company_id){
+	        return $query->where('company_id', $company_id);
+	    });
 	})
 	->orderBy('id','desc')
 	->get();
 
-	$suppliers = \App\Models\PmsModels\Suppliers::where('status', 'Active')->orderBy('name','asc')
+	$suppliers = \App\Models\PmsModels\Suppliers::where('status', 'Active')
+	->when(isset($supplier_id), function($query) use($supplier_id){
+		return $query->where('id', $supplier_id);
+	})
+	->orderBy('name','asc')
 	->get();
 @endphp
 <div class="row">
@@ -34,7 +49,7 @@
 	<div class="col-md-5 choose-ledger" style="display:none">
 		<label for="chart_of_account_id"><strong>Choose Ledger</strong></label>
 		<select name="chart_of_account_id" id="chart_of_account_id" class="form-control this-page-select2">
-			{!! chartOfAccountsOptions([], 0, 0, getAllGroupAndLedgers()) !!}
+			{!! chartOfAccountsOptions([], 0, 0, getAllGroupAndLedgers(), false, '', false, isset($companies) ? $companies : false) !!}
 		</select>
 	</div>
 	<div class="col-md-5 supplier-payable" style="display:none">
@@ -106,6 +121,10 @@
 
 @if(isset($select2) && $select2)
 <script type="text/javascript">
-	$('.this-page-select2').select2();
+	$(".this-page-select2").each(function() {
+	    $(this).select2({
+	      dropdownParent: $(this).parent()
+	    });
+	});
 </script>
 @endif

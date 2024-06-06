@@ -232,7 +232,7 @@
                         <td style="text-align: right">
                             {{ systemMoneyFormat($cost) }}
                         </td>
-                        <td style="text-align: right">{{ $item->batch->depreciation_rate.'%' }}</td>
+                        <td style="text-align: right">{{ $item->depreciation_rate.'%' }}</td>
                         <td style="text-align: right">
                             {{ systemMoneyFormat($opening_depreciation) }}
                         </td>
