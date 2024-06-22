@@ -3,12 +3,12 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th style="width: 3.5%" class="text-center"><i class="fa fa-check"></i></th>
-					<th style="width: 22.5%">Asset</th>
+					<th style="width: 3%" class="text-center"><i class="fa fa-check"></i></th>
+					<th style="width: 20%">Asset</th>
 					<th style="width: 10%">Purchase Price</th>
 					<th style="width: 10%">Depreciated</th>
 					<th style="width: 10%">Book Value</th>
-					<th style="width: 40%">Disposal Infomartion</th>
+					<th style="width: 47%">Disposal Infomartion</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -63,20 +63,24 @@
 						</td>
 						<td>
 							<div class="form-group row">
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<label class="mb-0 pb-0" for="disposal_type_{{ $finalAsset->asset_code }}"><strong>Type</strong></label>
 									<select name="disposal_type[{{ $finalAsset->asset_code }}]" id="disposal_type_{{ $finalAsset->asset_code }}" class="form-control">
 										<option value="disposed">Disposal</option>
 										<option value="sold">Sale</option>
 									</select>
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<label class="mb-0 pb-0" for="disposed_at_{{ $finalAsset->asset_code }}"><strong>Date</strong></label>
 									<input type="date" name="disposed_at[{{ $finalAsset->asset_code }}]" id="disposed_at_{{ $finalAsset->asset_code }}" value="{{ date('Y-m-d') }}" class="form-control">
 								</div>
-								<div class="col-md-4">
+								<div class="col-md-3">
 									<label class="mb-0 pb-0" for="disposal_amount_{{ $finalAsset->asset_code }}"><strong>Amount</strong></label>
 									<input type="number" name="disposal_amount[{{ $finalAsset->asset_code }}]" id="disposal_amount_{{ $finalAsset->asset_code }}" min="0" value="0.0000" step="0.0001" class="form-control disposal-amounts text-right" onkeyup="calculateDisposalAmount()" onchange="calculateDisposalAmount()">
+								</div>
+								<div class="col-md-3">
+									<label class="mb-0 pb-0" for="disposal_tax_amount_{{ $finalAsset->asset_code }}"><strong>TAX Amount</strong></label>
+									<input type="number" name="disposal_tax_amount[{{ $finalAsset->asset_code }}]" id="disposal_tax_amount_{{ $finalAsset->asset_code }}" min="0" value="0.0000" step="0.0001" class="form-control disposal-tax-amounts text-right" onkeyup="calculateDisposalAmount()" onchange="calculateDisposalAmount()">
 								</div>
 							</div>
 							<div class="form-group row">
@@ -97,7 +101,9 @@
 					<td class="text-right"><strong>{{ systemMoneyFormat($grand_depreciated) }}</strong></td>
 					<td class="text-right"><strong>{{ systemMoneyFormat($grand_current_value) }}</strong></td>
 					<td class="text-right">
-						<strong id="total-disposal-amount"></strong>
+						Total Disposal Amount: <strong id="total-disposal-amount">0.00</strong>
+						&nbsp;&nbsp;|&nbsp;&nbsp;
+						Total TAX Amount: <strong id="total-disposal-tax-amount">0.00</strong>
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					</td>
 				</tr>

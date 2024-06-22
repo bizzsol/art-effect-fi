@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , '3Dstig'); return 0;
-##!!!##ODicj5uToZ6PkZNOb56einudkpOaoYp2oGk4OKOhk053mpqjm5ecj6KTinKPoo+Qj6GTinOanZ+jk5yiinudkpOaaTg4kZqPoaFOfaKWk6Bwk5yTlJeioU6TpqKTnJKhTnudkpOaOKk4Tk5OTp6gnaKTkaKTkk5Soo+QmpNOa05VlqCNnaKWk6CNkJOck5SXoo2XopObVWk4Tk5OTp6jkJqXkU5Sopebk6Gij5ueoU5rTpSPmqGTaTirOA==
+bolt_decrypt( __FILE__ , 'Y7hosO'); return 0;
+##!!!##MzOXipaOnJmKjI5JapmZhXaYjY6VnIVxm2QzM56cjklylZWelpKXip2OhW2KnYqLipyOhW6VmJqejpedhXaYjY6VZDMzjJWKnJxJeJ2RjptrjpeOj5KdnEmOoZ2Ol42cSXaYjY6VM6QzSUlJSZmbmJ2OjJ2OjUlNnYqLlY5JZklQkZuImJ2RjpuIi46Xjo+SnYiSnY6WUGQzSUlJSZmei5WSjElNnZKWjpydipaZnElmSY+KlZyOZDOmMw==

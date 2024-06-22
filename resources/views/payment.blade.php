@@ -19,12 +19,16 @@
 	->orderBy('id','desc')
 	->get();
 
-	$suppliers = \App\Models\PmsModels\Suppliers::where('status', 'Active')
-	->when(isset($supplier_id), function($query) use($supplier_id){
-		return $query->where('id', $supplier_id);
-	})
-	->orderBy('name','asc')
-	->get();
+	if(isset($supplier_id)){
+		$suppliers = \App\Models\PmsModels\Suppliers::where('status', 'Active')->where('id', $supplier_id)
+		->orderBy('name','asc')
+		->get();
+	}else{
+		$suppliers = \App\Models\PmsModels\Suppliers::where('status', 'Active')
+		->orderBy('name','asc')
+		->get();
+	}
+	
 @endphp
 <div class="row">
 	<div class="col-md-3">

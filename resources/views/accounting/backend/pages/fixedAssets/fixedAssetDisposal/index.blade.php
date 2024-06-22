@@ -159,16 +159,18 @@
 
     function calculateDisposalAmount() {
         var total = 0;
+        var tax = 0;
         $.each($('.item-checkboxes'), function(index, val) {
-            console.log($(this).is(':checked'));
             if($(this).is(':checked')){
-                console.log($(this).parent().parent().find('.disposal-amounts').val());
                 var disposal_amount = $(this).parent().parent().find('.disposal-amounts').val();
+                var disposal_tax_amount = $(this).parent().parent().find('.disposal-tax-amounts').val();
                 total += parseFloat(disposal_amount != "" && disposal_amount > 0 ? parseFloat(disposal_amount) : 0);
+                tax += parseFloat(disposal_tax_amount != "" && disposal_tax_amount > 0 ? parseFloat(disposal_tax_amount) : 0);
             }
         });
 
         $('#total-disposal-amount').html(total.toFixed(4));
+        $('#total-disposal-tax-amount').html(tax.toFixed(4));
     }
 </script>
 @endsection
