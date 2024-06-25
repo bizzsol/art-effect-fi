@@ -100,5 +100,36 @@
                 $('#to').val($('#fiscal_year_id').find(':selected').attr('data-end')).attr('min', $('#fiscal_year_id').find(':selected').attr('data-start')).attr('max', $('#fiscal_year_id').find(':selected').attr('data-end'));
             }
         }
+
+        function getProfitCentres() {
+            $('#profit_centre_id').html('<option value="0">Please wait...</option>');
+            $.ajax({
+                url: "{{ url('accounting') }}?get-profit-centres&company_id="+$('#company_id').val(),
+                type: 'GET',
+                dataType: 'json',
+                data: {},
+            })
+            .done(function(response) {
+                var profitCentres = '<option value="0">All Profit Centres</option>';
+                $.each(response, function(index, profitCentre) {
+                    profitCentres += '<option value="'+profitCentre.id+'">['+profitCentre.code+'] '+profitCentre.name+'</option>';
+                });
+
+                $('#profit_centre_id').html(profitCentres).change();
+            });
+        }
+
+        function getCostCentres() {
+            $('#cost_centre_id').html('<option value="0">Please wait...</option>');
+            $.ajax({
+                url: "{{ url('accounting') }}?get-cost-centres&company_id="+$('#company_id').val()+"&profit_centre_id="+$('#profit_centre_id').find(':selected').val(),
+                type: 'GET',
+                data: {},
+            })
+            .done(function(response) {
+                console.log(response);
+                $('#cost_centre_id').html(response).change();
+            });
+        }
     </script>
 @endsection

@@ -4,24 +4,24 @@
         <td colspan="12">
             <table class="table table-bordered">
                 <thead>
-                <tr>
-                    <th style="width: 20%">Group</th>
-                    <th style="width: 35%">Ledger</th>
-                    <th style="width: 10%">From</th>
-                    <th style="width: 10%">To</th>
-                    <th style="width: 25%">Opening Balance</th>
-                </tr>
+                    <tr>
+                        <th style="width: 20%">Group</th>
+                        <th style="width: 35%">Ledger</th>
+                        <th style="width: 10%">From</th>
+                        <th style="width: 10%">To</th>
+                        <th style="width: 25%">Opening Balance</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>{{ '['.$account->accountGroup->code.'] '.$account->accountGroup->name }}</td>
-                    <td>{{ '['.$account->code.'] '.$account->name }}</td>
-                    <td>{{ $from }}</td>
-                    <td>{{ $to }}</td>
-                    <td class="text-right">
-                        {{ $currency->symbol }} {{ $opening_balance['balance'] }}
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{ '['.$account->accountGroup->code.'] '.$account->accountGroup->name }}</td>
+                        <td>{{ '['.$account->code.'] '.$account->name }}</td>
+                        <td>{{ $from }}</td>
+                        <td>{{ $to }}</td>
+                        <td class="text-right">
+                            {{ $currency->symbol }} {{ $opening_balance['balance'] }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </td>

@@ -29,25 +29,38 @@
 
             <div class="page-content">
                 <div class="row" style="margin-top: -15px">
-                    <div class="col-md-4">
-                        <div class="row pl-3">
-                            <div class="col-md-12 pt-0">
-                                @include('accounting.backend.pages.reports.buttons', [
-                                    'title' => $title,
-                                    'url' => url('accounting/chart-of-accounts'),
-                                    'searchHide' => true,
-                                    'clearHide' => true,
-                                ])
+                    <div class="col-md-6 pt-3">
+                        <form action="{{ url('accounting/chart-of-accounts') }}" method="get">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <select name="company_id" id="company_id" name="form-control">
+                                            @if(isset($companies[0]))
+                                            @foreach($companies as $key => $company)
+                                            <option value="{{ $company->id }}" {{ $company_id == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                            @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <select name="level" id="level" name="form-control">
+                                            @for($i=1;$i<=$levels;$i++)
+                                            <option value="{{ $i }}" {{ $level == $i ? 'selected' : '' }}>Level {{ $i }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <button class="btn btn-sm btn-block btn-success"><i class="las la-search"></i>&nbsp;Search</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="col-md-4 pt-3">
-                        <div class="form-group" id="search-div">
-                            <input type="text" name="search" id="search" placeholder="Search Chart of Accounts here..."
-                                   class="form-control" onkeyup="searchCOA($(this))" onchange="searchCOA($(this))">
-                        </div>
-                    </div>
-                    <div class="col-md-4 pt-3">
+                    <div class="col-md-6 pt-3">
                         <a class="btn btn-sm btn-info pull-right ml-2 show-ledger-details" style="display: none"
                            onclick="showLedgerDetails()"><i class="las la-plus-square"></i>&nbsp;Ledger Details</a>
                         <a class="btn btn-sm btn-danger pull-right ml-2 hide-ledger-details"
@@ -69,15 +82,6 @@
 
                 <div class="panel panel-info mt-3 pt-4 pb-4 pl-3 chart-of-accounts-tree" style="display: none">
                     <div class="row">
-                        <div class="col-md-12 mb-2">
-                            <strong>Levels >> </strong>
-                            <div class="btn-group mr-2" role="group" aria-label="Chart of Accounts Levels">
-                                @for($i=1;$i<=$levels;$i++)
-                                    <a class="btn btn-xs {{ $i <= $level ? 'btn-success' : 'btn-dark' }} p-3 mr-2"
-                                       href="{{ url('accounting/chart-of-accounts') }}?level={{ $i }}">{{ $i }}</a>
-                                @endfor
-                            </div>
-                        </div>
                         <div class="col-md-12">
                             <div id="jstree">
                                 <ul>{!! $accountGroupTree !!}</ul>
@@ -85,22 +89,36 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="panel panel-info mt-3 export-table chart-of-accounts-details">
-                    <table class="table table-head" cellspacing="0" width="100%" id="dataTable">
-                        <thead>
-                        <tr>
-                            <th style="width: 15%">{{__('Account Code')}}</th>
-                            <th style="width: 30%">{{__('Account Name')}}</th>
-                            <th class="text-center" style="width: 12.5%">{{__('Type')}}</th>
-                            <th class="text-center" style="width: 12.5%">{{__('Class')}}</th>
-                            <th class="text-center" style="width: 15%">{{__('Status')}}</th>
-                            <th class="text-center" style="width: 15%">{{__('Actions')}}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {!! $accountGroups !!}
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="form-group mb-0">
+                                <input type="text" name="search" id="search" placeholder="Search Chart of Accounts here..." class="form-control" onkeyup="searchCOA($(this))" onchange="searchCOA($(this))">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <a class="btn btn-sm btn-block btn-success" href="{{ url('accounting/chart-of-accounts?company_id='.$company_id.'&level='.$level.'&pdf') }}" target="_blank"><i class="lar la-file-pdf"></i>&nbsp;Download PDF</a>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <table class="table table-head" cellspacing="0" width="100%" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%">Account Code</th>
+                                        <th style="width: 30%">Account Name</th>
+                                        <th class="text-center" style="width: 7.5%">Type</th>
+                                        <th class="text-center" style="width: 7.5%">Class</th>
+                                        <th class="text-center" style="width: 20%">Companies</th>
+                                        <th class="text-center" style="width: 7.5%">Status</th>
+                                        <th class="text-center" style="width: 7.5%">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {!! $accountGroups !!}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -38,10 +38,10 @@
                             <input type="hidden" name="report_type" id="report_type" value="report">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-md-2">
+                                    <div class="row mb-2">
+                                        <div class="col-md-3">
                                             <label for="company_id"><strong>Company</strong></label>
-                                            <select name="company_id" id="company_id" class="form-control">
+                                            <select name="company_id" id="company_id" class="form-control" onchange="getProfitCentres()">
                                                 @if(isset($companies[0]))
                                                 @foreach($companies as $key => $company)
                                                     <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
@@ -49,7 +49,27 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-4">
+                                            <label for="profit_centre_id"><strong>Profit Centre</strong></label>
+                                            <select name="profit_centre_id" id="profit_centre_id" class="form-control" onchange="getCostCentres()">
+                                                <option value="0">All Profit Centres</option>
+                                                @if(isset($profitCentres[0]))
+                                                @foreach($profitCentres as $key => $profitCentre)
+                                                    <option value="{{ $profitCentre->id }}">[{{ $profitCentre->code }}] {{ $profitCentre->name }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label for="cost_centre_id"><strong>Cost Centre</strong></label>
+                                            <select name="cost_centre_id" id="cost_centre_id" class="form-control">
+                                                <option value="0">All Cost Centres</option>
+                                                {!! getCostCentres(true, $companies->first()->id, true) !!}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
                                             <label for="fiscal_year_id"><strong>Fiscal Year</strong></label>
                                             <select name="fiscal_year_id" id="fiscal_year_id" class="form-control" onchange="getDates()">
                                                 @if(isset($fiscalYears[0]))
@@ -59,7 +79,7 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <label for="from"><strong>From</strong></label>

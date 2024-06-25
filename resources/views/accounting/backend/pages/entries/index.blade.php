@@ -25,7 +25,7 @@
                     @can('entry-create')
                         @if(isset($entryTypes[0]))
                         @foreach($entryTypes as $key => $entryType)
-                            <a class="btn btn-sm btn-success pull-right ml-2" style="float: right" data-toggle="modal" data-target="#companyModal" onclick="$('#type').val('{{ $entryType->label }}')"><i class="las la-plus-circle"></i>&nbsp;{{ $entryType->name }}</a>
+                            <a class="btn btn-sm btn-success pull-right ml-2" style="float: right" @if($companies->count() == 1) href="{{ url('accounting/entries/create?type='.$entryType->label.'&company='.$companies->first()->id) }}" @else data-toggle="modal" data-target="#companyModal" onclick="$('#type').val('{{ $entryType->label }}')" @endif><i class="las la-plus-circle"></i>&nbsp;{{ $entryType->name }}</a>
                         @endforeach
                         @endif
                     @endcan

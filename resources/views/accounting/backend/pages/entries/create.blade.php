@@ -389,6 +389,10 @@
             </div>
         </div>
     </div>
+
+    <div id="coa" style="display: none">
+        {!! $chartOfAccountsOptions !!}
+    </div>
 @endsection
 @section('page-script')
     <script type="text/javascript">
@@ -409,7 +413,7 @@
                 '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>' +
                 '</td>' +
                 '<td>' +
-                '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>' +
+                '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">'+($('#coa').html())+'</select>' +
                 '</td>' +
                 '<td>' +
                 '<input type="number" min="0" step="any" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">' +
