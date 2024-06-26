@@ -1,1 +1,2 @@
-<a class="btn btn-xs btn-primary" href="{{ url('accounting/leases/'.$lease->id) }}">Installments</a>
+<a class="btn btn-xs btn-primary mb-1" href="{{ url('accounting/leases/'.$lease->id) }}">Installments</a>
+<a class="btn btn-xs btn-danger" href="{{ url('accounting/lease-depreciations/'.$lease->id) }}">Depreciations</a>

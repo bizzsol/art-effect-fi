@@ -139,76 +139,7 @@
 </htmlpagefooter>
 
 <div class="container">
-    <table class="table table-bordered">
-        <tr>
-            <td style="width: 33%;">
-                Company: <strong>{{ '['.$lease->costCentre->profitCentre->company->code.'] '.$lease->costCentre->profitCentre->company->name }}</strong>
-            </td>
-
-            <td style="width: 33%;">
-                Profit Centre: <strong>{{ '['.$lease->costCentre->profitCentre->code.'] '.$lease->costCentre->profitCentre->name }}</strong>
-            </td>
-
-            <td style="width: 33%;">
-                Cost Centre: <strong>{{ '['.$lease->costCentre->code.'] '.$lease->costCentre->name }}</strong>
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 67%;" colspan="2">
-                Vendor: <strong>{{ '['.$lease->supplier->code.'] '.$lease->supplier->name }}</strong>, Contract ID: <strong>{{ $lease->contract_id }}</strong>, Reference: <strong>{{ $lease->contract_reference }}</strong>
-            </td>
-            <td style="width: 33%;">
-                Interest Rate: <strong>{{ $lease->rate.'%' }}</strong> for <strong>{{ $lease->year }}</strong> years, <strong>{{ ucwords($lease->pay_interval) }}</strong> Installments
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 33%;">
-                Lease Amount: <strong>{{ $lease->exchangeRate->currency->code.' '.systemMoneyFormat($lease->amount) }}</strong>
-            </td>
-
-            <td style="width: 33%;">
-                Monthly Installment Amount: <strong>{{ $lease->exchangeRate->currency->code.' '.systemMoneyFormat($lease->installment_amount) }}</strong>
-            </td>
-
-            <td style="width: 33%;">
-                Total Lease Payable Amount: <strong>{{ $lease->exchangeRate->currency->code.' '.systemMoneyFormat($lease->total_payable_amount) }}</strong>
-            </td>
-        </tr>
-    </table>
-
-    <h3 style="margin-top: 25px"><strong>{{ ucwords($lease->pay_interval) }} Amortization Schedule</strong></h3>
-    <table class="table table-bordered table-striped table-hover">
-        <tbody>
-            <tr>
-                <td style="width: 10%;font-weight: bold" class="text-center">{{ ucwords(str_replace('ly', '', $lease->pay_interval)) }}</td>
-                <td style="width: 10%;font-weight: bold" class="text-center">Date</td>
-                <td style="width: 14%;font-weight: bold" class="text-right">Beginning</td>
-                <td style="width: 14%;font-weight: bold" class="text-right">PMT</td>
-                <td style="width: 14%;font-weight: bold" class="text-right">Interest</td>
-                <td style="width: 14%;font-weight: bold" class="text-right">Principal</td>
-                <td style="width: 14%;font-weight: bold" class="text-right">Ending balance</td>
-                <td style="width: 10%;font-weight: bold" class="text-center">Status</td>
-            </tr>
-            <tr>
-                <td class="text-right" colspan="7">{{ systemMoneyFormat($lease->amount) }}</td>
-                <td></td>
-            </tr>
-            @if($lease->schedules->count() > 0)
-            @foreach($lease->schedules as $key => $schedule)
-            <tr>
-                <td class="text-center">{{ $schedule->serial }}</td>
-                <td class="text-center">{{ $schedule->date }}</td>
-                <td class="text-right">{{ systemMoneyFormat($schedule->balance) }}</td>
-                <td class="text-right">{{ systemMoneyFormat($schedule->principle+$schedule->interest) }}</td>
-                <td class="text-right">{{ systemMoneyFormat($schedule->interest) }}</td>
-                <td class="text-right">{{ systemMoneyFormat($schedule->principle) }}</td>
-                <td class="text-right">{{ systemMoneyFormat($schedule->balance-$schedule->principle) }}</td>
-                <td class="text-center">{{ ucwords($schedule->status) }}</td>
-            </tr>
-            @endforeach
-            @endif
-        </tbody>
-    </table>
+   
 </div>
 </body>
 </html>   

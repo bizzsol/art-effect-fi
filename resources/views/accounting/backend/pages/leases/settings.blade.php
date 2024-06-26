@@ -44,28 +44,52 @@
                             @foreach($companies as $company)
                             <div class="col-md-12 mb-3">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="lease_asset_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Asset Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
-                                        <div class="input-group input-group-md mb-3 d-">
-                                            <select name="lease_asset_ledger_id[{{ $company->id }}]" id="lease_asset_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->lease_asset_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
-                                            </select>
+                                    <div class="col-md-7">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="lease_asset_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Asset Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <div class="input-group input-group-md mb-3 d-">
+                                                    <select name="lease_asset_ledger_id[{{ $company->id }}]" id="lease_asset_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
+                                                        {!! chartOfAccountsOptions([], $company->lease_asset_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="lease_liability_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Liability Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <div class="input-group input-group-md mb-3 d-">
+                                                    <select name="lease_liability_ledger_id[{{ $company->id }}]" id="lease_liability_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
+                                                        {!! chartOfAccountsOptions([], $company->lease_liability_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="lease_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <div class="input-group input-group-md mb-3 d-">
+                                                    <select name="lease_expense_ledger_id[{{ $company->id }}]" id="lease_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
+                                                        {!! chartOfAccountsOptions([], $company->lease_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="lease_liability_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Liability Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
-                                        <div class="input-group input-group-md mb-3 d-">
-                                            <select name="lease_liability_ledger_id[{{ $company->id }}]" id="lease_liability_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->lease_liability_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="lease_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
-                                        <div class="input-group input-group-md mb-3 d-">
-                                            <select name="lease_expense_ledger_id[{{ $company->id }}]" id="lease_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->lease_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
-                                            </select>
+                                    <div class="col-md-5">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label for="lease_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Depreciation Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <div class="input-group input-group-md mb-3 d-">
+                                                    <select name="lease_depreciation_ledger_id[{{ $company->id }}]" id="lease_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
+                                                        {!! chartOfAccountsOptions([], $company->lease_depreciation_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="lease_accumulated_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Lease Accumulated Depreciation Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <div class="input-group input-group-md mb-3 d-">
+                                                    <select name="lease_accumulated_depreciation_ledger_id[{{ $company->id }}]" id="lease_accumulated_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
+                                                        {!! chartOfAccountsOptions([], $company->lease_accumulated_depreciation_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

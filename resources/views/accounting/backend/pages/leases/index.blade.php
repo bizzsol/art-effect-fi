@@ -51,5 +51,16 @@
             backgroundDismiss: true
         });
     }
+
+    function leaseDetails(element) {
+        $.dialog({
+            title: "Lease #"+(element.text()),
+            content: "url:{{ url('accounting/leases') }}/"+(element.attr('data-id'))+"?details",
+            animation: 'scale',
+            columnClass: 'col-md-6 offset-3',
+            closeAnimation: 'scale',
+            backgroundDismiss: true
+        });
+    }
 </script>
 @endsection
