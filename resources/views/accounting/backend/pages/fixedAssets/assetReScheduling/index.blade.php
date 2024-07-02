@@ -22,7 +22,7 @@
                 <li class="active">Accounts</li>
                 <li class="active">{{__($title)}}</li>
                 <li class="top-nav-btn">
-                    
+                    <a class="btn btn-sm btn-success" href="{{ url('accounting/asset-re-scheduling/create') }}"><i class="las la-plus"></i>&nbsp;Re-Schedule Asset</a>
                 </li>
             </ul>
         </div>

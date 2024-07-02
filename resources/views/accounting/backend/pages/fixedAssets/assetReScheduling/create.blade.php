@@ -31,7 +31,20 @@
                 <div class="panel-boby p-3">
                     <form action="{{ url('accounting/asset-re-scheduling/create') }}" method="get" accept-charset="utf-8">
                         <div class="row pr-3">
-                            <div class="col-md-3 col-sm-12">
+                            <div class="col-md-2 col-sm-12">
+                                <label for="company_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="getBatches()">
+                                        <option value="0">All Companies</option>
+                                        @if(isset($companies[0]))
+                                        @foreach($companies as $key => $company)
+                                            <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>{{ $company->code }}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-12">
                                 <label for="product_id"><strong>{{ __('Assets') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <select name="product_id" id="product_id" class="form-control rounded" onchange="getBatches()">
@@ -50,7 +63,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-3 col-sm-12">
                                 <label for="fixed_asset_batch_id"><strong>{{ __('Batches') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <select name="fixed_asset_batch_id" id="fixed_asset_batch_id" class="form-control rounded" onchange="getItems()">
@@ -194,7 +207,7 @@
     function getBatches(){
         var product_id = $('#product_id').val();
         $.ajax({
-            url: "{{ url('accounting/asset-re-scheduling/create') }}?action=batches&product_id="+$('#product_id').val()+"&selected={{ request()->get('fixed_asset_batch_id') }}",
+            url: "{{ url('accounting/asset-re-scheduling/create') }}?action=batches&company_id="+$('#company_id').val()+"&product_id="+$('#product_id').val()+"&selected={{ request()->get('fixed_asset_batch_id') }}",
             type: 'GET',
             data: {},
         })
@@ -206,7 +219,7 @@
     function getItems() {
         $('.items').html('<option value="0">Please wait...</option>');
         $.ajax({
-            url: "{{ url('accounting/asset-re-scheduling/create') }}?action=items&product_id="+$('#product_id').val()+"&fixed_asset_batch_id="+$('#fixed_asset_batch_id').val()+"&selected={{ request()->get('fixed_asset_batch_item_id') }}",
+            url: "{{ url('accounting/asset-re-scheduling/create') }}?action=items&company_id="+$('#company_id').val()+"&product_id="+$('#product_id').val()+"&fixed_asset_batch_id="+$('#fixed_asset_batch_id').val()+"&selected={{ request()->get('fixed_asset_batch_item_id') }}",
             type: 'GET',
             data: {},
         })
