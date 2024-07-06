@@ -51,8 +51,9 @@
                                                     <div class="form-group">
                                                         <label for="status"><strong>Status</strong></label>
                                                         <select name="status" id="status" class="form-control">
-                                                            <option value="yes" {{ $status == 'yes' ? 'selected' : '' }}>Approved</option>
-                                                            <option value="no" {{ $status == 'no' ? 'selected' : '' }}>Waiting for Approval</option>
+                                                            <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Waiting for Approval</option>
+                                                            <option value="approved" {{ $status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                                            <option value="denied" {{ $status == 'denied' ? 'selected' : '' }}>Denied</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -138,6 +139,50 @@
                         cancel: true,
                         confirm: {
                             text: 'Approve',
+                            value: true,
+                            visible: true,
+                            closeModal: true,
+                            className: 'bg-success'
+                        },
+                    },
+                }).then((value) => {
+                    if (value) {
+                        $.ajax({
+                            type: 'POST',
+                            url: element.attr('data-src'),
+                            dataType: "json",
+                            data: {_token: '{!! csrf_token() !!}', requisition_id: requisition_id},
+                            success: function (data) {
+                                if (data.result === 'success') {
+                                    notify(data.message, 'success');
+                                    reloadDatatable();
+                                } else {
+                                    notify(data.message, data.result);
+                                }
+                            }
+                        });
+                        return false;
+                    }
+                });
+            } else {
+                notify('Please Select Requisition!!', 'error');
+            }
+        }
+        
+
+        function finanaceDeniel(element) {
+            let requisition_id = element.attr('data-id');
+
+            if (requisition_id !== '') {
+                swal({
+                    title: "{{__('Are you sure?')}}",
+                    text: "{{__('Once you Deny, You can not rollback from there.')}}",
+                    icon: "warning",
+                    dangerMode: false,
+                    buttons: {
+                        cancel: true,
+                        confirm: {
+                            text: 'Deny',
                             value: true,
                             visible: true,
                             closeModal: true,
