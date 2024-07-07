@@ -31,20 +31,27 @@
                 <div class="panel-boby p-3">
                     
                         <div class="row pr-3">
-                            <div class="col-md-3 col-sm-12">
-                                <label for="purchase_order_id"><strong>{{ __('Purchase orders') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                            <div class="col-md-2 col-sm-12">
+                                <label for="company_id"><strong>Company:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
-                                    <select name="purchase_order_id" id="purchase_order_id" class="form-control rounded" onchange="getStocks()">
-                                        <option value="0">Choose a Purchase order</option>
-                                        @if(isset($purchaseOrders[0]))
-                                        @foreach($purchaseOrders as $key => $purchaseOrder)
-                                            <option value="{{ $purchaseOrder->id }}">{{ $purchaseOrder->reference_no }}</option>
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="getPO()">
+                                        @if(isset($companies[0]))
+                                        @foreach($companies as $key => $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
                                         @endforeach
                                         @endif
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3 col-sm-12">
+                            <div class="col-md-4 col-sm-12">
+                                <label for="purchase_order_id"><strong>{{ __('Purchase orders') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="purchase_order_id" id="purchase_order_id" class="form-control rounded" onchange="getStocks()">
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
                                 <label for="goods_received_items_stock_in_id"><strong>{{ __('GRN') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <select name="goods_received_items_stock_in_id" id="goods_received_items_stock_in_id" class="form-control rounded">
@@ -92,11 +99,24 @@
 
 @section('page-script')
 <script type="text/javascript">
-    getStocks();
+    getPO();
+    function getPO(){
+        var company_id = $('#company_id').val();
+        $.ajax({
+            url: "{{ url('accounting/asset-costing-entries/create') }}?action=po&company_id="+$('#company_id').val(),
+            type: 'GET',
+            data: {},
+        })
+        .done(function(response) {
+            $('#purchase_order_id').html(response).change();
+            $('.costs').html('');
+        });
+    }
+
     function getStocks(){
         var purchase_order_id = $('#purchase_order_id').val();
         $.ajax({
-            url: "{{ url('accounting/asset-costing-entries/create') }}?action=stocks&purchase_order_id="+$('#purchase_order_id').val(),
+            url: "{{ url('accounting/asset-costing-entries/create') }}?action=stocks&purchase_order_id="+$('#purchase_order_id').val()+"&company_id="+$('#company_id').val(),
             type: 'GET',
             data: {},
         })
@@ -109,7 +129,7 @@
     function getCosts() {
         $('.costs').html('<h3 class="text-center"><strong>Please wait...</strong></h3>');
         $.ajax({
-            url: "{{ url('accounting/asset-costing-entries/create') }}?action=costs&purchase_order_id="+$('#purchase_order_id').val()+"&goods_received_items_stock_in_id="+$('#goods_received_items_stock_in_id').val(),
+            url: "{{ url('accounting/asset-costing-entries/create') }}?action=costs&purchase_order_id="+$('#purchase_order_id').val()+"&goods_received_items_stock_in_id="+$('#goods_received_items_stock_in_id').val()+"&company_id="+$('#company_id').val(),
             type: 'GET',
             data: {},
         })

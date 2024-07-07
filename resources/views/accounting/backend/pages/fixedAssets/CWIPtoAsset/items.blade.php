@@ -37,7 +37,7 @@
 						<input type="checkbox" name="products[]" class="choose-products" value="{{ $item->id }}" checked onchange="calculateTotal()">
 					</td>
 					<td>
-						<a class="text-primary" onclick="showCostDetails('{{ $item->id }}')">{{ $item->relGoodsReceivedItems->relProduct->name }} {{ getProductAttributesFaster($item->relGoodsReceivedItems->relProduct) }}</a>
+						<a class="text-primary" onclick="showCostDetails('{{ $item->id }}')">{{ $item->relGoodsReceivedItems->relProduct->name }} {{ getProductAttributesFaster($item->relGoodsReceivedItems->relProduct) }} {{ getProductAttributesFaster($item->relGoodsReceivedItems) }}</a>
 					</td>
 					<td>{{ $item->delivery_qty }} {{ $item->relGoodsReceivedItems->relProduct->productUnit->unit_name }}</td>
 					<td class="text-center">{{ $purchaseOrder->relQuotation->exchangeRate->currency->code }}</td>

@@ -19,7 +19,8 @@
 				@foreach($items as $key => $item)
 				@php
 					$show = true;
-					if($item->relGoodsReceivedItems->relProduct->category->is_cwip == 0){
+					
+					if($item->relGoodsReceivedItems->relProduct->is_cwip == 0){
 						$delivered = \App\Models\PmsModels\RequisitionDeliveryItem::where('product_id', $item->relGoodsReceivedItems->product_id)
 						->whereHas('relRequisitionDelivery', function($query) use($item){
 							return $query->whereIn('requisition_id', $item->relPurchaseOrder->purchaseOrderRequisitions->pluck('requisition_id')->toArray());
@@ -41,7 +42,7 @@
 						{{ $item->relGoodsReceivedItems->relProduct->is_service == 1 ? ' | Service' : '' }}
 					</td>
 					<td>
-						<a class="text-primary" onclick="showCostDetails('{{ $item->id }}')">{{ $item->relGoodsReceivedItems->relProduct->name }} {{ getProductAttributesFaster($item->relGoodsReceivedItems->relProduct) }}</a>
+						<a class="text-primary" onclick="showCostDetails('{{ $item->id }}')">{{ $item->relGoodsReceivedItems->relProduct->name }} {{ getProductAttributesFaster($item->relGoodsReceivedItems->relProduct) }} {{ getProductAttributesFaster($item->relGoodsReceivedItems) }}</a>
 					</td>
 					<td class="text-center">{{ $item->received_qty }} {{ $item->relGoodsReceivedItems->relProduct->productUnit->unit_name }}</td>
 					<td>
