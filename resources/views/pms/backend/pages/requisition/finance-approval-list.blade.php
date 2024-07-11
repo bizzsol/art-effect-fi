@@ -98,8 +98,6 @@
         </div>
     </div>
 
-
-
     <div class="modal" id="requisitionDetailModal">
         <div class="modal-dialog modal-lg" style="max-width: 80% !important;">
             <div class="modal-content" style="max-width: 100% !important;">
@@ -125,92 +123,97 @@
 @section('page-script')
     @include('yajra.js')
     <script>
-
         function financeApproval(element) {
-            let requisition_id = element.attr('data-id');
-
-            if (requisition_id !== '') {
-                swal({
-                    title: "{{__('Are you sure?')}}",
-                    text: "{{__('Once you Approve, You can not rollback from there.')}}",
-                    icon: "warning",
-                    dangerMode: false,
-                    buttons: {
-                        cancel: true,
-                        confirm: {
-                            text: 'Approve',
-                            value: true,
-                            visible: true,
-                            closeModal: true,
-                            className: 'bg-success'
-                        },
+            swal({
+                title: "Are you sure ?",
+                text: "Once you Approve, You can not rollback from there.'",
+                icon: "warning",
+                dangerMode: false,
+                buttons: {
+                    cancel: true,
+                    confirm: {
+                        text: 'Approve',
+                        value: true,
+                        visible: true,
+                        closeModal: true,
+                        className: 'bg-success'
                     },
-                }).then((value) => {
-                    if (value) {
-                        $.ajax({
-                            type: 'POST',
-                            url: element.attr('data-src'),
-                            dataType: "json",
-                            data: {_token: '{!! csrf_token() !!}', requisition_id: requisition_id},
-                            success: function (data) {
-                                if (data.result === 'success') {
-                                    notify(data.message, 'success');
-                                    reloadDatatable();
-                                } else {
-                                    notify(data.message, data.result);
-                                }
-                            }
-                        });
-                        return false;
-                    }
-                });
-            } else {
-                notify('Please Select Requisition!!', 'error');
-            }
+                },
+            })
+            .then((value) => {
+                if (value) {
+                    $.ajax({
+                        type: 'POST',
+                        url: element.attr('data-src'),
+                        dataType: "json",
+                        data: {
+                            _token: '{!! csrf_token() !!}',
+                            requisition_id: element.attr('data-id')
+                        }
+                    })
+                    .done(function(response) {
+                        if (response.success) {
+                            notify(response.message, 'success');
+                            reloadDatatable();
+                        } else {
+                            notify(response.message, 'error');
+                        }
+                    });
+                    return false;
+                }
+            });
         }
-        
 
-        function finanaceDeniel(element) {
-            let requisition_id = element.attr('data-id');
+        function financeDeniel(element) {
+            $.confirm({
+                title: 'Deny Requisition',
+                content: '' +
+                '<hr class="mt-0 pt-0">'+
+                '<form action="" class="formName">' +
+                    '<div class="form-group">' +
+                        '<textarea placeholder="Your Comments" class="comments form-control" required rows="5"></textarea>' +
+                    '</div>' +
+                '</form>',
+                buttons: {
+                    deny: {
+                        text: 'Deny',
+                        btnClass: 'btn-red',
+                        action: function () {
+                            var comments = this.$content.find('.comments').val();
+                            if(!comments){
+                                $.alert('Please Write some comments.');
+                                return false;
+                            }
 
-            if (requisition_id !== '') {
-                swal({
-                    title: "{{__('Are you sure?')}}",
-                    text: "{{__('Once you Deny, You can not rollback from there.')}}",
-                    icon: "warning",
-                    dangerMode: false,
-                    buttons: {
-                        cancel: true,
-                        confirm: {
-                            text: 'Deny',
-                            value: true,
-                            visible: true,
-                            closeModal: true,
-                            className: 'bg-success'
-                        },
-                    },
-                }).then((value) => {
-                    if (value) {
-                        $.ajax({
-                            type: 'POST',
-                            url: element.attr('data-src'),
-                            dataType: "json",
-                            data: {_token: '{!! csrf_token() !!}', requisition_id: requisition_id},
-                            success: function (data) {
-                                if (data.result === 'success') {
-                                    notify(data.message, 'success');
+                            $.ajax({
+                                type: 'POST',
+                                url: element.attr('data-src'),
+                                dataType: "json",
+                                data: {
+                                    _token: '{!! csrf_token() !!}',
+                                    requisition_id: element.attr('data-id'),
+                                    comments: comments
+                                }
+                            })
+                            .done(function(response) {
+                                if (response.success) {
+                                    notify(response.message, 'success');
                                     reloadDatatable();
                                 } else {
-                                    notify(data.message, data.result);
+                                    notify(response.message, 'error');
                                 }
-                            }
-                        });
-                        return false;
-                    }
-                });
-            } else {
-                notify('Please Select Requisition!!', 'error');
-            }
+                            });
+                        }
+                    },
+                    close: {
+                        text: 'Close',
+                        btnClass: 'btn-dark',
+                        action: function () {
+                            
+                        }
+                    },
+                }
+            });
         }
 
         function openModal(requisitionId) {

@@ -484,10 +484,14 @@
     }
 
     function exportReportToExcel(filename = '') {
+        // var test = $('.export-table');
+        // window.open('data:application/vnd.ms-excel,' + 
+        //     encodeURIComponent(test[0].outerHTML));
+
         var downloadLink;
         var dataType = 'application/vnd.ms-excel';
         let tableSelect = document.querySelector(".export-table");
-        var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+        var tableHTML = encodeURIComponent(tableSelect.outerHTML);
 
         filename = filename?filename+'.xls':'Report.xls';
         downloadLink = document.createElement("a");
@@ -523,7 +527,6 @@
 							data: {_token: "{{ csrf_token() }}", table:table, id:id},
 						})
 						.done(function(response) {
-                            console.log(response);
 							if(response.success){
 								button.removeClass(response.old_class);
 								button.addClass(response.new_class);

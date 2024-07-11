@@ -10,9 +10,8 @@
         margin-bottom: 1.25in;
         header: page-header;
         footer: page-footer;
-
-        background: url('assets/idcard/letterhead/{{ getUnitCode(0) }}.png') no-repeat 0 0;
-          background-image-resize: 6;
+        background: url({{ getCompanyPad($companies->where('id', request()->get('company_id'))->first()) }}) no-repeat 0 0;
+        background-image-resize: 6;
       }
 
       html, body, p  {

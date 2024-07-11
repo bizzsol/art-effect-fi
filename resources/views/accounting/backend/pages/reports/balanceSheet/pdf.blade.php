@@ -11,7 +11,7 @@
         header: page-header;
         footer: page-footer;
 
-        background: url({{ getCompanyPad(auth()->user()->costCentre->profitCentre->company) }}) no-repeat 0 0;
+        background: url({{ getCompanyPad($companies->where('id', request()->get('company_id'))->first()) }}) no-repeat 0 0;
         background-image-resize: 6;
       }
 
