@@ -48,7 +48,7 @@
                             <div class="col-md-12 mb-3">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <label for="asset_cost_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Overhouling Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="asset_cost_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Asset Cost Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="asset_cost_ledger_id[{{ $company->id }}]" id="asset_cost_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->asset_cost_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
@@ -56,7 +56,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="balance_upload_clearing_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accidental Loss Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="balance_upload_clearing_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Balance Upload Clearing Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="balance_upload_clearing_ledger_id[{{ $company->id }}]" id="balance_upload_clearing_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->balance_upload_clearing_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
@@ -64,7 +64,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="accumulated_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Overhouling Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="accumulated_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accumulated Depreciation Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="accumulated_depreciation_ledger_id[{{ $company->id }}]" id="accumulated_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->accumulated_depreciation_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
@@ -72,7 +72,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="depreciation_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accidental Loss Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="depreciation_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Depreciation Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="depreciation_expense_ledger_id[{{ $company->id }}]" id="depreciation_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->depreciation_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
