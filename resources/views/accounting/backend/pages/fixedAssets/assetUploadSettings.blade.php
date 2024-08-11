@@ -14,6 +14,10 @@
     .select2-container{
         width:  100% !important;
     }
+
+
+
+    
 </style>
 @endsection
 @section('main-content')
