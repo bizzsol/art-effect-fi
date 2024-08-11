@@ -40,6 +40,7 @@
 </script>
 @yield('page-script')
 @include('accounting.backend.layouts.toster-script')
+@include('pms.backend.layouts.tools')
 @include('contextmenu')
 </body>
 
