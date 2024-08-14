@@ -53,7 +53,7 @@
                                 <select name="company_id" id="company_id" class="form-control" onchange="getProfitCentres(),getChartOfAccounts();">
                                     @if(isset($companies[0]))
                                     @foreach($companies as $key => $company)
-                                        <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
+                                        <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
                                     @endforeach
                                     @endif
                                 </select>
@@ -82,7 +82,7 @@
                                 <div class="form-group">
                                     <label for="chart_of_account_id"><strong>Ledger Account</strong></label>
                                     <div class="input-group input-group-md mb-3 d-">
-                                        <select name="chart_of_account_id" id="chart_of_account_id" class="form-control">
+                                        <select name="chart_of_account_id[]" id="chart_of_account_id" class="form-control" multiple data-placeholder="Choose Ledger Accounts...">
                                             {!! chartOfAccountsOptions([], request()->get('chart_of_account_id'), 0, getAllGroupAndLedgers(false, true)) !!}
                                         </select>
                                     </div>

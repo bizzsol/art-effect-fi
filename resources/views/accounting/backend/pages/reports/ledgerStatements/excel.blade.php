@@ -1,18 +1,24 @@
 <table class="table table-bordered">
     <tr>
-        <td style="width: 20%"><strong>Group</strong></td>
-        <td style="width: 35%"><strong>Ledger</strong></td>
+        <td style="width: 55%"><strong>Ledger</strong></td>
         <td style="width: 10%"><strong>From</strong></td>
         <td style="width: 10%"><strong>To</strong></td>
         <td style="width: 25%"><strong>Opening Balance</strong></td>
     </tr>
     <tr>
-        <td>{{ '['.$account->accountGroup->code.'] '.$account->accountGroup->name }}</td>
-        <td>{{ '['.$account->code.'] '.$account->name }}</td>
+        <td>
+            <ul>
+                @if(isset($searchAccounts[0]))
+                @foreach($searchAccounts as $searchAccount)
+                <li>{{ '['.$searchAccount->code.'] '.$searchAccount->name }} ({{ '['.$searchAccount->accountGroup->code.'] '.$searchAccount->accountGroup->name }})</li>
+                @endforeach
+                @endif
+            </ul>
+        </td>
         <td>{{ $from }}</td>
         <td>{{ $to }}</td>
         <td class="text-right">
-            {{ $currency->symbol }} {{ $opening_balance['balance'] }}
+            {{ $currency->symbol }} {{ $opening_balance }}
         </td>
     </tr>
 </table>
@@ -35,15 +41,15 @@
     @php
         $total_debit = 0;
         $total_credit = 0;
-        $closing_balance = $opening_balance['balance'];
+        $closing_balance = $opening_balance;
     @endphp
     @if(isset($entries[0]))
         @foreach($entries as $key => $entry)
             @php
                 $debit = 0;
                 $credit = 0;
-                if($entry->items->where('chart_of_account_id', $chart_of_account_id)->count() > 0){
-                    foreach($entry->items->where('chart_of_account_id', $chart_of_account_id) as $key => $item){
+                if($entry->items->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray())->count() > 0){
+                    foreach($entry->items->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray()) as $key => $item){
                         $debit += ($item->debit_credit == "D" ? $item->amount : 0);
                         $credit += ($item->debit_credit == "C" ? $item->amount : 0);
                     }
