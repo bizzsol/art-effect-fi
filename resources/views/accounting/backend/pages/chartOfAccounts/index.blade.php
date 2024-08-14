@@ -68,8 +68,7 @@
 
                         @can('chart-of-accounts-create')
                             <a class="btn btn-sm btn-success pull-right ml-2"
-                               href="{{ url('accounting/chart-of-accounts/create') }}"><i class="la la-plus"></i>&nbsp;New
-                                Ledger</a>
+                               href="{{ url('accounting/chart-of-accounts/create') }}"><i class="la la-plus"></i>&nbsp;New Ledger</a>
                         @endcan
 
                         @can('account-groups-create')
@@ -90,18 +89,21 @@
                     </div>
                 </div>
 
-                <div class="panel panel-info mt-3 export-table chart-of-accounts-details">
+                <div class="panel panel-info mt-3 chart-of-accounts-details">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-8">
                             <div class="form-group mb-0">
                                 <input type="text" name="search" id="search" placeholder="Search Chart of Accounts here..." class="form-control" onkeyup="searchCOA($(this))" onchange="searchCOA($(this))">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <a class="btn btn-sm btn-block btn-success" href="{{ url('accounting/chart-of-accounts?company_id='.$company_id.'&level='.$level.'&pdf') }}" target="_blank"><i class="lar la-file-pdf"></i>&nbsp;Download PDF</a>
                         </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-sm btn-block btn-info" onclick="exportReportToExcel('{{ $title }}')"><i class="lar la-file-excel"></i>&nbsp;Download Excel</a>
+                        </div>
                         <div class="col-md-12 mt-2">
-                            <table class="table table-head" cellspacing="0" width="100%" id="dataTable">
+                            <table class="table table-head export-table" cellspacing="0" width="100%" id="dataTable">
                                 <thead>
                                     <tr>
                                         <th style="width: 20%">Account Code</th>
@@ -148,8 +150,8 @@
 
         function deleteMe(element) {
             swal({
-                title: "{{__('Are you sure?')}}",
-                text: "{{__('Once you delete, You can not recover this data and related files.')}}",
+                title: "Are you sure ?",
+                text: "Once you delete, You can not recover this data and related files.",
                 icon: "warning",
                 dangerMode: true,
                 buttons: {

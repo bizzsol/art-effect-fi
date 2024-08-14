@@ -14,10 +14,6 @@
     .select2-container{
         width:  100% !important;
     }
-
-
-
-    
 </style>
 @endsection
 @section('main-content')
@@ -44,30 +40,34 @@
                     <form action="{{ route('accounting.asset-upload-settings.store') }}" method="post" accept-charset="utf-8">
                     @csrf
                         <div class="row pr-3 pt-3">
+                            <div class="col-md-12 mb-2">
+                                <h4><strong>Balance Upload Clearing Ledger</strong></h4>
+                                <hr>
+                            </div>
                             @if(isset($companies[0]))
                             @foreach($companies as $company)
                             @php
                                 $getLedgerBalances = getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)
                             @endphp
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <label for="asset_cost_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Asset Cost Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="asset_cost_ledger_id[{{ $company->id }}]" id="asset_cost_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->asset_cost_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="balance_upload_clearing_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Balance Upload Clearing Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
+                                    </div> --}}
+                                    <div class="col-md-12">
+                                        <label for="balance_upload_clearing_ledger_id_{{ $company->id }}"><strong>{{ $company->name }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="balance_upload_clearing_ledger_id[{{ $company->id }}]" id="balance_upload_clearing_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
                                                 {!! chartOfAccountsOptions([], $company->balance_upload_clearing_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    {{-- <div class="col-md-3">
                                         <label for="accumulated_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accumulated Depreciation Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="accumulated_depreciation_ledger_id[{{ $company->id }}]" id="accumulated_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
@@ -82,7 +82,7 @@
                                                 {!! chartOfAccountsOptions([], $company->depreciation_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             @endforeach

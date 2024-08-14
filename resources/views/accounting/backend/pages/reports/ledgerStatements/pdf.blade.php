@@ -11,7 +11,7 @@
         header: page-header;
         footer: page-footer;
 
-        background: url({{ getCompanyPad(auth()->user()->costCentre->profitCentre->company) }}) no-repeat 0 0;
+        background: url({{ getCompanyPad($this_company) }}) no-repeat 0 0;
         background-image-resize: 6;
       }
 
@@ -164,110 +164,110 @@
     </htmlpagefooter>
     
     <div class="container">
-        <h5>Ledger statement for <strong>[{{ $account->code }}] {{ $account->name }}</strong> from <strong>{{ date('d-M-Y', strtotime($from)) }}</strong> to <strong>{{ date('d-M-Y', strtotime($to)) }}</strong></h5>
+      <h5>Ledger statement for <strong>[{{ $account->code }}] {{ $account->name }}</strong> from <strong>{{ date('d-M-Y', strtotime($from)) }}</strong> to <strong>{{ date('d-M-Y', strtotime($to)) }}</strong></h5>
 
-        <table class="table-bordered">
-          <tbody>
-            <tr>
-                <td style="width: 20%"><strong>Group</strong></td>
-                <td style="width: 35%"><strong>Ledger</strong></td>
-                <td style="width: 10%"><strong>From</strong></td>
-                <td style="width: 10%"><strong>To</strong></td>
-                <td style="width: 10%"><strong>Currency</strong></td>
-                <td style="width: 25%"><strong>Opening Balance</strong></td>
-            </tr>
-            <tr>
-                <td>{{ '['.$account->accountGroup->code.'] '.$account->accountGroup->name }}</td>
-                <td>{{ '['.$account->code.'] '.$account->name }}</td>
-                <td class="text-center">{{ $from }}</td>
-                <td class="text-center">{{ $to }}</td>
-                <td class="text-center">
-                  {{ $currency->code }}
-                </td>
-                <td class="text-right">
-                  {{ $opening_balance['balance'] }}
-                </td>
-
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="table table-bordered">
-            <tr>
-              <td style="width: 7%"><strong>Date</strong></td>
-              <td style="width: 8%"><strong>Reference</strong></td>
-              <td style="width: 10%"><strong>Ledger</strong></td>
-              <td style="width: 10%"><strong>Supplier</strong></td>
-              <td style="width: 8%"><strong>Type</strong></td>
-              <td style="width: 7%" class="text-right"><strong>Currency</strong></td>
-              <td style="width: 9%" class="text-right"><strong>Debit</strong></td>
-              <td style="width: 9%" class="text-right"><strong>Credit</strong></td>
-              <td style="width: 9%" class="text-right"><strong>Debit ({{ $currency->code }})</strong></td>
-              <td style="width: 9%" class="text-right"><strong>Credit ({{ $currency->code }})</strong></td>
-              <td style="width: 14%" class="text-right"><strong>Closing Balance ({{ $currency->code }})</strong></td>
-                <td style="width: 14%" class="text-left"><strong>Narration</strong></td>
-           </tr>
-          @php
-              $total_debit = 0;
-              $total_credit = 0;
-              $closing_balance = $opening_balance['balance'];
-          @endphp
-          @if(isset($entries[0]))
-          @foreach($entries as $key => $entry)
-          @php
-              $debit = 0;
-              $credit = 0;
-              if($entry->items->where('chart_of_account_id', $chart_of_account_id)->count() > 0){
-                  foreach($entry->items->where('chart_of_account_id', $chart_of_account_id) as $key => $item){
-                      $debit += ($item->debit_credit == "D" ? $item->amount : 0);
-                      $credit += ($item->debit_credit == "C" ? $item->amount : 0);
-                  }
-              }
-
-              $exchangeRate = 1;
-              if($entry->exchangeRate->currency_id != $currency->id){
-                  $exchangeRate = json_decode($entry->exchangeRate->rates, true)[$currency->id]['rate'];
-              }
-
-              $total_debit += ($debit > 0 ? $debit*$exchangeRate : 0);
-              $total_credit += ($credit > 0 ? $credit*$exchangeRate : 0);
-
-              $closing_balance = ($closing_balance+(($debit > 0 ? $debit*$exchangeRate : 0)-($credit > 0 ? $credit*$exchangeRate : 0)));
-          @endphp
+      <table class="table-bordered">
+        <tbody>
           <tr>
-              <td>{{ $entry->date }}</td>
-              <td>{{ $entry->number }}</td>
-              <td>
-                  <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}" data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
-                      <p>Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') }}</p>
-                      <p>Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') }}</p>
-                  </a>
+              <td style="width: 20%"><strong>Group</strong></td>
+              <td style="width: 35%"><strong>Ledger</strong></td>
+              <td style="width: 10%"><strong>From</strong></td>
+              <td style="width: 10%"><strong>To</strong></td>
+              <td style="width: 10%"><strong>Currency</strong></td>
+              <td style="width: 25%"><strong>Opening Balance</strong></td>
+          </tr>
+          <tr>
+              <td>{{ '['.$account->accountGroup->code.'] '.$account->accountGroup->name }}</td>
+              <td>{{ '['.$account->code.'] '.$account->name }}</td>
+              <td class="text-center">{{ $from }}</td>
+              <td class="text-center">{{ $to }}</td>
+              <td class="text-center">
+                {{ $currency->code }}
               </td>
-              <td>
-                  {{ getEntryVendor($entry) }}
-              </td>
-              <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
-              <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
-              <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
-              <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
-              <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit*$exchangeRate) : '' }}</td>
-              <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit*$exchangeRate) : '' }}</td>
               <td class="text-right">
-                  {{ systemMoneyFormat($closing_balance) }}
+                {{ $opening_balance['balance'] }}
               </td>
-              <td>{{ $entry->notes }}</td>
-          </tr>
-          @endforeach
-          @endif
 
-          <tr>
-              <td colspan="8" class="text-right"><strong>Balance: ({{ $currency->code }})</strong></td>
-              <td class="text-right"><strong>{{ $total_debit > 0 ? systemMoneyFormat($total_debit) : '' }}</strong></td>
-              <td class="text-right"><strong>{{ $total_credit > 0 ? systemMoneyFormat($total_credit) : '' }}</strong></td>
-              <td class="text-right"><strong>{{ systemMoneyFormat($closing_balance) }}</strong></td>
-              <td></td>
           </tr>
-        </table>
+        </tbody>
+      </table>
+
+      <table class="table table-bordered">
+          <tr>
+            <td style="width: 7%"><strong>Date</strong></td>
+            <td style="width: 8%"><strong>Reference</strong></td>
+            <td style="width: 10%"><strong>Ledger</strong></td>
+            <td style="width: 10%"><strong>Supplier</strong></td>
+            <td style="width: 8%"><strong>Type</strong></td>
+            <td style="width: 7%" class="text-right"><strong>Currency</strong></td>
+            <td style="width: 9%" class="text-right"><strong>Debit</strong></td>
+            <td style="width: 9%" class="text-right"><strong>Credit</strong></td>
+            <td style="width: 9%" class="text-right"><strong>Debit ({{ $currency->code }})</strong></td>
+            <td style="width: 9%" class="text-right"><strong>Credit ({{ $currency->code }})</strong></td>
+            <td style="width: 14%" class="text-right"><strong>Closing Balance ({{ $currency->code }})</strong></td>
+              <td style="width: 14%" class="text-left"><strong>Narration</strong></td>
+         </tr>
+        @php
+            $total_debit = 0;
+            $total_credit = 0;
+            $closing_balance = $opening_balance['balance'];
+        @endphp
+        @if(isset($entries[0]))
+        @foreach($entries as $key => $entry)
+        @php
+            $debit = 0;
+            $credit = 0;
+            if($entry->items->where('chart_of_account_id', $chart_of_account_id)->count() > 0){
+                foreach($entry->items->where('chart_of_account_id', $chart_of_account_id) as $key => $item){
+                    $debit += ($item->debit_credit == "D" ? $item->amount : 0);
+                    $credit += ($item->debit_credit == "C" ? $item->amount : 0);
+                }
+            }
+
+            $exchangeRate = 1;
+            if($entry->exchangeRate->currency_id != $currency->id){
+                $exchangeRate = json_decode($entry->exchangeRate->rates, true)[$currency->id]['rate'];
+            }
+
+            $total_debit += ($debit > 0 ? $debit*$exchangeRate : 0);
+            $total_credit += ($credit > 0 ? $credit*$exchangeRate : 0);
+
+            $closing_balance = ($closing_balance+(($debit > 0 ? $debit*$exchangeRate : 0)-($credit > 0 ? $credit*$exchangeRate : 0)));
+        @endphp
+        <tr>
+            <td>{{ $entry->date }}</td>
+            <td>{{ $entry->number }}</td>
+            <td>
+                <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}" data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
+                    <p>Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') }}</p>
+                    <p>Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') }}</p>
+                </a>
+            </td>
+            <td>
+                {{ getEntryVendor($entry) }}
+            </td>
+            <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
+            <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
+            <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
+            <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
+            <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit*$exchangeRate) : '' }}</td>
+            <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit*$exchangeRate) : '' }}</td>
+            <td class="text-right">
+                {{ systemMoneyFormat($closing_balance) }}
+            </td>
+            <td>{{ $entry->notes }}</td>
+        </tr>
+        @endforeach
+        @endif
+
+        <tr>
+            <td colspan="8" class="text-right"><strong>Balance: ({{ $currency->code }})</strong></td>
+            <td class="text-right"><strong>{{ $total_debit > 0 ? systemMoneyFormat($total_debit) : '' }}</strong></td>
+            <td class="text-right"><strong>{{ $total_credit > 0 ? systemMoneyFormat($total_credit) : '' }}</strong></td>
+            <td class="text-right"><strong>{{ systemMoneyFormat($closing_balance) }}</strong></td>
+            <td></td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>                                                                                                               

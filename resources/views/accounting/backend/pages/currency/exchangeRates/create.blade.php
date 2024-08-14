@@ -29,7 +29,7 @@
         <div class="page-content">
             <div class="panel panel-info mt-3">
                 <div class="panel-boby p-3">
-                    <form action="{{ route('accounting.exchange-rates.store') }}" method="post" accept-charset="utf-8" enctype="multipart/form-data" id="exchange-rate-form">
+                    <form action="{{ route('accounting.exchange-rates.store') }}" method="post" accept-charset="utf-8" enctype="multipart/form-data" id="exchange-rate-form" novalidate>
                     @csrf
                         <div class="row pr-3">
                             <div class="col-md-3">
