@@ -92,6 +92,15 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <div class="col-md-12">
+                                <label for="users"><strong>User Control:</strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="users[]" id="users" class="form-control rounded" multiple data-placeholder="Choose Users...">
+                                        
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="row pr-3">
                             <div class="col-md-7">
@@ -154,6 +163,12 @@
                 departments += '<option value="'+val.hr_department_id+'">['+val.hr_department_code+'] '+val.hr_department_name+'</option>';
             });
             $('#hr_department_id').html(departments).select2();
+            
+            var users = '';
+            $.each(response.users, function(index, val) {
+                users += '<option value="'+val.id+'">'+val.name+'</option>';
+            });
+            $('#users').html(users).select2();
         });
     }
 </script>
