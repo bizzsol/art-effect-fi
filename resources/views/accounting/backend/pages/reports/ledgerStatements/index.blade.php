@@ -23,11 +23,11 @@
             <ul class="breadcrumb">
                 <li>
                     <i class="ace-icon fa fa-home home-icon"></i>
-                    <a href="{{  route('pms.dashboard') }}">{{ __('Home') }}</a>
+                    <a href="{{ route('pms.dashboard') }}">Home</a>
                 </li>
                 <li><a href="#">PMS</a></li>
                 <li class="active">Accounts</li>
-                <li class="active">{{__($title)}}</li>
+                <li class="active">{{ $title }}</li>
             </ul>
         </div>
 
@@ -82,8 +82,18 @@
                                 <div class="form-group">
                                     <label for="chart_of_account_id"><strong>Ledger Account</strong></label>
                                     <div class="input-group input-group-md mb-3 d-">
-                                        <select name="chart_of_account_id[]" id="chart_of_account_id" class="form-control" multiple data-placeholder="Choose Ledger Accounts...">
+                                        <select name="chart_of_account_id[]" id="chart_of_account_id" class="form-control" multiple data-placeholder="Choose Ledger Accounts..." onchange="getSubLedgers($(this))">
                                             {!! chartOfAccountsOptions([], request()->get('chart_of_account_id'), 0, getAllGroupAndLedgers(false, true)) !!}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sub_ledger_id"><strong>Sub Ledger</strong></label>
+                                    <div class="input-group input-group-md mb-3 d-">
+                                        <select name="sub_ledger_id[]" id="sub_ledger_id" class="form-control" multiple data-placeholder="Choose Sub Ledgers...">
+                                            
                                         </select>
                                     </div>
                                 </div>
@@ -120,15 +130,15 @@
                                     <input type="date" name="to" id="to" value="{{ date('Y-m-d', strtotime($to)) }}" class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 pt-4">
                                 @can('ledger-statement-excel')
                                     @include('accounting.backend.pages.reports.buttons', [
                                         'url' => url('accounting/ledger-statement?chart_of_account_id='.request()->get('chart_of_account_id').'&from='.request()->get('from').'&to='.request()->get('to')),
                                         'normalExcel' => true
                                     ])
                                 @endcan
-                                </div>
                             </div>
+                        </div>
                         </form>
                     </div>
                 </div>

@@ -107,12 +107,12 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 20%">Account Code</th>
-                                        <th style="width: 30%">Account Name</th>
+                                        <th style="width: 27.5%">Account Name</th>
                                         <th class="text-center" style="width: 7.5%">Type</th>
                                         <th class="text-center" style="width: 7.5%">Class</th>
                                         <th class="text-center" style="width: 20%">Companies</th>
                                         <th class="text-center" style="width: 7.5%">Status</th>
-                                        <th class="text-center" style="width: 7.5%">Actions</th>
+                                        <th class="text-center" style="width: 10%">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -182,7 +182,14 @@
                                 }, 1500);
                                 $('.' + row_class).remove();
                             } else {
-                                showAlert('error', response.message);
+                                swal({
+                                    icon: 'error',
+                                    text: response.message,
+                                    button: false
+                                });
+                                setTimeout(() => {
+                                    swal.close();
+                                }, 1500);
                                 return;
                             }
                         },

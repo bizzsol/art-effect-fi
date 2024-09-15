@@ -121,7 +121,16 @@
                                                </select>
                                             </td>
                                             <td>
-                                                <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>
+                                                <div class="row ledger-parent">
+                                                    <div class="col-md-12 ledger">
+                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="getSubLedgers($(this));Entries();">{!! $chartOfAccountsOptions !!}</select>
+                                                    </div>
+                                                    <div class="col-md-12 sub-ledger mt-2" style="display: none">
+                                                        <select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ $item->sub_ledger_id }}">
+                                                            <option value="{{ null }}">Without Sub-Ledger</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <input type="number" step="any" min="0" name="debit[]" class="form-control debit text-right" @if($item->debit_credit == "D") value="{{ $item->amount }}" @else value="0" @endif onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187">
@@ -210,6 +219,10 @@
         </div>
     </div>
 </div>
+
+<div id="coa" style="display: none">
+    {!! $chartOfAccountsOptions !!}
+</div>
 @endsection
 @section('page-script')
 <script type="text/javascript">
@@ -229,9 +242,16 @@
                                 '<td>'+
                                    '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>'+
                                 '</td>'+
-                                '<td>'+
-                                    '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">{!! $chartOfAccountsOptions !!}</select>'+
-                                '</td>'+
+                                '<td>' +
+                                    '<div class="row ledger-parent">' +
+                                        '<div class="col-md-12 ledger">' +
+                                            '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="getSubLedgers($(this));Entries();">'+($('#coa').html())+'</select>' +
+                                        '</div>' +
+                                        '<div class="col-md-12 sub-ledger mt-2" style="display: none">'+
+                                            '<select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ null }}"></select>'+
+                                        '</div>'+
+                                    '</div>' +
+                                '</td>' +
                                 '<td>'+
                                     '<input type="number" step="any" min="0" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">'+
                                 '</td>'+
@@ -245,7 +265,31 @@
                                     '<a onclick="remove($(this))"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>'+
                                 '</td>'+
                             '</tr>');
+        getSubLedgers($('.entries tr:last-child').find('.chart_of_account_id'));
         Entries();
+    }
+
+    function getSubLedgers(element) {
+        var subLedgers = '<option value="{{ null }}">Without Sub-Ledger</option>';
+        element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+        element.parent().parent().find('.sub-ledger').hide();
+
+        $.ajax({
+            url: "{{ url('accounting/entries/create?get-sub-ledgers') }}&chart_of_account_id="+element.val(),
+            type: 'GET',
+            dataType: 'json',
+            data: {},
+        })
+        .done(function(response) {
+            if(response.count > 0){
+                $.each(response.sub_ledgers, function(index, sub_ledger) {
+                    subLedgers += '<option value="'+sub_ledger.id+'" '+(element.parent().parent().find('.sub-ledger-select2').attr('data-selected') == sub_ledger.id ? 'selected' : '')+'>['+sub_ledger.code+'] '+sub_ledger.name+'</option>';
+                });
+
+                element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+                element.parent().parent().find('.sub-ledger').show();
+            }
+        });
     }
 
     function remove(element) {

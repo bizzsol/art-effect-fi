@@ -227,7 +227,8 @@
             <td style="width: 20%;border-top: none !important">
                 <strong>
                     @include('accounting.backend.pages.entry-approval-stage',[
-                        'object' => $entry
+                        'object' => $entry,
+                        'userCostCentres' => auth()->user()->costCentres->pluck('cost_centre_id')->toArray()
                     ])
                 </strong>
             </td>
@@ -259,7 +260,7 @@
                     <td>{{ $item->costCentre ? '['.$item->costCentre->code.'] '.$item->costCentre->name : '' }}</td>
                     <td>{{ $item->chartOfAccount ? '['.$item->chartOfAccount->accountGroup->code.'] '.$item->chartOfAccount->accountGroup->name : '' }}</td>
                     <td>
-                        {{ $item->chartOfAccount ? '['.$item->chartOfAccount->code.'] '.$item->chartOfAccount->name : '' }} {!! transactionVendor($item) ? transactionVendor($item) : '' !!}
+                        {{ $item->chartOfAccount ? '['.$item->chartOfAccount->code.'] '.$item->chartOfAccount->name : '' }} {{ showSubLedger($item) }} {!! transactionVendor($item) ? transactionVendor($item) : '' !!}
                     </td>
                     <td class="text-center">{{ $currency }}</td>
                     @if(!$same)

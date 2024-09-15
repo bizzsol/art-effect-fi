@@ -81,7 +81,7 @@
                 if(response.success){
                     toastr.success(response.message);
                     $('.jconfirm').remove();
-                    if($('.datatable-serverside')){
+                    if($('.datatable-serverside') != undefined){
                         reloadDatatable();
                     }else{
                         location.reload();

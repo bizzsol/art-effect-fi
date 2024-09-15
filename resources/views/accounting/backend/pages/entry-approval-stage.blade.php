@@ -1,5 +1,5 @@
 @php
-	$clickable = $object->items->whereIn('cost_centre_id', auth()->user()->costCentres->pluck('cost_centre_id')->toArray())->count() > 0 ? true : false;
+	$clickable = $object->items->whereIn('cost_centre_id', $userCostCentres)->count() > 0 ? true : false;
 @endphp
 <div style="width: 150px !important">
 	@if($object->is_approved == 'approved')

@@ -102,19 +102,29 @@
                                     <input type="date" name="to" id="to_" class="form-control" value="{{ $to }}" />
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
+                            <div class="col-md-4 ledger-parent">
+                                <div class="form-group ledger">
                                     <label for="debit_ledger_id_"><strong>Debit Ledger</strong></label>
-                                    <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ $debit_ledger_id }}">
+                                    <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ $debit_ledger_id }}" onchange="getSubLedgers($(this))">
                                         
                                     </select>
                                 </div>
+                                <div class="form-group sub-ledger mt-2" style="display: none">
+                                    <select name="debit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ $debit_sub_ledger_id }}">
+                                        <option value="{{ null }}">Without Sub-Ledger</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
+                            <div class="col-md-4 ledger-parent">
+                                <div class="form-group ledger">
                                     <label for="credit_ledger_id_"><strong>Credit Ledger</strong></label>
-                                    <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ $credit_ledger_id }}">
+                                    <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ $credit_ledger_id }}" onchange="getSubLedgers($(this))">
                                         
+                                    </select>
+                                </div>
+                                <div class="form-group sub-ledger mt-2" style="display: none">
+                                    <select name="credit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ $credit_sub_ledger_id }}">
+                                        <option value="{{ null }}">Without Sub-Ledger</option>
                                     </select>
                                 </div>
                             </div>
@@ -187,6 +197,29 @@
             columnClass: 'col-md-12',
             closeAnimation: 'scale',
             backgroundDismiss: true
+        });
+    }
+
+    function getSubLedgers(element, div) {
+        var subLedgers = '<option value="{{ null }}">Without Sub-Ledger</option>';
+        element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+        element.parent().parent().find('.sub-ledger').hide();
+
+        $.ajax({
+            url: "{{ url('accounting/entries/create?get-sub-ledgers') }}&chart_of_account_id="+element.val(),
+            type: 'GET',
+            dataType: 'json',
+            data: {},
+        })
+        .done(function(response) {
+            if(response.count > 0){
+                $.each(response.sub_ledgers, function(index, sub_ledger) {
+                    subLedgers += '<option value="'+sub_ledger.id+'" '+(element.parent().parent().find('.sub-ledger-select2').attr('data-selected') == sub_ledger.id ? 'selected' : '')+'>['+sub_ledger.code+'] '+sub_ledger.name+'</option>';
+                });
+
+                element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+                element.parent().parent().find('.sub-ledger').show();
+            }
         });
     }
 

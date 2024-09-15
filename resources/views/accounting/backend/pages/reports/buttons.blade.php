@@ -131,5 +131,31 @@
                 $('#cost_centre_id').html(response).change();
             });
         }
+
+        function getSubLedgers(element) {
+            var values = [];
+            $.each(element.find("option:selected"), function(){            
+                values.push($(this).val());
+            });
+
+            $('#sub_ledger_id').html('');
+            $.ajax({
+                url: "{{ url('accounting') }}?get-sub-ledgers&ledgers="+values.join(','),
+                type: 'GET',
+                dataType: 'json',
+                data: {},
+            })
+            .done(function(response) {
+                var sub_ledgers = '';
+                $.each(response.ledgers, function(index, ledger) {
+                    sub_ledgers += '<optgroup label="['+ledger.code+'] '+ledger.name+'">';
+                    $.each(ledger.sub_ledgers, function(index, sub_ledger) {
+                        sub_ledgers += '<option value="'+sub_ledger.id+'">['+ledger.code+'] ['+sub_ledger.code+'] '+sub_ledger.name+'</option>';
+                    });
+                    sub_ledgers += '</optgroup>';
+                });
+                $('#sub_ledger_id').html(sub_ledgers).change();
+            });
+        }
     </script>
 @endsection

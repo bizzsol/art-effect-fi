@@ -167,18 +167,28 @@
       <table class="table-bordered">
         <tbody>
           <tr>
-              <td style="width: 55%"><strong>Ledger</strong></td>
-              <td style="width: 10%"><strong>From</strong></td>
-              <td style="width: 10%"><strong>To</strong></td>
-              <td style="width: 10%"><strong>Currency</strong></td>
-              <td style="width: 25%"><strong>Opening Balance</strong></td>
+            <td style="width: 40%"><strong>Ledger</strong></td>
+            <td style="width: 25%"><strong>Sub-Ledger</strong></td>
+            <td style="width: 10%"><strong>From</strong></td>
+            <td style="width: 10%"><strong>To</strong></td>
+            <td style="width: 10%"><strong>Currency</strong></td>
+            <td style="width: 15%"><strong>Opening Balance</strong></td>
           </tr>
           <tr>
               <td>
                   <ul>
-                      @if(isset($searchAccounts[0]))
-                      @foreach($searchAccounts as $searchAccount)
-                      <li>{{ '['.$searchAccount->code.'] '.$searchAccount->name }} ({{ '['.$searchAccount->accountGroup->code.'] '.$searchAccount->accountGroup->name }})</li>
+                    @if(isset($searchAccounts[0]))
+                    @foreach($searchAccounts as $searchAccount)
+                    <li>{{ '['.$searchAccount->code.'] '.$searchAccount->name }} ({{ '['.$searchAccount->accountGroup->code.'] '.$searchAccount->accountGroup->name }})</li>
+                    @endforeach
+                    @endif
+                  </ul>
+              </td>
+              <td>
+                  <ul class="pl-2">
+                      @if(isset($subLedgers[0]))
+                      @foreach($subLedgers as $subLedger)
+                      <li>{{ '['.$subLedger->code.'] '.$subLedger->name }}</li>
                       @endforeach
                       @endif
                   </ul>
@@ -191,25 +201,25 @@
               <td class="text-right">
                 {{ $opening_balance }}
               </td>
-
           </tr>
         </tbody>
       </table>
 
       <table class="table table-bordered">
           <tr>
-            <td style="width: 7%"><strong>Date</strong></td>
-            <td style="width: 8%"><strong>Reference</strong></td>
-            <td style="width: 10%"><strong>Ledger</strong></td>
-            <td style="width: 10%"><strong>Supplier</strong></td>
-            <td style="width: 8%"><strong>Type</strong></td>
-            <td style="width: 7%" class="text-right"><strong>Currency</strong></td>
-            <td style="width: 9%" class="text-right"><strong>Debit</strong></td>
-            <td style="width: 9%" class="text-right"><strong>Credit</strong></td>
-            <td style="width: 9%" class="text-right"><strong>Debit ({{ $currency->code }})</strong></td>
-            <td style="width: 9%" class="text-right"><strong>Credit ({{ $currency->code }})</strong></td>
-            <td style="width: 14%" class="text-right"><strong>Closing Balance ({{ $currency->code }})</strong></td>
-              <td style="width: 14%" class="text-left"><strong>Narration</strong></td>
+              <td style="width: 7%"><strong>Date</strong></td>
+              <td style="width: 7%"><strong>Reference</strong></td>
+              <td style="width: 10%"><strong>Ledger</strong></td>
+              <td style="width: 10%"><strong>Sub-Ledger</strong></td>
+              <td style="width: 10%"><strong>Supplier</strong></td>
+              <td style="width: 6%"><strong>Type</strong></td>
+              <td style="width: 5%" class="text-right"><strong><small>Currency</small></strong></td>
+              <td style="width: 7%" class="text-right"><strong>Debit</strong></td>
+              <td style="width: 7%" class="text-right"><strong>Credit</strong></td>
+              <td style="width: 7%" class="text-right"><strong>Debit ({{ $currency->code }})</strong></td>
+              <td style="width: 7%" class="text-right"><strong>Credit ({{ $currency->code }})</strong></td>
+              <td style="width: 7%" class="text-right"><strong>Closing Balance ({{ $currency->code }})</strong></td>
+              <td style="width: 10%" class="text-left"><strong>Narration</strong></td>
          </tr>
         @php
             $total_debit = 0;
@@ -248,6 +258,21 @@
                 </a>
             </td>
             <td>
+              <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
+                 data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
+                 @if($entry->items->where('debit_credit', 'D')->whereNotNull('sub_ledger_id')->count() > 0)
+                  <p>
+                      Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('subLedger.name')->implode(', ') }}
+                  </p>
+                 @endif
+                 @if($entry->items->where('debit_credit', 'C')->whereNotNull('sub_ledger_id')->count() > 0)
+                  <p>
+                      Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('subLedger.name')->implode(', ') }}
+                  </p>
+                 @endif
+              </a>
+            </td>
+            <td>
                 {{ getEntryVendor($entry) }}
             </td>
             <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
@@ -265,7 +290,7 @@
         @endif
 
         <tr>
-            <td colspan="8" class="text-right"><strong>Balance: ({{ $currency->code }})</strong></td>
+            <td colspan="9" class="text-right"><strong>Balance: ({{ $currency->code }})</strong></td>
             <td class="text-right"><strong>{{ $total_debit > 0 ? systemMoneyFormat($total_debit) : '' }}</strong></td>
             <td class="text-right"><strong>{{ $total_credit > 0 ? systemMoneyFormat($total_credit) : '' }}</strong></td>
             <td class="text-right"><strong>{{ systemMoneyFormat($closing_balance) }}</strong></td>

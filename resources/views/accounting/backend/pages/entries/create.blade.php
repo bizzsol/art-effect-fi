@@ -59,11 +59,9 @@
                             @if(request()->get('type') == "payment")
                                 <div class="row pr-3">
                                     <div class="col-md-2">
-                                        <label for="form_type"><strong>{{ ucwords(request()->get('type')) }} Type:<span
-                                                        class="text-danger">&nbsp;*</span></strong></label>
+                                        <label for="form_type"><strong>{{ ucwords(request()->get('type')) }} Type:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="form_type" id="form_type" class="form-control rounded"
-                                                    onchange="checkIfPO()">
+                                            <select name="form_type" id="form_type" class="form-control rounded" onchange="checkIfPO()">
                                                 <option value="without_po">Without PO Reference</option>
                                                 <option value="with_po">With PO Reference</option>
                                             </select>
@@ -72,8 +70,7 @@
                                     <div class="col-md-2 with-po">
                                         <label for="supplier_id"><strong>Choose Supplier:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="supplier_id" id="supplier_id" class="form-control rounded"
-                                                    onchange="getPurchaseOrders()">
+                                            <select name="supplier_id" id="supplier_id" class="form-control rounded" onchange="getPurchaseOrders()">
                                                 <option value="0">Choose Supplier</option>
                                                 @if(isset($suppliers[0]))
                                                     @foreach($suppliers as $key => $supplier)
@@ -130,11 +127,8 @@
                                     <div class="col-md-5 with-po">
                                         <div class="row">
                                             <div class="col-md-5">
-                                                <label for="pay_amount"><strong><span
-                                                                id="pay-amount-label">Pay Amount</span>:<span
-                                                                class="text-danger">&nbsp;*</span></strong></label>
-                                                <input type="number" name="pay_amount" id="pay_amount" step="any"
-                                                       value="0.00" class="form-control text-right"
+                                                <label for="pay_amount"><strong><span id="pay-amount-label">Pay Amount</span>:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                <input type="number" name="pay_amount" id="pay_amount" step="any" value="0.00" class="form-control text-right"
                                                        onchange="printPOAmount()" onkeyup="printPOAmount()">
                                             </div>
 
@@ -149,8 +143,7 @@
                                             </div> --}}
 
                                             <div class="col-md-7 is-advance">
-                                                <label for="advance_category_id"><strong>Advance Category:<span
-                                                                class="text-danger">&nbsp;*</span></strong></label>
+                                                <label for="advance_category_id"><strong>Advance Category:<span class="text-danger">&nbsp;*</span></strong></label>
                                                 <div class="input-group input-group-md mb-3 d-">
                                                     <select name="advance_category_id" id="advance_category_id"
                                                             class="form-control rounded">
@@ -172,8 +165,7 @@
                                 <div class="col-md-3">
                                     <label for="number"><strong>{{ __('Reference') }}:</strong></label>
                                     <div class="input-group input-group-md mb-3 d-">
-                                        <input type="text" name="number" id="number" value="{{ old('number') }}"
-                                               class="form-control rounded">
+                                        <input type="text" name="number" id="number" value="{{ old('number') }}" class="form-control rounded">
                                     </div>
                                 </div>
                                 <div class="col-md-2" id="currency-choose">
@@ -256,7 +248,16 @@
                                                         <select name="cost_centre_id[]" class="form-control cost_centre_id select2 choose-me" data-selected="{{ $item['cost_centre_id'] }}">{!! $costCentres !!}</select>
                                                     </td>
                                                     <td>
-                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 choose-me" onchange="Entries()" data-selected="{{ $item['chart_of_account_id'] }}">{!! $chartOfAccountsOptions !!}</select>
+                                                        <div class="row ledger-parent">
+                                                            <div class="col-md-12 ledger">
+                                                                <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 choose-me" onchange="getSubLedgers($(this));Entries();" data-selected="{{ $item['chart_of_account_id'] }}">{!! $chartOfAccountsOptions !!}</select>
+                                                            </div>
+                                                            <div class="col-md-12 sub-ledger mt-2" style="display: none">
+                                                                <select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ isset($item['sub_ledger_id']) ? $item['sub_ledger_id'] : null }}">
+                                                                    <option value="{{ null }}">Without Sub-Ledger</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>
                                                         <input type="number" min="0" step="any" name="debit[]"
@@ -413,7 +414,14 @@
                 '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>' +
                 '</td>' +
                 '<td>' +
-                '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="Entries()">'+($('#coa').html())+'</select>' +
+                    '<div class="row ledger-parent">' +
+                        '<div class="col-md-12 ledger">' +
+                            '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="getSubLedgers($(this));Entries();">'+($('#coa').html())+'</select>' +
+                        '</div>' +
+                        '<div class="col-md-12 sub-ledger mt-2" style="display: none">'+
+                            '<select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ null }}"></select>'+
+                        '</div>'+
+                    '</div>' +
                 '</td>' +
                 '<td>' +
                 '<input type="number" min="0" step="any" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">' +
@@ -428,7 +436,31 @@
                 '<a onclick="remove($(this))" class="action-buttons"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>' +
                 '</td>' +
                 '</tr>');
+            getSubLedgers($('.entries tr:last-child').find('.chart_of_account_id'));
             Entries();
+        }
+
+        function getSubLedgers(element) {
+            var subLedgers = '<option value="{{ null }}">Without Sub-Ledger</option>';
+            element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+            element.parent().parent().find('.sub-ledger').hide();
+
+            $.ajax({
+                url: "{{ url('accounting/entries/create?get-sub-ledgers') }}&chart_of_account_id="+element.val(),
+                type: 'GET',
+                dataType: 'json',
+                data: {},
+            })
+            .done(function(response) {
+                if(response.count > 0){
+                    $.each(response.sub_ledgers, function(index, sub_ledger) {
+                        subLedgers += '<option value="'+sub_ledger.id+'" '+(element.parent().parent().find('.sub-ledger-select2').attr('data-selected') == sub_ledger.id ? 'selected' : '')+'>['+sub_ledger.code+'] '+sub_ledger.name+'</option>';
+                    });
+
+                    element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
+                    element.parent().parent().find('.sub-ledger').show();
+                }
+            });
         }
 
         function remove(element) {

@@ -107,7 +107,8 @@
                                             </td>
                                             <td style="width: 20%;border-top: none !important">
                                                 @include('accounting.backend.pages.entry-approval-stage',[
-                                                    'object' => $entry
+                                                    'object' => $entry,
+                                                    'userCostCentres' => auth()->user()->costCentres->pluck('cost_centre_id')->toArray()
                                                 ])
                                             </td>
                                         </tr>
@@ -150,6 +151,8 @@
                                                             @else
                                                                 {{ isset($item->chartOfAccount) ? '['.$item->chartOfAccount->code.'] '.$item->chartOfAccount->name : '' }}
                                                             @endif
+
+                                                            {{ showSubLedger($item) }}
 
                                                             {!! transactionVendor($item) ? transactionVendor($item) : '' !!}
                                                         </td>
@@ -295,6 +298,8 @@
                                                                 @else
                                                                     {{ isset($item->chartOfAccount) ? '['.$item->chartOfAccount->code.'] '.$item->chartOfAccount->name : '' }}
                                                                 @endif
+
+                                                                {{ showSubLedger($item) }}
 
                                                                 {!! transactionVendor($item) ? transactionVendor($item) : '' !!}
                                                             </td>
