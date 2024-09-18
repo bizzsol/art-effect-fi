@@ -32,20 +32,22 @@
                     
                         <div class="row pr-3">
                             <div class="col-md-3 col-sm-12">
+                                <label for="company_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                <div class="input-group input-group-md mb-3 d-">
+                                    <select name="company_id" id="company_id" class="form-control rounded" onchange="getProducts()">
+                                        @if(isset($companies[0]))
+                                        @foreach($companies as $key => $company)
+                                            <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
                                 <label for="product_id"><strong>{{ __('Assets') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                 <div class="input-group input-group-md mb-3 d-">
                                     <select name="product_id" id="product_id" class="form-control rounded" onchange="getBatches()">
-                                        @if(isset($categories[0]))
-                                        @foreach($categories as $key => $category)
-                                        <optgroup label="{{ $category->name }}">
-                                            @if($products->where('category_id', $category->id)->count())
-                                            @foreach($products->where('category_id', $category->id) as $key => $product)
-                                            <option value="{{ $product->id }}">{{ $product->name }} {{ getProductAttributesFaster($product) }}</option>
-                                            @endforeach
-                                            @endif
-                                        </optgroup>
-                                        @endforeach
-                                        @endif
+                                        
                                     </select>
                                 </div>
                             </div>
@@ -108,24 +110,37 @@
 
 @section('page-script')
 <script type="text/javascript">
-    getBatches();
-    function getBatches(){
-        var product_id = $('#product_id').val();
+    getProducts();
+    function getProducts(){
+        var company_id = $('#company_id').val();
         $.ajax({
-            url: "{{ url('accounting/fixed-asset-distributions/create') }}?action=batches&product_id="+$('#product_id').val(),
+            url: "{{ url('accounting/fixed-asset-distributions/create') }}?get-products&company_id="+$('#company_id').val(),
             type: 'GET',
             data: {},
         })
         .done(function(response) {
-            $('#fixed_asset_batch_id').html(response);
+            $('#product_id').html(response).change();
         });
+    }
+
+    getBatches();
+    function getBatches(){
+        // var product_id = $('#product_id').val();
+        // $.ajax({
+        //     url: "{{ url('accounting/fixed-asset-distributions/create') }}?action=batches&product_id="+$('#product_id').val(),
+        //     type: 'GET',
+        //     data: {},
+        // })
+        // .done(function(response) {
+        //     $('#fixed_asset_batch_id').html(response);
+        // });
     }
 
     function getItems() {
         $('.button-row').hide();
         $('.items').html('<h3 class="text-center"><strong>Please wait...</strong></h3>');
         $.ajax({
-            url: "{{ url('accounting/fixed-asset-distributions/create') }}?action=items&fixed_asset_batch_id="+$('#fixed_asset_batch_id').val()+"&asset_code="+$('#asset_code').val()+"&product_id="+$('#product_id').val(),
+            url: "{{ url('accounting/fixed-asset-distributions/create') }}?action=items&fixed_asset_batch_id="+$('#fixed_asset_batch_id').val()+"&asset_code="+$('#asset_code').val()+"&product_id="+$('#product_id').val()+"&company_id="+$('#company_id').val(),
             type: 'GET',
             data: {},
         })

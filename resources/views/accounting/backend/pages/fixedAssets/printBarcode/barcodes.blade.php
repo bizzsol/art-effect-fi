@@ -105,7 +105,7 @@
     
     <body>
         <htmlpageheader name="page-header">
-            <h2 style="padding-left: 10px;padding-top: 140px">{{ $title }}</h2>
+            <h3 style="padding-left: 10px;padding-top: 140px">{{ $title }}</h3>
         </htmlpageheader>
 
         <htmlpagefooter name="page-footer">

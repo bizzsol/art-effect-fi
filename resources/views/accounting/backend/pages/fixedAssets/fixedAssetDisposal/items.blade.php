@@ -117,7 +117,7 @@
 		@include('payment', [
 			'currency_id' => $currency_id,
 			'select2' => true,
-			'company_id' => false
+			'company_id' => request()->get('company_id')
 		])
 	</div>
 	<div class="col-md-2 pt-5 mt-2">
