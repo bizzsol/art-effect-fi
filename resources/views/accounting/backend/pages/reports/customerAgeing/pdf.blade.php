@@ -107,11 +107,6 @@
         <div class="col-md-6" style="width: 50%;float:left;padding-top: 135px">
           <h2><strong>{{ $title }}</strong></h2>
         </div>
-        {{-- <div class="col-md-6 text-right" style="width: 50%;float:left;padding-top: 50px">
-          @if(!empty($purchaseOrder->Unit->hr_unit_logo) && file_exists(public_path($purchaseOrder->Unit->hr_unit_logo)))
-            <img src="{{ str_replace('/assets','assets', $purchaseOrder->Unit->hr_unit_logo) }}" alt="logo" style="float: right !important;height: 15mm; width:  35mm; margin: 0;" />
-          @endif
-        </div> --}}
       </div>
     </htmlpageheader>
 
@@ -123,29 +118,6 @@
                 {{ $title }} Printed by <strong>{{ auth()->user()->name  }}</strong>
             </td>
           </tr>
-          {{-- <tr>
-            <td colspan="2" style="border: none !important">
-              <small>(Note: This {{ $directPurchase ? 'Internal Job Order' : 'Purchase Order' }} doesn’t require signature as it is automatically generated from MBM Group’s ERP)</small>
-            </td>
-          </tr> --}}
-          {{-- <tr>
-            <td style="border-left: none !important;border-bottom: none !important">
-              <small>
-                Factory: M-19 & M-14, Section-14, Mirpur, Dhaka-1206
-                <br>
-                Phone: +8809678-411412, Mail: info@mbm.group
-              </small>
-            </td>
-            <td style="padding-left: 25px;border-right: none !important;border-bottom: none !important">
-              <small>
-                Corporate Office: Plot: 1358, Road: 50 (Old), 9 (New)
-                <br>
-                Avenue: 11, DOHS, Mirpur-12, Dhaka-1216
-                <br>
-                Website: www.mbm.group
-              </small>
-            </td>
-          </tr> --}}
           <tr style="border: none !important">
             <td style="height: 50px; !important;border: none !important;border-right: none !important">
               
@@ -164,17 +136,7 @@
     </htmlpagefooter>
     
     <div class="container">
-      <table class="table-bordered">
-        <tbody>
-          <tr>
-            <td style="width: 40%"><strong>Ledger</strong></td>
-            <td style="width: 25%"><strong>Sub-Ledger</strong></td>
-            <td style="width: 10%"><strong>From</strong></td>
-            <td style="width: 10%"><strong>To</strong></td>
-            <td style="width: 10%"><strong>Currency</strong></td>
-            <td style="width: 15%"><strong>Opening Balance</strong></td>
-          </tr>
-      </table>
+      @include('accounting.backend.pages.reports.customerAgeing.report')
     </div>
   </body>
 </html>                                                                                                               
