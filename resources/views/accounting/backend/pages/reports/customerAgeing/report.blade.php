@@ -6,7 +6,7 @@
 			<h5>
 				Date: <strong>{{ date('F jS, Y') }}</strong>
 				&nbsp;&nbsp;|&nbsp;&nbsp;
-				Code Searched: <strong>{{ implode(', ', array_keys($companyEntries)) }}</strong>
+				<strong>{{ empty(request()->get('customer_code')) ? 'All Customers' : collect($customers)->pluck('name')->implode(', ') }}</strong>
 			</h5>
 		</td>
 	</tr>
@@ -28,11 +28,11 @@
 		$amounts = [];
 		foreach(ageingDays() as $key => $days){
 			if($days[1]){
-				$thisEntries = $entries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')));
+				$thisEntries = $entries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
 			}
-			$thisEntries = $entries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')));
+			$thisEntries = $entries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
 			
-			$amount = $thisEntries->where('debit_credit', 'D')->sum('amount');
+			$amount = $thisEntries->where('debit_credit', 'D')->sum('amount')-$thisEntries->where('debit_credit', 'C')->sum('amount');
 			$amounts[$days[0]] = $amount;
 			if(!isset($grandAmounts[$days[0]])){
 				$grandAmounts[$days[0]] = 0;
@@ -64,11 +64,11 @@
 		$amounts = [];
 		foreach(ageingDays() as $key => $days){
 			if($days[1]){
-				$thisEntries = $profitCentreEntries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')));
+				$thisEntries = $profitCentreEntries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
 			}
-			$thisEntries = $profitCentreEntries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')));
+			$thisEntries = $profitCentreEntries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
 			
-			$amounts[$days[0]] = $thisEntries->where('debit_credit', 'D')->sum('amount');
+			$amounts[$days[0]] = $thisEntries->where('debit_credit', 'D')->sum('amount')-$thisEntries->where('debit_credit', 'C')->sum('amount');
 		}
 	@endphp
 	<tr>

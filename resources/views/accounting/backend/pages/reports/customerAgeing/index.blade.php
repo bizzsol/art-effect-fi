@@ -50,7 +50,7 @@
                         <div class="row mb-2">
                             <div class="col-md-3">
                                 <label for="company_id"><strong>Company</strong></label>
-                                <select name="company_id" id="company_id" class="form-control" onchange="getProfitCentres();">
+                                <select name="company_id" id="company_id" class="form-control" onchange="getChartOfAccounts();getProfitCentres();">
                                     @if(isset($companies[0]))
                                     @foreach($companies as $key => $company)
                                         <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
@@ -60,7 +60,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="profit_centre_id"><strong>Profit Centre</strong></label>
-                                <select name="profit_centre_id" id="profit_centre_id" class="form-control">
+                                <select name="profit_centre_id" id="profit_centre_id" class="form-control" onchange="getCompanies()">
                                     <option value="0">All Profit Centres</option>
                                     @if(isset($profitCentres[0]))
                                     @foreach($profitCentres as $key => $profitCentre)
@@ -71,9 +71,26 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="company_codes"><strong>Company Codes (Comma Separated, Ex: abc,def)</strong></label>
+                                    <label for="customer_code"><strong>Customer Code</strong></label>
+                                    <select name="customer_code" id="customer_code" class="form-control">
+                                        <option value="{{ null }}">All Customers</option>
+                                        @if(isset($customers[0]))
+                                        @foreach($customers as $key => $customer)
+                                            <option value="{{ $customer['code'] }}">{{ $customer['code'] }} :: {{ $customer['name'] }}</option>
+                                        @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="chart_of_account_id"><strong>Ledger Accounts</strong></label>
                                     <div class="input-group input-group-md mb-3 d-">
-                                        <input type="text" name="company_codes" id="company_codes" class="form-control" value="{{ request()->get('company_codes') }}">
+                                        <select name="chart_of_account_id[]" id="chart_of_account_id" class="form-control" multiple data-placeholder="Choose Ledger Accounts...">
+                                            {!! $chartOfAccountsOptions !!}
+                                        </select>
                                     </div>
                                 </div>
                             </div>

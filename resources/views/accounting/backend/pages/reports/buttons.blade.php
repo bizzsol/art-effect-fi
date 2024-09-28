@@ -132,6 +132,22 @@
             });
         }
 
+        function getCompanies() {
+            $('#customer_code').html('<option value="{{ null }}">Please wait...</option>');
+            $.ajax({
+                url: "{{ url('accounting/customer-ageing') }}?get-companies&company_id="+$('#company_id').val()+"&profit_centre_id="+$('#profit_centre_id').find(':selected').val(),
+                type: 'GET',
+                data: {},
+            })
+            .done(function(response) {
+                var customer_code = '<option value="{{ null }}">All Customers</option>';
+                $.each(response, function(index, customer) {
+                    customer_code += '<option value="'+customer.code+'">'+customer.code+' :: '+customer.name+'</option>';
+                });
+                $('#customer_code').html(customer_code).change();
+            });
+        }
+
         function getSubLedgers(element) {
             var values = [];
             $.each(element.find("option:selected"), function(){            
