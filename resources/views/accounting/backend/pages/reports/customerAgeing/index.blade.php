@@ -76,7 +76,9 @@
                                         <option value="{{ null }}">All Customers</option>
                                         @if(isset($customers[0]))
                                         @foreach($customers as $key => $customer)
+                                        @if(isset($customer['code']) && !empty($customer['code']))
                                             <option value="{{ $customer['code'] }}">{{ $customer['code'] }} :: {{ $customer['name'] }}</option>
+                                        @endif
                                         @endforeach
                                         @endif
                                     </select>

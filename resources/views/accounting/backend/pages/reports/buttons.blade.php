@@ -142,7 +142,9 @@
             .done(function(response) {
                 var customer_code = '<option value="{{ null }}">All Customers</option>';
                 $.each(response, function(index, customer) {
-                    customer_code += '<option value="'+customer.code+'">'+customer.code+' :: '+customer.name+'</option>';
+                    if(customer.code != undefined && customer.code != ''){
+                        customer_code += '<option value="'+customer.code+'">'+customer.code+' :: '+customer.name+'</option>';
+                    }
                 });
                 $('#customer_code').html(customer_code).change();
             });
