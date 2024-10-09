@@ -19,18 +19,19 @@
 	</tr>
 
 	@php
+		$searchAccountsArray = $searchAccounts->pluck('id')->toArray();
 		$grandAmounts = [];
 	@endphp
 	@foreach($companyEntries as $code => $entries)
 	@if(isset($entries[0]))
 	@php
-		$companyInformation = getCompanyInformation($entries->first()->entry);
+		$companyInformation = $customers->where('code', $code)->first();
 		$amounts = [];
 		foreach(ageingDays() as $key => $days){
 			if($days[1]){
-				$thisEntries = $entries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
+				$thisEntries = $entries->where('date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccountsArray);
 			}
-			$thisEntries = $entries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
+			$thisEntries = $entries->where('date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccountsArray);
 			
 			$amount = $thisEntries->where('debit_credit', 'D')->sum('amount')-$thisEntries->where('debit_credit', 'C')->sum('amount');
 			$amounts[$days[0]] = $amount;
@@ -42,7 +43,7 @@
 	@endphp
 	<tr>
 		<td>
-			<strong>{{ $companyInformation['code'] }} :: {{ $companyInformation['name'] }}</strong>
+			<strong>{{ isset($companyInformation['code']) ? $companyInformation['code'] : '' }} :: {{ isset($companyInformation['name']) ? $companyInformation['name'] : '' }}</strong>
 		</td>
 		@foreach($amounts as $amount)
 		<td class="text-right">
@@ -57,16 +58,16 @@
 	@if($this_company->profitCentres->count() > 0)
 	@foreach($this_company->profitCentres as $profitCentre)
 	@php
-		$profitCentreEntries = $entries->where('costCentre.profit_centre_id', $profitCentre->id);
+		$profitCentreEntries = $entries->where('profit_centre_id', $profitCentre->id);
 	@endphp
 	@if($profitCentreEntries->count() > 0)
 	@php
 		$amounts = [];
 		foreach(ageingDays() as $key => $days){
 			if($days[1]){
-				$thisEntries = $profitCentreEntries->where('entry.date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
+				$thisEntries = $profitCentreEntries->where('date', '>=', date('Y-m-d', strtotime('- '.$days[1].' days')))->whereIn('chart_of_account_id', $searchAccountsArray);
 			}
-			$thisEntries = $profitCentreEntries->where('entry.date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray());
+			$thisEntries = $profitCentreEntries->where('date', '<', date('Y-m-d', strtotime('- '.$days[0].' days')))->whereIn('chart_of_account_id', $searchAccountsArray);
 			
 			$amounts[$days[0]] = $thisEntries->where('debit_credit', 'D')->sum('amount')-$thisEntries->where('debit_credit', 'C')->sum('amount');
 		}

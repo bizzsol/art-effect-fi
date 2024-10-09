@@ -98,6 +98,16 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="narration"><strong>Narrations</strong></label>
+                                    <div class="input-group input-group-md mb-3 d-">
+                                        <input type="text" name="narration" id="narration" class="form-control" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="currency_id"><strong>Currency</strong></label>
