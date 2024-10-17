@@ -135,6 +135,7 @@
                                 </div>
                             </div>
                             <div class="col-md-8 pt-4">
+                                <input type="hidden" name="page" id="page" /> 
                                 @include('accounting.backend.pages.reports.buttons', [
                                     'url' => url('accounting/customer-ageing?chart_of_account_id='.request()->get('chart_of_account_id').'&from='.request()->get('date')),
                                 ])

@@ -41,11 +41,10 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="company_id_"><strong>Company</strong></label>
-                                    <select name="company_id" id="company_id_" class="form-control" onchange="getLedgers()">
-                                        <option value="{{ null }}">All Companies</option>
+                                    <select name="company_id" id="company_id_" class="form-control" onchange="getLedgers();">
                                         @if(isset($companies[0]))
                                         @foreach($companies as $key => $company)
-                                        <option value="{{ $company->id }}" {{ $company_id == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                        <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -58,7 +57,7 @@
                                         <option value="{{ null }}">All Entry Types</option>
                                         @if(isset($entryTypes[0]))
                                         @foreach($entryTypes as $key => $entryType)
-                                        <option value="{{ $entryType->id }}" {{ $entry_type_id == $entryType->id ? 'selected' : '' }}>{{ $entryType->name }}</option>
+                                        <option value="{{ $entryType->id }}" {{ request()->get('entry_type_id') == $entryType->id ? 'selected' : '' }}>{{ $entryType->name }}</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -67,11 +66,10 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="fiscal_year_id_"><strong>Fiscal Year</strong></label>
-                                    <select name="fiscal_year_id" id="fiscal_year_id_" class="form-control">
-                                        <option value="{{ null }}">All Fiscal Years</option>
+                                    <select name="fiscal_year_id" id="fiscal_year_id_" class="form-control" onchange="printDates()">
                                         @if(isset($fiscalYears[0]))
                                         @foreach($fiscalYears as $key => $fiscalYear)
-                                        <option value="{{ $fiscalYear->id }}" {{ $fiscal_year_id == $fiscalYear->id ? 'selected' : '' }}>{{ $fiscalYear->title }}</option>
+                                        <option value="{{ $fiscalYear->id }}" {{ request()->get('fiscal_year_id') == $fiscalYear->id ? 'selected' : '' }} data-start="{{ $fiscalYear->start }}" data-end="{{ $fiscalYear->end }}">{{ $fiscalYear->title }}</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -84,7 +82,7 @@
                                         <option value="{{ null }}">All Currencies</option>
                                         @if(isset($currencies[0]))
                                         @foreach($currencies as $key => $currency)
-                                        <option value="{{ $currency->id }}" {{ $currency_id == $currency->id ? 'selected' : '' }}>{{ $currency->code }}</option>
+                                        <option value="{{ $currency->id }}" {{ request()->get('currency_id') == $currency->id ? 'selected' : '' }}>{{ $currency->code }}</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -93,24 +91,24 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="from_"><strong>Date From</strong></label>
-                                    <input type="date" name="from" id="from_" class="form-control" value="{{ $from }}" />
+                                    <input type="date" name="from" id="from_" class="form-control" value="{{ request()->get('from') }}" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="to_"><strong>Date To</strong></label>
-                                    <input type="date" name="to" id="to_" class="form-control" value="{{ $to }}" />
+                                    <input type="date" name="to" id="to_" class="form-control" value="{{ request()->get('to') }}" />
                                 </div>
                             </div>
                             <div class="col-md-4 ledger-parent">
                                 <div class="form-group ledger">
                                     <label for="debit_ledger_id_"><strong>Debit Ledger</strong></label>
-                                    <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ $debit_ledger_id }}" onchange="getSubLedgers($(this))">
+                                    <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('debit_ledger_id') }}" onchange="getSubLedgers($(this))">
                                         
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
-                                    <select name="debit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ $debit_sub_ledger_id }}">
+                                    <select name="debit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ request()->get('debit_sub_ledger_id') }}">
                                         <option value="{{ null }}">Without Sub-Ledger</option>
                                     </select>
                                 </div>
@@ -118,12 +116,12 @@
                             <div class="col-md-4 ledger-parent">
                                 <div class="form-group ledger">
                                     <label for="credit_ledger_id_"><strong>Credit Ledger</strong></label>
-                                    <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ $credit_ledger_id }}" onchange="getSubLedgers($(this))">
+                                    <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('credit_ledger_id') }}" onchange="getSubLedgers($(this))">
                                         
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
-                                    <select name="credit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ $credit_sub_ledger_id }}">
+                                    <select name="credit_sub_ledger_id" class="form-control sub-ledger-select2" data-selected="{{ request()->get('credit_sub_ledger_id') }}">
                                         <option value="{{ null }}">Without Sub-Ledger</option>
                                     </select>
                                 </div>
@@ -133,12 +131,12 @@
                                     <label for="status_"><strong>Status</strong></label>
                                     <select name="status" id="status_" class="form-control">
                                         <option value="{{ null }}">All Status</option>
-                                        <option value="approved" {{ $status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                        <option value="approved" {{ request()->get('status') == 'approved' ? 'selected' : '' }}>Approved</option>
                                         @if(isset($approvalLevels[0]))
                                         @foreach($approvalLevels as $approvalLevel)
-                                            <option value="{{ $approvalLevel->name }}-approved" {{ $status == $approvalLevel->name.'-approved' ? 'selected' : '' }}>{{ $approvalLevel->name }} Approved</option>
-                                            <option value="{{ $approvalLevel->name }}-pending" {{ $status == $approvalLevel->name.'-pending' ? 'selected' : '' }}>{{ $approvalLevel->name }} Pending</option>
-                                            <option value="{{ $approvalLevel->name }}-denied" {{ $status == $approvalLevel->name.'-denied' ? 'selected' : '' }}>{{ $approvalLevel->name }} Denied</option>
+                                            <option value="{{ $approvalLevel->name }}-approved" {{ request()->get('status') == $approvalLevel->name.'-approved' ? 'selected' : '' }}>{{ $approvalLevel->name }} Approved</option>
+                                            <option value="{{ $approvalLevel->name }}-pending" {{ request()->get('status') == $approvalLevel->name.'-pending' ? 'selected' : '' }}>{{ $approvalLevel->name }} Pending</option>
+                                            <option value="{{ $approvalLevel->name }}-denied" {{ request()->get('status') == $approvalLevel->name.'-denied' ? 'selected' : '' }}>{{ $approvalLevel->name }} Denied</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -153,9 +151,13 @@
                         </div>
                     </form>
                 </div>
+
+                @if(request()->has('company_id'))
                 <div class="panel-body">
                     @include('yajra.datatable')
                 </div>
+                @endif
+
             </div>
         </div>
     </div>
@@ -233,13 +235,24 @@
             data: {},
         })
         .done(function(response) {
-            $('#debit_ledger_id_').html('<option value="{{ null }}">All Debit Ledgers</option>'+response);
-            $('#credit_ledger_id_').html('<option value="{{ null }}">All Credit Ledgers</option>'+response);
+            $('#debit_ledger_id_').html('<option value="{{ null }}">All Debit Ledgers</option>'+response.coa);
+            $('#credit_ledger_id_').html('<option value="{{ null }}">All Credit Ledgers</option>'+response.coa);
 
             $.each($('.select-me'), function(index, val) {
                 $(this).select2().val($(this).attr('data-selected')).trigger("change");
             });
+
+            var fiscal_year_id = parseInt("{{ request()->get('fiscal_year_id') > 0 ? request()->get('fiscal_year_id') : 0 }}");
+            console.log(fiscal_year_id);
+            if(fiscal_year_id == 0){
+                $('#fiscal_year_id_').select2().val(response.fy.id).trigger("change");
+            }
         });
+    }
+
+    function printDates(){
+        $('#from_').val($('#fiscal_year_id_').find(':selected').attr('data-start'));
+        $('#to_').val($('#fiscal_year_id_').find(':selected').attr('data-end'));
     }
 
     $(document).ready(function() {

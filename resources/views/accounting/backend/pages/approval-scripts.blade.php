@@ -41,10 +41,10 @@
         });
     }
 
-    function entryApproval(id) {
+    function entryApproval(element) {
         $.dialog({
             title: '&nbsp;',
-            content: "url:{{ url('accounting/entries/0') }}?approval&id="+id,
+            content: "url:{{ url('accounting/entries/0') }}?approval&id="+element.attr('data-id'),
             animation: 'scale',
             columnClass: 'medium',
             closeAnimation: 'scale',
@@ -52,10 +52,21 @@
         });
     }
 
-    function entryApprovalHistory(id) {
+    function entryGlobalApproval(element) {
         $.dialog({
             title: '&nbsp;',
-            content: "url:{{ url('accounting/entries') }}/"+id+"?approval-history",
+            content: "url:{{ url('accounting/entries/0') }}?global-approval&id="+element.attr('data-id'),
+            animation: 'scale',
+            columnClass: 'col-md-12',
+            closeAnimation: 'scale',
+            backgroundDismiss: true,
+        });
+    }
+
+    function entryApprovalHistory(element) {
+        $.dialog({
+            title: '&nbsp;',
+            content: "url:{{ url('accounting/entries') }}/"+element.attr('data-id')+"?approval-history",
             animation: 'scale',
             columnClass: 'medium',
             closeAnimation: 'scale',

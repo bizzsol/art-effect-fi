@@ -94,3 +94,21 @@
 		<td style="width: 10%;" class="text-right"><strong>{{ systemMoneyFormat(array_sum(array_values($grandAmounts))) }}</strong></td>
 	</tr>
 </table>
+
+@if(request()->get('report_type') == 'report')
+	{!! $paginate->render('pagination::bootstrap-4') !!}
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.each($('a.page-link'), function(index, val) {
+				var link = $(this);
+				link.click(function(event) {
+					event.preventDefault();
+					$('#page').val(link.text());
+					$('#report-form').submit();
+				});
+			});
+		});
+	</script>
+@endif
+

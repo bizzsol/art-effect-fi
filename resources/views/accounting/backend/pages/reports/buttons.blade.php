@@ -141,7 +141,7 @@
             })
             .done(function(response) {
                 var customer_code = '<option value="{{ null }}">All Customers</option>';
-                $.each(response, function(index, customer) {
+                $.each(response.data, function(index, customer) {
                     if(customer != null && customer != undefined){
                         if(customer.code != undefined && customer.code != ''){
                             customer_code += '<option value="'+customer.code+'">'+customer.code+' :: '+customer.name+'</option>';
