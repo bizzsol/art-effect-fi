@@ -123,7 +123,7 @@
                                 <div class="col-md-12">
                                     @can('balance-sheet-excel')
                                         @include('accounting.backend.pages.reports.buttons', [
-                                            'title' => "Balance Sheet from ".date('M jS, y', strtotime($fiscalYear->start))." to ".date('M jS, y', strtotime($fiscalYear->end)),
+                                            'title' => "Balance Sheet",
                                             'url' => url('accounting/balance-sheet'),
                                         ])
                                     @endcan

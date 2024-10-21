@@ -155,7 +155,7 @@
                                 <div class="col-md-12">
                                     @can('trial-balance-excel')
                                         @include('accounting.backend.pages.reports.buttons', [
-                                            'title' => "Trial Balance from ".date('M jS, y', strtotime($fiscalYear->start))." to ".date('M jS, y', strtotime($fiscalYear->end)),
+                                            'title' => "Trial Balance",
                                             'url' => url('accounting/trial-balance'),
                                         ])
                                     @endcan

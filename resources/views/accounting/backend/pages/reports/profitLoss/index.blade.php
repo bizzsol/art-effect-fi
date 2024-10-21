@@ -123,7 +123,7 @@
                                 <div class="col-md-12">
                                     @can('profit-loss-excel')
                                         @include('accounting.backend.pages.reports.buttons', [
-                                            'title' => "Profit Loss from ".date('M jS, y', strtotime($fiscalYear->start))." to ".date('M jS, y', strtotime($fiscalYear->end)),
+                                            'title' => "Profit Loss",
                                             'url' => url('accounting/profit-loss'),
                                         ])
                                     @endcan

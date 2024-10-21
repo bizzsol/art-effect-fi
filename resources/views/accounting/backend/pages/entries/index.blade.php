@@ -20,14 +20,29 @@
                 </li>
                 <li><a href="#">PMS</a></li>
                 <li class="active">Accounts</li>
-                <li class="active">{{__($title)}}</li>
+                <li class="active">{{ __($title) }}</li>
                 <li class="top-nav-btn">
                     @can('entry-create')
-                        @if(isset($entryTypes[0]))
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-success pull-right ml-2 dropdown-toggle" style="float: right" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="las la-plus-circle"></i>&nbsp;New Transaction
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @if(isset($entryTypes[0]))
+                            @foreach($entryTypes as $key => $entryType)
+                                <a class="dropdown-item" @if($companies->count() == 1) href="{{ url('accounting/entries/create?type='.$entryType->label.'&company='.$companies->first()->id) }}" @else data-toggle="modal" data-target="#companyModal" onclick="$('#type').val('{{ $entryType->label }}')" @endif style="font-size: 14px;font-weight: 600">
+                                    <i class="las la-hand-point-right"></i>&nbsp;&nbsp;{{ $entryType->name }}
+                                </a>
+                            @endforeach
+                            @endif
+                          </div>
+                        </div>
+
+                        {{-- @if(isset($entryTypes[0]))
                         @foreach($entryTypes as $key => $entryType)
                             <a class="btn btn-sm btn-success pull-right ml-2" style="float: right" @if($companies->count() == 1) href="{{ url('accounting/entries/create?type='.$entryType->label.'&company='.$companies->first()->id) }}" @else data-toggle="modal" data-target="#companyModal" onclick="$('#type').val('{{ $entryType->label }}')" @endif><i class="las la-plus-circle"></i>&nbsp;{{ $entryType->name }}</a>
                         @endforeach
-                        @endif
+                        @endif --}}
                     @endcan
                 </li>
             </ul>
@@ -69,7 +84,7 @@
                                     <select name="fiscal_year_id" id="fiscal_year_id_" class="form-control" onchange="printDates()">
                                         @if(isset($fiscalYears[0]))
                                         @foreach($fiscalYears as $key => $fiscalYear)
-                                        <option value="{{ $fiscalYear->id }}" {{ request()->get('fiscal_year_id') == $fiscalYear->id ? 'selected' : '' }} data-start="{{ $fiscalYear->start }}" data-end="{{ $fiscalYear->end }}">{{ $fiscalYear->title }}</option>
+                                        <option value="{{ $fiscalYear->id }}" {{  $fiscal_year_id == $fiscalYear->id ? 'selected' : '' }} data-start="{{ $fiscalYear->start }}" data-end="{{ $fiscalYear->end }}">{{ $fiscalYear->title }}</option>
                                         @endforeach
                                         @endif
                                     </select>
@@ -91,20 +106,21 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="from_"><strong>Date From</strong></label>
-                                    <input type="date" name="from" id="from_" class="form-control" value="{{ request()->get('from') }}" />
+                                    <input type="date" name="from" id="from_" class="form-control" value="{{ $from }}" />
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="to_"><strong>Date To</strong></label>
-                                    <input type="date" name="to" id="to_" class="form-control" value="{{ request()->get('to') }}" />
+                                    <input type="date" name="to" id="to_" class="form-control" value="{{ $to }}" />
                                 </div>
                             </div>
                             <div class="col-md-4 ledger-parent">
                                 <div class="form-group ledger">
                                     <label for="debit_ledger_id_"><strong>Debit Ledger</strong></label>
                                     <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('debit_ledger_id') }}" onchange="getSubLedgers($(this))">
-                                        
+                                        <option value="{{ null }}">All Debit Ledgers</option>
+                                        {!! $currentCOA !!}
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
@@ -117,7 +133,8 @@
                                 <div class="form-group ledger">
                                     <label for="credit_ledger_id_"><strong>Credit Ledger</strong></label>
                                     <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('credit_ledger_id') }}" onchange="getSubLedgers($(this))">
-                                        
+                                        <option value="{{ null }}">All Credit Ledgers</option>
+                                        {!! $currentCOA !!}
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
@@ -152,7 +169,7 @@
                     </form>
                 </div>
 
-                @if(request()->has('company_id'))
+                @if($company_id > 0)
                 <div class="panel-body">
                     @include('yajra.datatable')
                 </div>
@@ -225,7 +242,6 @@
         });
     }
 
-    getLedgers();
     function getLedgers() {
          $('#debit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
         $('#credit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
@@ -243,7 +259,6 @@
             });
 
             var fiscal_year_id = parseInt("{{ request()->get('fiscal_year_id') > 0 ? request()->get('fiscal_year_id') : 0 }}");
-            console.log(fiscal_year_id);
             if(fiscal_year_id == 0){
                 $('#fiscal_year_id_').select2().val(response.fy.id).trigger("change");
             }
