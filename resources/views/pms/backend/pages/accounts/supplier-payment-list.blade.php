@@ -40,16 +40,23 @@
 							<div class="col-md-12">
 								<form action="{{ url('pms/accounts/supplier-payments') }}" method="get" accept-charset="utf-8">
 									<div class="row">
+										<div class="col-md-1">
+											<p class="font-weight-bold"><label for="company_id"><strong>Company:</strong></label></p>
+											<div class="input-group input-group-md mb-3 d-">
+												<select name="company_id" id="company_id" class="form-control rounded" onchange="getSuppliers()">
+													@if(isset($companies[0]))
+													@foreach($companies as $company)
+													<option value="{{ $company->id }}" {{ $company_id == $company->id ? 'selected' : '' }}>{{ $company->code }}</option>
+													@endforeach
+													@endif
+												</select>
+											</div>
+										</div>
 										<div class="col-md-3">
 											<p class="font-weight-bold"><label for="supplier_id"><strong>Supplier:</strong></label></p>
 											<div class="input-group input-group-md mb-3 d-">
 												<select name="supplier_id" id="supplier_id" class="form-control rounded">
-													<option value="{{ null }}">{{ __('All Suppliers') }}</option>
-													@if(isset($suppliers[0]))
-													@foreach($suppliers as $supplier)
-													<option value="{{ $supplier->id }}" {{ $supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }} ({{ $supplier->code }})</option>
-													@endforeach
-													@endif
+													
 												</select>
 											</div>
 										</div>
@@ -122,10 +129,10 @@
 											<input type="hidden" name="hidden_datetime" id="hidden_datetime" value="{{ request()->has('datetime') ? request()->get('datetime') : date('Y-m-d H:i:s') }}">
 										</div>
 
-										<div class="col-md-2 col-sm-6 pr-3">
+										<div class="col-md-1 col-sm-6 pr-3">
 											<p class="font-weight-bold"><label for="searchRequisitonBtn"></label></p>
 											<div class="input-group input-group-md">
-												<button class="btn btn-success rounded mt-8 btn-md btn-block" type="submit"> <i class="las la-search"></i>Get Payment Form</button>
+												<button class="btn btn-success rounded mt-8 btn-md btn-block" type="submit"> <i class="las la-search"></i>Search</button>
 											</div>
 										</div>
 									</div>
@@ -149,7 +156,7 @@
 						<div class="col-md-10">
 							@include('payment', [
 								'currency_id' => request()->get('payment_currency_id'),
-								'company_id' => false
+								'company_id' => request()->get('company_id')
 							])
 						</div>
 						<div class="col-md-2 pt-5 mt-2">
@@ -168,6 +175,25 @@
 @include('yajra.js')
 <script type="text/javascript">
 	$('body').addClass('sidebar-main');
+	
+	getSuppliers();
+	function  getSuppliers(){
+		$.ajax({
+			url: "{{ url('pms/accounts/supplier-payments') }}?get-suppliers&company_id="+$('#company_id').val(),
+			type: 'GET',
+			dataType: 'json',
+			data: {},
+		})
+		.done(function(response) {
+			console.log(response);
+			var suppliers = '<option value="{{ null }}">{{ __('All Suppliers') }}</option>';
+			var supplier_id = "{{ $supplier_id }}";
+			$.each(response, function(index, val) {
+				suppliers += '<option value="'+val.id+'" '+(supplier_id == val.id ? 'selected' : '')+'>'+val.name+' ('+val.code+')</option>';
+			});
+			$('#supplier_id').html(suppliers).change();
+		});
+	}
 
 	$(document).ready(function() {
 		var form = $('#supplier-payment-form');

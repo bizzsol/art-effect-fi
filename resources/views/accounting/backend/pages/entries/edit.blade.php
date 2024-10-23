@@ -116,14 +116,12 @@
                                         @foreach($entry->items as $key => $item)
                                         <tr>
                                             <td>
-                                               <select name="cost_centre_id[]" class="form-control cost_centre_id select2 select-cost-centre" data-selected-cost-centre="{{ $item->cost_centre_id }}">
-                                                    {!! $costCentres !!}
-                                               </select>
+                                               <select name="cost_centre_id[]" class="form-control cost_centre_id select2 select-cost-centre" data-selected-cost-centre="{{ $item->cost_centre_id }}"></select>
                                             </td>
                                             <td>
                                                 <div class="row ledger-parent">
                                                     <div class="col-md-12 ledger">
-                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="getSubLedgers($(this));Entries();">{!! $chartOfAccountsOptions !!}</select>
+                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="getSubLedgers($(this));Entries();"></select>
                                                     </div>
                                                     <div class="col-md-12 sub-ledger mt-2" style="display: none">
                                                         <select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ $item->sub_ledger_id }}">
@@ -223,24 +221,29 @@
 <div id="coa" style="display: none">
     {!! $chartOfAccountsOptions !!}
 </div>
+<div id="cc" style="display: none">
+    {!! $costCentres !!}
+</div>
 @endsection
 @section('page-script')
 <script type="text/javascript">
-    $(document).ready(function() {
+    setTimeout(function(){
+        var cc = $('#cc').html();
+        var coa = $('#coa').html();
         $.each($('.select-cost-centre'), function(index, val) {
-            $(this).val($(this).attr('data-selected-cost-centre')).trigger('change');
+            $(this).html(cc).val($(this).attr('data-selected-cost-centre')).trigger('change');
         });
 
         $.each($('.select-account'), function(index, val) {
-            $(this).val($(this).attr('data-selected-account')).trigger('change');
+            $(this).html(coa).val($(this).attr('data-selected-account')).trigger('change');
         });
-    });
+    }, 1000);
 
     Entries();
     function add() {
         $('.entries').append('<tr>'+
                                 '<td>'+
-                                   '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>'+
+                                   '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">'+($('#cc').html())+'</select>'+
                                 '</td>'+
                                 '<td>' +
                                     '<div class="row ledger-parent">' +

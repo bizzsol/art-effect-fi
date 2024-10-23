@@ -51,16 +51,24 @@
 											</div>
 										</div>
 
+										<div class="col-md-2">
+											<p class="font-weight-bold"><label for="company_id"><strong>Company:</strong></label></p>
+											<div class="input-group input-group-md mb-3 d-">
+												<select name="company_id" id="company_id" class="form-control rounded" onchange="getSuppliers()">
+													@if(isset($companies[0]))
+													@foreach($companies as $company)
+													<option value="{{ $company->id }}" {{ $company_id == $company->id ? 'selected' : '' }}>{{ $company->code }}</option>
+													@endforeach
+													@endif
+												</select>
+											</div>
+										</div>
+
 										<div class="col-md-3 col-sm-6">
 											<p class="mb-1 font-weight-bold"><label for="supplier_id">{{ __('Supplier') }}:</label></p>
 											<div class="input-group input-group-md mb-3 d-">
 												<select name="supplier_id" id="supplier_id" class="form-control rounded">
-													<option value="{{ null }}">{{ __('Select One') }}</option>
-													@if(isset($chooseSuppliers[0]))
-													@foreach($chooseSuppliers as $key => $supplier)
-													<option value="{{ $supplier->id }}" {{ $supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }} ({{ $supplier->code }})</option>
-													@endforeach
-													@endif
+													
 												</select>
 											</div>
 										</div>
@@ -102,5 +110,24 @@
 	@endsection
 	@section('page-script')
 	@include('yajra.js')
-	
+	<script type="text/javascript">
+		getSuppliers();
+		function  getSuppliers(){
+			$.ajax({
+				url: "{{ url('pms/accounts/supplier-ledgers') }}?get-suppliers&company_id="+$('#company_id').val(),
+				type: 'GET',
+				dataType: 'json',
+				data: {},
+			})
+			.done(function(response) {
+				console.log(response);
+				var suppliers = '<option value="{{ null }}">{{ __('Choose a Suppliers') }}</option>';
+				var supplier_id = "{{ $supplier_id }}";
+				$.each(response, function(index, val) {
+					suppliers += '<option value="'+val.id+'" '+(supplier_id == val.id ? 'selected' : '')+'>'+val.name+' ('+val.code+')</option>';
+				});
+				$('#supplier_id').html(suppliers).change();
+			});
+		}
+	</script>
 	@endsection

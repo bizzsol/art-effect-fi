@@ -42,21 +42,24 @@
                         <div class="row pr-3 pt-3">
                             @if(isset($companies[0]))
                             @foreach($companies as $company)
+                            @php
+                                $options = chartOfAccountsOptions([], 0, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id));
+                            @endphp
                             <div class="col-md-12 mb-3">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="intercompany_debit_ledger_id_{{ $company->id }}"><strong>[{{ $company->code }}] {{ $company->name }} Debit Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="intercompany_debit_ledger_id[{{ $company->id }}]" id="intercompany_debit_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->intercompany_debit_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                            <select name="intercompany_debit_ledger_id[{{ $company->id }}]" id="intercompany_debit_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->intercompany_debit_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="intercompany_credit_ledger_id_{{ $company->id }}"><strong>[{{ $company->code }}] {{ $company->name }} Credit Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="intercompany_credit_ledger_id[{{ $company->id }}]" id="intercompany_credit_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->intercompany_credit_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                            <select name="intercompany_credit_ledger_id[{{ $company->id }}]" id="intercompany_credit_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->intercompany_credit_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
@@ -79,4 +82,13 @@
         </div>
     </div>
 </div>
+@endsection
+@section('page-script')
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.each($('.select-me'), function(index, val) {
+            $(this).select2().val($(this).attr('data-selected')).trigger("change");
+        });
+    });
+</script>
 @endsection

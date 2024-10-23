@@ -47,39 +47,39 @@
                             @if(isset($companies[0]))
                             @foreach($companies as $company)
                             @php
-                                $getLedgerBalances = getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)
+                                $options = chartOfAccountsOptions([], 0, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id));
                             @endphp
                             <div class="col-md-4 mb-3">
                                 <div class="row">
                                     {{-- <div class="col-md-3">
                                         <label for="asset_cost_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Asset Cost Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="asset_cost_ledger_id[{{ $company->id }}]" id="asset_cost_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->asset_cost_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
+                                            <select name="asset_cost_ledger_id[{{ $company->id }}]" id="asset_cost_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->asset_cost_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div> --}}
                                     <div class="col-md-12">
                                         <label for="balance_upload_clearing_ledger_id_{{ $company->id }}"><strong>{{ $company->name }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="balance_upload_clearing_ledger_id[{{ $company->id }}]" id="balance_upload_clearing_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->balance_upload_clearing_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
+                                            <select name="balance_upload_clearing_ledger_id[{{ $company->id }}]" id="balance_upload_clearing_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->balance_upload_clearing_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
                                     {{-- <div class="col-md-3">
                                         <label for="accumulated_depreciation_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accumulated Depreciation Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="accumulated_depreciation_ledger_id[{{ $company->id }}]" id="accumulated_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->accumulated_depreciation_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
+                                            <select name="accumulated_depreciation_ledger_id[{{ $company->id }}]" id="accumulated_depreciation_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->accumulated_depreciation_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="depreciation_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Depreciation Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="depreciation_expense_ledger_id[{{ $company->id }}]" id="depreciation_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->depreciation_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, $getLedgerBalances) !!}
+                                            <select name="depreciation_expense_ledger_id[{{ $company->id }}]" id="depreciation_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->depreciation_expense_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div> --}}
@@ -102,4 +102,13 @@
         </div>
     </div>
 </div>
+@endsection
+@section('page-script')
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.each($('.select-me'), function(index, val) {
+            $(this).select2().val($(this).attr('data-selected')).trigger("change");
+        });
+    });
+</script>
 @endsection

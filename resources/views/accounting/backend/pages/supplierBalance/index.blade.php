@@ -31,6 +31,19 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group mb-0">
+                                    <label for="company_id"><strong>Company:</strong></label>
+                                </div>
+                                <select name="company_id" id="company_id" class="form-control rounded">
+                                    <option value="{{ null }}">All Companies</option>
+                                    @if(isset($companies[0]))
+                                    @foreach($companies as $company)
+                                    <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>{{ $company->code }}</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group mb-0">
                                     <label for="date"><strong>As On:</strong></label>
                                     <input type="date" name="date" id="date" value="{{ $date }}" class="form-control">
                                 </div>

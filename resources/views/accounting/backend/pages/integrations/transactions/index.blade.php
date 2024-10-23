@@ -26,7 +26,17 @@
 
         <div class="page-content">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
+                    <select class="form-control" name="company_id" id="company_id" onchange="window.open('{{ url('accounting/transactions') }}?company_id='+$('#company_id').val(), '_parent')">
+                        <option value="{{ null }}">All Companies</option>
+                        @if(isset($companies[0]))
+                        @foreach($companies as $company)
+                        <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                        @endforeach
+                        @endif
+                    </select>
+                </div>
+                <div class="col-md-8">
                     <a class="btn btn-sm btn-success pull-right ml-2" href="{{ url('accounting/transactions/create') }}" style="float: right"><i class="la la-plus"></i>&nbsp;New Transaction</a>
                 </div>
             </div>

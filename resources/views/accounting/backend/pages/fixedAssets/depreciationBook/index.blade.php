@@ -32,9 +32,20 @@
                 <div class="panel-boby p-3">
                     <form action="{{ url('accounting/depreciation-book') }}" method="get" accept-charset="utf-8">
                         <div class="row pr-3">
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-10 col-sm-12">
                                 <div class="row">
-                                    <div class="col-md-5 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
+                                        <label for="company_id"><strong>Company</strong></label>
+                                        <select name="company_id" id="company_id" class="form-control">
+                                            <option value="{{ null }}">All Companies</option>
+                                            @if(isset($companies[0]))
+                                            @foreach($companies as $key => $company)
+                                            <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                            @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
                                         <label for="year"><strong>Year:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="year" id="year" class="form-control rounded">
@@ -47,7 +58,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-7 col-sm-12">
+                                    <div class="col-md-4 col-sm-12">
                                         <label for="month"><strong>Month:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="month" id="month" class="form-control rounded">

@@ -34,6 +34,18 @@
                         <div class="col-md-12">
                             <form action="{{ url('accounting/fixed-asset-register') }}" method="get" accept-charset="utf-8">
                                 <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="company_id"><strong>Company</strong></label>
+                                            <select name="company_id" id="company_id" class="form-control">
+                                                @if(isset($companies[0]))
+                                                @foreach($companies as $key => $company)
+                                                <option value="{{ $company->id }}" {{ $company_id == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="from"><strong>From</strong></label>
@@ -54,9 +66,12 @@
                                 </div>
                             </form>
                         </div>
+
+                        @if($company_id > 0)
                         <div class="col-md-12">
                             @include('yajra.datatable')
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>

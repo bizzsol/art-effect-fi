@@ -49,6 +49,19 @@
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <div class="form-group">
+                                                        <label for="company_id"><strong>Company</strong></label>
+                                                        <select name="company_id" id="company_id" class="form-control">
+                                                            <option value="{{ null }}">All Companies</option>
+                                                            @if(isset($companies[0]))
+                                                            @foreach($companies as $key => $company)
+                                                            <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
+                                                            @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
                                                         <label for="status"><strong>Status</strong></label>
                                                         <select name="status" id="status" class="form-control">
                                                             <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Waiting for Approval</option>
@@ -78,8 +91,7 @@
                                                 </div>
                                                 <div class="col-md-1 pt-1 pl-0 mt-4">
                                                     <a class="btn btn-md mt-1 btn-block btn-danger"
-                                                       href="{{ url('accounting/requisition-finance-approval') }}"><i
-                                                                class="la la-times"></i>&nbsp;Clear</a>
+                                                       href="{{ url('accounting/requisition-finance-approval') }}"><i class="la la-times"></i>&nbsp;Clear</a>
                                                 </div>
                                             </div>
                                         </form>
@@ -87,7 +99,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="panel-body">
                             @include('yajra.datatable')

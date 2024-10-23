@@ -42,21 +42,24 @@
                         <div class="row pr-3 pt-3">
                             @if(isset($companies[0]))
                             @foreach($companies as $company)
+                            @php
+                                $options = chartOfAccountsOptions([], 0, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id));
+                            @endphp
                             <div class="col-md-12 mb-3">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label for="overhouling_expense_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Overhouling Expense Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="overhouling_expense_ledger_id[{{ $company->id }}]" id="overhouling_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->overhouling_expense_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                            <select name="overhouling_expense_ledger_id[{{ $company->id }}]" id="overhouling_expense_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->overhouling_expense_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="accidental_loss_ledger_id_{{ $company->id }}"><strong>{{ $company->code }} Accidental Loss Ledger:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <select name="accidental_loss_ledger_id[{{ $company->id }}]" id="accidental_loss_ledger_id_{{ $company->id }}" class="form-control rounded select-me">
-                                                {!! chartOfAccountsOptions([], $company->accidental_loss_ledger_id, 0, $all, false, '', false, [$company->id], true, getLedgerBalances($all, $company->id, getActiveFiscalYear($company->id)->id)) !!}
+                                            <select name="accidental_loss_ledger_id[{{ $company->id }}]" id="accidental_loss_ledger_id_{{ $company->id }}" class="form-control rounded select-me" data-selected="{{ $company->accidental_loss_ledger_id }}">
+                                                {!! $options !!}
                                             </select>
                                         </div>
                                     </div>
@@ -79,4 +82,14 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('page-script')
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.each($('.select-me'), function(index, val) {
+            $(this).select2().val($(this).attr('data-selected')).trigger("change");
+        });
+    });
+</script>
 @endsection

@@ -36,16 +36,33 @@
 				<div class="panel-body">
 					<form action="{{ route('pms.po.cash.approval.list') }}" method="get" accept-charset="utf-8">
 						<div class="row mb-3">
-							<div class="col-md-4 offset-md-4">
-								<div class="row">
-									@if(stringStatusArray())
-									@foreach(stringStatusArray() as $key => $status)
-									<div class="col-md-4 pl-0 pr-0">
-										<a class="btn btn-md btn-block {{ $cash_status == $key ? 'btn-primary' : 'btn-dark' }}" href="{{ url('pms/po-cash-approval?cash_status='.$key) }}" style="border-radius: 0px !important">{{$status}}</a>
-									</div>
-									@endforeach
-									@endif
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="company_id"><strong>Company</strong></label>
+									<select class="form-control" name="company_id" id="company_id">
+										<option value="{{ null }}">All Company</option>
+										@if(isset($companies[0]))
+										@foreach($companies as $company)
+										<option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>{{ $company->code }}</option>
+										@endforeach
+										@endif
+									</select>
 								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label for="cash_status"><strong>Status</strong></label>
+									<select class="form-control" name="cash_status" id="cash_status">
+										@if(stringStatusArray())
+										@foreach(stringStatusArray() as $key => $status)
+										<option value="{{ $key }}" {{ $cash_status == $key ? 'selected' : '' }}>{{ $status }}</option>
+										@endforeach
+										@endif
+									</select>
+								</div>
+							</div>
+							<div class="col-md-2 pt-4">
+								<button class="btn btn-success btn-md mt-2 btn-block">Search</button>
 							</div>
 						</div>
 					</form>

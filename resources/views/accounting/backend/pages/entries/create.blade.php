@@ -39,7 +39,6 @@
                     <li class="active">{{__($title)}}</li>
                     <li class="top-nav-btn">
                         <a class="btn btn-sm btn-success text-white" title="Upload Excel" data-toggle="modal" data-target="#uploadExcel"><i class="las la-upload"></i>&nbsp;Upload Excel</a>
-
                         @if(isset(session()->get('entries-items')[0]))
                         <a class="btn btn-sm btn-danger text-white" href="{{ url()->full() }}&clear-entry-items"><i class="las la-times"></i>&nbsp;Reset Excel Data</a>
                         @endif
@@ -245,12 +244,18 @@
                                             @foreach(session()->get('entries-items') as $key => $item)
                                                 <tr>
                                                     <td>
-                                                        <select name="cost_centre_id[]" class="form-control cost_centre_id select2 choose-me" data-selected="{{ $item['cost_centre_id'] }}">{!! $costCentres !!}</select>
+                                                        <input type="hidden" name="cost_centre_id[]" value="{{ $item['cost_centre_id'] }}">
+                                                        [{{ $item['cost_centre_code'] }}]&nbsp;{{ $item['cost_centre_name'] }}
+                                                        
+                                                        {{-- <select name="cost_centre_id[]" class="form-control cost_centre_id select2 choose-cc" data-selected="{{ $item['cost_centre_id'] }}"></select> --}}
                                                     </td>
                                                     <td>
                                                         <div class="row ledger-parent">
                                                             <div class="col-md-12 ledger">
-                                                                <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 choose-me" onchange="getSubLedgers($(this));Entries();" data-selected="{{ $item['chart_of_account_id'] }}">{!! $chartOfAccountsOptions !!}</select>
+                                                                <input type="hidden" name="chart_of_account_id[]" value="{{ $item['chart_of_account_id'] }}">
+                                                                [{{ $item['chart_of_account_code'] }}]&nbsp;{{ $item['chart_of_account_name'] }}
+
+                                                                {{-- <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 choose-coa" onchange="getSubLedgers($(this));Entries();" data-selected="{{ $item['chart_of_account_id'] }}"></select> --}}
                                                             </div>
                                                             <div class="col-md-12 sub-ledger mt-2" style="display: none">
                                                                 <select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ isset($item['sub_ledger_id']) ? $item['sub_ledger_id'] : null }}">
@@ -394,14 +399,20 @@
     <div id="coa" style="display: none">
         {!! $chartOfAccountsOptions !!}
     </div>
+    <div id="cc" style="display: none">
+        {!! $costCentres !!}
+    </div>
 @endsection
 @section('page-script')
     <script type="text/javascript">
         var session_items = parseInt("{{ isset(session()->get('entries-items')[0]) ? count(session()->get('entries-items')) : 0 }}");
         if(session_items > 0){
-            $.each($('.choose-me'), function(index, val) {
-                $(this).select2().val($(this).attr('data-selected')).trigger("change");
-            });
+            // $.each($('.choose-cc'), function(index, val) {
+            //     $(this).html($('#cc').html()).select2().val($(this).attr('data-selected')).trigger("change");
+            // });
+            // $.each($('.choose-coa'), function(index, val) {
+            //     $(this).html($('#coa').html()).select2().val($(this).attr('data-selected')).trigger("change");
+            // });
             calculation();
         }else{
             add();
@@ -411,7 +422,7 @@
         function add() {
             $('.entries').append('<tr>' +
                 '<td>' +
-                '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>' +
+                '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">'+($('#cc').html())+'</select>' +
                 '</td>' +
                 '<td>' +
                     '<div class="row ledger-parent">' +
