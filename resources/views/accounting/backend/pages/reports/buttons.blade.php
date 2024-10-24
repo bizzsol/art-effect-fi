@@ -30,6 +30,17 @@
 
 @section('page-script')
     <script type="text/javascript">
+        function searchReport(element) {
+            $.each($('.report-tbody').find('tr'), function(index, val) {
+                var tr = $(this).text().toLowerCase();
+                if(tr.search(element.val().toLowerCase()) != -1){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
+        }
+
         function zeroBalanceFilter(){
             $.each($('.closing_balance_column'), function(index, val) {
                 if($('#zero_balance').val() == 1){
@@ -86,10 +97,12 @@
             .done(function(response) {
                 button.prop('disabled', false).html('<i class="la la-search"></i>&nbsp;Search');
                 $('.report-view').html(response);
+                $('.report-search').show();
             })
             .fail(function(response) {
                 button.prop('disabled', false).html('<i class="la la-search"></i>&nbsp;Search');
                 $('.report-view').html(response).hide();
+                $('.report-search').hide();
             });
         }
 

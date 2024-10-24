@@ -22,47 +22,7 @@
 		$searchAccountsArray = $searchAccounts->pluck('id')->toArray();
 		$grandAmounts = [];
 	@endphp
-
-	@if(isset($this_company->profitCentres[0]))
-	@foreach($this_company->profitCentres as $profitCentre)
-		@php
-			$profitCentreEntries = $items->where('profit_centre_id', $profitCentre->id);
-		@endphp
-		@if($profitCentreEntries->count() > 0)
-		@php
-			$amounts = [];
-			foreach(ageingDays() as $key => $days){
-				$from = $days[1] ? date('Y-m-d', strtotime('-'.($days[1] == 1 ? 0 : $days[1]).' days')) : false;
-				$to = $days[0] ? date('Y-m-d', strtotime('-'.($days[1] == 1 ? 0 : $days[1]).' days')) : false;
-				$thisEntries = $profitCentreEntries->whereIn('chart_of_account_id', $searchAccountsArray)
-				->when($from, function($query) use($from){
-					return $query->where('date', '>', $from);
-				})
-				->when($to, function($query) use($to){
-					return $query->where('date', '<=', $to);
-				});
-				
-				$amounts[$days[0]] = $thisEntries->where('debit_credit', 'D')->sum('amount')-$thisEntries->where('debit_credit', 'C')->sum('amount');
-			}
-		@endphp
-		<tr>
-			<td>{{ $profitCentre->name }}</td>
-			@foreach($amounts as $amount)
-			<td class="text-right">{{ systemMoneyFormat($amount) }}</td>
-			@endforeach
-			<td class="text-right">{{ systemMoneyFormat(array_sum(array_values($amounts))) }}</strong></td>
-		</tr>
-
-
-		@php
-
-		@endphp
-		
-		@endif
-	@endforeach
-	@endif
-
-	{{-- @foreach($companyEntries as $code => $entries)
+	@foreach($companyEntries as $code => $entries)
 	@if(isset($entries[0]))
 	@php
 		$companyInformation = $customers->where('code', $code)->first();
@@ -132,7 +92,7 @@
 		<td style="width: 8.5%;" class="text-right"><strong>{{ isset($grandAmounts[$days[0]]) ? systemMoneyFormat($grandAmounts[$days[0]]) : 0 }}</strong></td>
 		@endforeach
 		<td style="width: 10%;" class="text-right"><strong>{{ systemMoneyFormat(array_sum(array_values($grandAmounts))) }}</strong></td>
-	</tr> --}}
+	</tr>
 </table>
 
 @if(request()->get('report_type') == 'report')

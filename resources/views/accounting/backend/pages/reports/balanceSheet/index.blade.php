@@ -72,7 +72,7 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <label for="from"><strong>From</strong></label>
@@ -100,20 +100,13 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-12">
                                                     <label for="group_wise"><strong>Group Wise</strong></label>
                                                     <select name="group_wise" id="group_wise" class="form-control">
                                                         <option value="0">No</option>
                                                         <option value="1">Yes</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label for="zero_balance"><strong>Zero Balance</strong></label>
-                                                    <select name="zero_balance" id="zero_balance" class="form-control" onchange="zeroBalanceFilter()">
-                                                        <option value="1">Yes</option>
-                                                        <option value="0">No</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -134,6 +127,19 @@
 
                     <div class="panel panel-info mt-2 p-2">
                         <div class="row">
+                            <div class="col-md-12 report-search mb-2" style="display: none">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <input type="text" placeholder="Search Ledger Code and Names here..." class="form-control search-report" onchange="searchReport($(this))" onkeyup="searchReport($(this))">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="zero_balance" id="zero_balance" class="form-control" onchange="zeroBalanceFilter()">
+                                            <option value="1">Show Zero Balance</option>
+                                            <option value="0">Hide Zero Balance</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-12 report-view export-table" style="display: none">
 
                             </div>

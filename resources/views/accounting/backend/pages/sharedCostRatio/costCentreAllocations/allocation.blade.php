@@ -31,21 +31,23 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th style="width: 5%;">SL</th>
-                            <th style="width: 10%;">Type</th>
-                            <th style="width: 15%;">Company</th>
-                            <th style="width: 25%;">Cost Centre</th>
-                            <th style="width: 35%;">Chart of Account</th>
-                            <th style="width: 10%;">Allocation</th>
+                            <th style="width: 2.5%;">SL</th>
+                            <th style="width: 7.5%;">Type</th>
+                            <th style="width: 5%;">Company</th>
+                            <th style="width: 20%;">Cost Centre</th>
+                            <th style="width: 30%;">Chart of Account</th>
+                            <th style="width: 30%;">Counter Chart of Account</th>
+                            <th style="width: 5%;">Allocation</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td class="text-center">1.</td>
                             <td class="text-center"><strong>Source</strong></td>
-                            <td>[{{ $allocation->costCentre->profitCentre->company->code }}] {{ $allocation->costCentre->profitCentre->company->name }}</td>
+                            <td>{{ $allocation->costCentre->profitCentre->company->code }}</td>
                             <td>[{{ $allocation->costCentre->code }}] {{ $allocation->costCentre->name }}</td>
                             <td>[{{ $allocation->chartOfAccount->code }}] {{ $allocation->chartOfAccount->name }}</td>
+                            <td>@if(isset($allocation->counterChartOfAccount->code)) [{{ $allocation->counterChartOfAccount->code }}] {{ $allocation->counterChartOfAccount->name }} @endif</td>
                             <td class="text-right"><strong>{{ $allocation->allocation }}%</strong></td>
                         </tr>
 
@@ -54,9 +56,10 @@
                         <tr>
                             <td class="text-center">{{ $key+2 }}.</td>
                             <td class="text-center"><strong>Destination</strong></td>
-                            <td>[{{ $target->costCentre->profitCentre->company->code }}] {{ $target->costCentre->profitCentre->company->name }}</td>
+                            <td>{{ $target->costCentre->profitCentre->company->code }}</td>
                             <td>[{{ $target->costCentre->code }}] {{ $target->costCentre->name }}</td>
                             <td>[{{ $target->chartOfAccount->code }}] {{ $target->chartOfAccount->name }}</td>
+                            <td>@if(isset($target->counterChartOfAccount->code)) [{{ $target->counterChartOfAccount->code }}] {{ $target->counterChartOfAccount->name }} @endif</td>
                             <td class="text-right"><strong>{{ $target->allocation }}%</strong></td>
                         </tr>
                         @endforeach

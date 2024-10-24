@@ -170,6 +170,16 @@
             </div>
         </div>
     </div>
+
+    <div id="cc" style="display: none">
+        {!! $costCentres !!}
+    </div>
+    <div id="coa" style="display: none">
+        {!! $chartOfAccountsOptions !!}
+    </div>
+    <div id="ct" style="display: none">
+        {!! $currencyTypes !!}
+    </div>
 @endsection
 @section('page-script')
     <script type="text/javascript">
@@ -186,13 +196,13 @@
         function add() {
             $('.entries').append('<tr>' +
                 '<td>' +
-                    '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">{!! $costCentres !!}</select>' +
+                    '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">'+($('#cc').html())+'</select>' +
                 '</td>' +
                 '<td>' +
-                    '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2">{!! $chartOfAccountsOptions !!}</select>' +
+                    '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2">'+($('#coa').html())+'</select>' +
                 '</td>' +
                 '<td>' +
-                    '<select name="currency_id[]" class="form-control currency_id select2">{!! $currencyTypes !!}</select>' +
+                    '<select name="currency_id[]" class="form-control currency_id select2">'+($('#ct').html())+'</select>' +
                 '</td>' +
                 '<td>' +
                     '<input type="number" min="0" step="any" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">' +

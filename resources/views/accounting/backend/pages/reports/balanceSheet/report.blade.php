@@ -18,7 +18,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="report-tbody">
                         {!! $assets !!}
                     </tbody>
                 </table> 
@@ -42,7 +42,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="report-tbody">
                         {!! $liabilities !!}
                     </tbody>
                 </table>

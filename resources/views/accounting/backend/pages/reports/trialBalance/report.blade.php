@@ -9,7 +9,7 @@
            <th style="width: 15%" class="text-right closing_balance_column">Closing Balance</th>
        </tr>
    </thead>
-   <tbody>
+   <tbody class="report-tbody">
        {!! $trialBalance !!}
    </tbody>
 </table>

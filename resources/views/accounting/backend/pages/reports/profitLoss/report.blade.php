@@ -18,7 +18,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="report-tbody">
                         {!! $incomes !!}
                     </tbody>
                 </table> 
@@ -42,7 +42,7 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="report-tbody">
                         {!! $expenses !!}
                     </tbody>
                 </table>

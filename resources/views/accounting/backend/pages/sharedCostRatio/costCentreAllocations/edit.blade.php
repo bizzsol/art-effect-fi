@@ -52,11 +52,12 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 10%">Type</th>
-                                            <th style="width: 15%">Company</th>
-                                            <th style="width: 20%">Cost Centre</th>
-                                            <th style="width: 30%">Chart of Account</th>
-                                            <th style="width: 15%">Allocation</th>
-                                            <th style="width: 10%">Actions</th>
+                                            <th style="width: 10%">Company</th>
+                                            <th style="width: 15%">Cost Centre</th>
+                                            <th style="width: 25%">Chart of Account</th>
+                                            <th style="width: 25%">Counter Chart of Account</th>
+                                            <th style="width: 10%">Allocation</th>
+                                            <th style="width: 5%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="destinations">
@@ -86,6 +87,11 @@
                                             <td>
                                                 <select name="ledgers[]" class="form-control ledgers select2">
                                                     {!! chartOfAccountsOptions([], $allocation->chart_of_account_id, 0, $all, false, 'yes', false, [$allocation->costCentre->profitCentre->company_id], true, getLedgerBalances($all, $allocation->costCentre->profitCentre->company_id, getActiveFiscalYear($allocation->costCentre->profitCentre->company_id)->id)) !!}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="counter_ledgers[]" class="form-control counter-ledgers select2">
+                                                    {!! chartOfAccountsOptions([], $allocation->counter_chart_of_account_id, 0, $all, false, 'yes', false, [$allocation->costCentre->profitCentre->company_id], true, getLedgerBalances($all, $allocation->costCentre->profitCentre->company_id, getActiveFiscalYear($allocation->costCentre->profitCentre->company_id)->id)) !!}
                                                 </select>
                                             </td>
                                             <td>
@@ -127,6 +133,11 @@
                                                     </select>
                                                 </td>
                                                 <td>
+                                                    <select name="counter_ledgers[]" class="form-control counter-ledgers select2">
+                                                        {!! chartOfAccountsOptions([], $target->counter_chart_of_account_id, 0, $all, false, 'yes', false, [$target->costCentre->profitCentre->company_id], true, getLedgerBalances($all, $target->costCentre->profitCentre->company_id, getActiveFiscalYear($target->costCentre->profitCentre->company_id)->id)) !!}
+                                                    </select>
+                                                </td>
+                                                <td>
                                                     <input type="number" name="allocations[]" id="allocations" value="{{ $target->allocation }}" min="1" max="100" class="form-control destination-allocations" />
                                                 </td>
                                                 <td class="text-center">
@@ -138,7 +149,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="6" class="text-right">
+                                            <td colspan="7" class="text-right">
                                                 <a class="btn btn-success btn-sm text-white" onclick="addNewDestination()"><i class="las la-plus"></i>&nbsp;Add New Destination</a>
                                             </td>
                                         </tr>
@@ -190,6 +201,9 @@
                                         '<select name="ledgers[]" class="form-control ledgers select2"></select>'+
                                     '</td>'+
                                     '<td>'+
+                                        '<select name="counter_ledgers[]" class="form-control counter-ledgers select2"></select>'+
+                                    '</td>'+
+                                    '<td>'+
                                         '<input type="number" name="allocations[]" id="allocations" value="0" min="1" max="100" class="form-control destination-allocations" />'+
                                     '</td>'+
                                     '<td class="text-center">'+
@@ -214,6 +228,7 @@
         .done(function(response) {
             element.parent().parent().parent().find('.cost-centres').html(response.cost_centres).change();
             element.parent().parent().parent().find('.ledgers').html(response.ledgers).change();
+            element.parent().parent().parent().find('.counter-ledgers').html(response.ledgers).change();
         });
     }
 </script>

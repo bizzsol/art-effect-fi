@@ -134,7 +134,22 @@
                                     <input type="date" name="date" id="date" value="{{ date('Y-m-d', strtotime($date)) }}" class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-8 pt-4">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="per_page"><strong>Per Page</strong></label>
+                                    <select class="form-control" name="per_page" id="per_page">
+                                        <option>50</option>
+                                        <option>100</option>
+                                        <option>200</option>
+                                        <option>300</option>
+                                        <option>400</option>
+                                        <option>500</option>
+                                        <option>1000</option>
+                                        <option>10000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 pt-4">
                                 <input type="hidden" name="page" id="page" /> 
                                 @include('accounting.backend.pages.reports.buttons', [
                                     'url' => url('accounting/customer-ageing?chart_of_account_id='.request()->get('chart_of_account_id').'&from='.request()->get('date')),
@@ -147,7 +162,10 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-info mt-2 p-2 report-view export-table">
+    <div class="col-md-12 report-search p-2 bg-white" style="display: none">
+        <input type="text" placeholder="Search Customer Code and Names here..." class="form-control search-report" onchange="searchReport($(this))" onkeyup="searchReport($(this))">
+    </div>
+    <div class="panel panel-info p-2 report-view export-table">
         
     </div>
 </div>

@@ -51,11 +51,12 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 10%">Type</th>
-                                            <th style="width: 15%">Company</th>
-                                            <th style="width: 20%">Cost Centre</th>
-                                            <th style="width: 30%">Chart of Account</th>
-                                            <th style="width: 15%">Allocation</th>
-                                            <th style="width: 10%">Actions</th>
+                                            <th style="width: 10%">Company</th>
+                                            <th style="width: 15%">Cost Centre</th>
+                                            <th style="width: 25%">Chart of Account</th>
+                                            <th style="width: 25%">Counter Chart of Account</th>
+                                            <th style="width: 10%">Allocation</th>
+                                            <th style="width: 5%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="destinations">
@@ -63,7 +64,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td colspan="6" class="text-right">
+                                            <td colspan="7" class="text-right">
                                                 <a class="btn btn-success btn-sm text-white" onclick="addNewDestination()"><i class="las la-plus"></i>&nbsp;Add New Destination</a>
                                             </td>
                                         </tr>
@@ -87,7 +88,7 @@
 <div style="display: none" id="destination-company">
     @if(isset($companies[0]))
     @foreach($companies as $company)
-    <option value="{{ $company->id }}">[{{ $company->code }}] {{ $company->name }}</option>
+    <option value="{{ $company->id }}">{{ $company->code }}</option>
     @endforeach
     @endif
 </div>
@@ -98,27 +99,30 @@
     addNewDestination();
     function addNewDestination() {
         $('#destinations').append('<tr>'+
-                                    '<td>'+
+                                    '<td style="width: 10%">'+
                                         '<select name="types[]" class="form-control select2">'+
                                             '<option value="source">Source</option>'+
                                             '<option value="destination">Destination</option>'+
                                         '</select>'+
                                     '</td>'+
-                                    '<td>'+
+                                    '<td style="width: 10%">'+
                                         '<div>'+
                                             '<select name="companies[]" onchange="getCompanyInformation($(this))" class="form-control company select2">'+($('#destination-company').html())+'</select>'+
                                         '</div>'+
                                     '</td>'+
-                                    '<td>'+
+                                    '<td style="width: 15%">'+
                                         '<select name="cost_centres[]" class="form-control cost-centres select2"></select>'+
                                     '</td>'+
-                                    '<td>'+
+                                    '<td style="width: 25%">'+
                                         '<select name="ledgers[]" class="form-control ledgers select2"></select>'+
                                     '</td>'+
-                                    '<td>'+
+                                    '<td style="width: 25%">'+
+                                        '<select name="counter_ledgers[]" class="form-control counter-ledgers select2"></select>'+
+                                    '</td>'+
+                                    '<td style="width: 10%">'+
                                         '<input type="number" name="allocations[]" id="allocations" value="0" min="1" max="100" class="form-control destination-allocations" />'+
                                     '</td>'+
-                                    '<td class="text-center">'+
+                                    '<td style="width: 5%" class="text-center">'+
                                         '<a class="btn btn-danger btn-sm text-white" onclick="removeDestination($(this))"><i class="las la-trash"></i></a>'+
                                     '</td>'+
                                 '</tr>');
@@ -140,6 +144,7 @@
         .done(function(response) {
             element.parent().parent().parent().find('.cost-centres').html(response.cost_centres).change();
             element.parent().parent().parent().find('.ledgers').html(response.ledgers).change();
+            element.parent().parent().parent().find('.counter-ledgers').html(response.ledgers).change();
         });
     }
 </script>

@@ -95,20 +95,22 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 10%">Type</th>
-                                    <th style="width: 20%">Company</th>
-                                    <th style="width: 25%">Cost Centre</th>
-                                    <th style="width: 20%">Chart of Account</th>
-                                    <th class="text-right" style="width: 7.5%">Allocation</th>
-                                    <th class="text-right" style="width: 17.5%">Amount</th>
+                                    <th class="text-center" style="width: 5%">Type</th>
+                                    <th style="width: 10%">Company</th>
+                                    <th style="width: 20%">Cost Centre</th>
+                                    <th style="width: 22.5%">Chart of Account</th>
+                                    <th style="width: 22.5%">Counter Chart of Account</th>
+                                    <th class="text-right" style="width: 5%">Allocation</th>
+                                    <th class="text-right" style="width: 15%">Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td class="text-center"><strong>Source</strong></td>
-                                    <td>[{{ $costCentreAllocation->costCentre->profitCentre->company->code }}] {{ $costCentreAllocation->costCentre->profitCentre->company->name }}</td>
+                                    <td>{{ $costCentreAllocation->costCentre->profitCentre->company->code }}</td>
                                     <td>[{{ $costCentreAllocation->costCentre->code }}] {{ $costCentreAllocation->costCentre->name }}</td>
                                     <td>[{{ $costCentreAllocation->chartOfAccount->code }}] {{ $costCentreAllocation->chartOfAccount->name }}</td>
+                                    <td>[{{ $costCentreAllocation->counterChartOfAccount->code }}] {{ $costCentreAllocation->counterChartOfAccount->name }}</td>
                                     <td class="text-right"><strong>{{ $costCentreAllocation->allocation }}%</strong></td>
                                     <td class="text-right"><strong>{{ systemMoneyFormat($balance) }}</strong></td>
                                 </tr>
@@ -117,9 +119,10 @@
                                 @foreach($costCentreAllocation->targets as $target)
                                 <tr>
                                     <td class="text-center"><strong>Destination</strong></td>
-                                    <td>[{{ $target->costCentre->profitCentre->company->code }}] {{ $target->costCentre->profitCentre->company->name }}</td>
+                                    <td>{{ $target->costCentre->profitCentre->company->code }}</td>
                                     <td>[{{ $target->costCentre->code }}] {{ $target->costCentre->name }}</td>
                                     <td>[{{ $target->chartOfAccount->code }}] {{ $target->chartOfAccount->name }}</td>
+                                    <td>[{{ $target->counterChartOfAccount->code }}] {{ $target->counterChartOfAccount->name }}</td>
                                     <td class="text-right"><strong>{{ $target->allocation }}%</strong></td>
                                     <td class="text-right"><strong>{{ systemMoneyFormat($balance != 0 && $target->allocation > 0 ? $balance*($target->allocation/100) : 0) }}</strong></td>
                                 </tr>
@@ -127,14 +130,14 @@
                                 @endif
                             </tbody>
                         </table>
-                        @if($balance != 0)
+                        {{-- @if($balance != 0) --}}
                             <div class="row">
                                 <div class="col-md-12 text-right">
                                     <a class="btn btn-dark btn-md" href="{{ url('accounting/shared-cost-ratios') }}"><i class="la la-times"></i>&nbsp;Cancel</a>
                                     <button type="submit" class="btn btn-success btn-md share-cost-ratio-button"><i class="la la-save"></i>&nbsp;Process Cost Centre Ratio Share</button>
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                         </form>
                     @endif
                     
