@@ -165,6 +165,22 @@
             });
         }
 
+        function getSuppliers() {
+            $('#customer_code').html('<option value="{{ null }}">Please wait...</option>');
+            $.ajax({
+                url: "{{ url('accounting/supplier-ageing') }}?get-suppliers&company_id="+$('#company_id').val()+"&profit_centre_id="+$('#profit_centre_id').find(':selected').val(),
+                type: 'GET',
+                data: {},
+            })
+            .done(function(response) {
+                var suppliers = '<option value="{{ null }}">All Suppliers</option>';
+                $.each(response, function(index, supplier) {
+                    suppliers += '<option value="'+supplier.id+'">'+supplier.name+'</option>';
+                });
+                $('#supplier_id').html(suppliers).change();
+            });
+        }
+
         function getSubLedgers(element) {
             var values = [];
             $.each(element.find("option:selected"), function(){            
