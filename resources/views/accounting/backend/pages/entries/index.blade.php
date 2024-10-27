@@ -120,7 +120,6 @@
                                     <label for="debit_ledger_id_"><strong>Debit Ledger</strong></label>
                                     <select name="debit_ledger_id" id="debit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('debit_ledger_id') }}" onchange="getSubLedgers($(this))">
                                         <option value="{{ null }}">All Debit Ledgers</option>
-                                        {!! $currentCOA !!}
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
@@ -134,7 +133,6 @@
                                     <label for="credit_ledger_id_"><strong>Credit Ledger</strong></label>
                                     <select name="credit_ledger_id" id="credit_ledger_id_" class="form-control select-me" data-selected="{{ request()->get('credit_ledger_id') }}" onchange="getSubLedgers($(this))">
                                         <option value="{{ null }}">All Credit Ledgers</option>
-                                        {!! $currentCOA !!}
                                     </select>
                                 </div>
                                 <div class="form-group sub-ledger mt-2" style="display: none">
@@ -242,6 +240,7 @@
         });
     }
 
+    getLedgers();
     function getLedgers() {
          $('#debit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
         $('#credit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
