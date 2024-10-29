@@ -168,12 +168,25 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-8">
+                                                <div class="col-md-2">
+                                                    <label for="company_id"><strong>{{ __('Company') }}:<span class="text-danger">&nbsp;*</span></strong></label>
+                                                    <div class="input-group input-group-md mb-3 d-">
+                                                        <select name="company_id" id="company_id" 
+                                                        class="form-control company_id select2" onchange="getCOA()">
+                                                            @if(isset($companies[0]))
+                                                            @foreach($companies as $key => $company)
+                                                                <option value="{{ $company->id }}">{{ $company->code }}</option>
+                                                            @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
                                                     <label for="chart_of_account_id"><strong>{{ __('Ledger') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                                     <div class="input-group input-group-md mb-3 d-">
-                                                        <select name="chart_of_account_id"
+                                                        <select name="chart_of_account_id" id="chart_of_account_id" 
                                                         class="form-control chart_of_account_id select2">
-                                                            {!! $chartOfAccountsOptions !!}
+                                                            
                                                         </select>
                                                     </div>
                                                 </div>
@@ -198,4 +211,20 @@
             </div>
         </div>
     </div>
+@endsection
+@section('page-script')
+<script type="text/javascript">
+    getCOA();
+    function getCOA() {
+        $('#chart_of_account_id').html('<option value="{{ null }}">Please wait....</option>');
+        $.ajax({
+            url: "{{ url('accounting/bank-accounts/create') }}?get-coa&company_id="+$('#company_id').val(),
+            type: 'GET',
+            data: {},
+        })
+        .done(function(response) {
+            $('#chart_of_account_id').html(response);
+        });
+    }
+</script>
 @endsection
