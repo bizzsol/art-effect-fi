@@ -1,3 +1,4 @@
+<span style="display: none" id="export-title">{{ $title }}</span>
 <table class="table table-bordered table-striped table-hover">
    <thead>
        <tr>

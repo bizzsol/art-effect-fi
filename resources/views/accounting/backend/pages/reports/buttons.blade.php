@@ -23,7 +23,7 @@
         </div>
     @else
         <div class="col-md-{{ !(!isset($searchHide) || !$searchHide) ? 4 : 2 }} pt-1 pl-0">
-            <button class="btn btn-sm btn-block btn-primary" type="button" onclick="exportReportToExcel('{{ $title }}')"><i class="lar la-file-excel"></i>&nbsp;Excel</button>
+            <button class="btn btn-sm btn-block btn-primary" type="button" onclick="exportReportToExcel()"><i class="lar la-file-excel"></i>&nbsp;Excel</button>
         </div>
     @endif
 </div>

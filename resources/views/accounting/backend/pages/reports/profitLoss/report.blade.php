@@ -1,3 +1,4 @@
+<span style="display: none" id="export-title">{{ $title }}</span>
 <table style="width: 100%">
     <tbody>
         <tr>
@@ -5,11 +6,9 @@
                <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            @if(!$groupWise)
                             <th style="width: 25%">
                                 <h5><strong>Codes</strong></h5>
                             </th>
-                            @endif
                             <th style="width: 50%">
                                 <h5><strong>{{ $incomeGroups->pluck('name')->implode(', ') }}</strong></h5>
                             </th>
@@ -29,11 +28,9 @@
                 <table class="table table-bordered table-striped table-hover">
                     <thead>
                         <tr>
-                            @if(!$groupWise)
                             <th style="width: 25%">
                                 <h5><strong>Codes</strong></h5>
                             </th>
-                            @endif
                             <th style="width: 50%">
                                 <h5><strong>{{ $expenseGroups->pluck('name')->implode(', ') }}</strong></h5>
                             </th>

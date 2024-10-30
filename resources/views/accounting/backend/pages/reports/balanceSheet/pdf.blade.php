@@ -103,16 +103,7 @@
   
   <body>
     <htmlpageheader name="page-header">
-      <div class="row mb-3 print-header">
-        <div class="col-md-6" style="width: 50%;float:left;padding-top: 135px">
-          <h2><strong>{{ $title }}</strong></h2>
-        </div>
-        {{-- <div class="col-md-6 text-right" style="width: 50%;float:left;padding-top: 50px">
-          @if(!empty($purchaseOrder->Unit->hr_unit_logo) && file_exists(public_path($purchaseOrder->Unit->hr_unit_logo)))
-            <img src="{{ str_replace('/assets','assets', $purchaseOrder->Unit->hr_unit_logo) }}" alt="logo" style="float: right !important;height: 15mm; width:  35mm; margin: 0;" />
-          @endif
-        </div> --}}
-      </div>
+      <h2 style="padding-top: 115px"><strong>{{ $title }}</strong></h2>
     </htmlpageheader>
 
     <htmlpagefooter name="page-footer">
@@ -167,11 +158,9 @@
     <div class="container">
       <table class="table table-bordered">
         <tr>
-          @if(!$groupWise)
           <td style="width: 20%;padding: 10px 10px 10px 10px !important">
             <h5 style="font-size: 16px;"><strong>Codes</strong></h5>
           </td>
-          @endif
           <td style="width: 50%;padding: 10px 10px 10px 10px !important">
             <h5 style="font-size: 16px;"><strong>{{ $assetGroups->pluck('name')->implode(', ') }}</strong></h5>
           </td>
@@ -184,11 +173,9 @@
       <table class="table table-bordered">
         <tr>
           <tr>
-            @if(!$groupWise)
             <td style="width: 20%;padding: 10px 10px 10px 10px !important">
               <h5 style="font-size: 16px;"><strong>Codes</strong></h5>
             </td>
-            @endif
             <td style="width: 50%;padding: 10px 10px 10px 10px !important">
               <h5 style="font-size: 16px;"><strong>{{ $liabilityGroups->pluck('name')->implode(', ') }}</strong></h5>
             </td>

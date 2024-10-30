@@ -483,17 +483,13 @@
         }
     }
 
-    function exportReportToExcel(filename = '') {
-        // var test = $('.export-table');
-        // window.open('data:application/vnd.ms-excel,' + 
-        //     encodeURIComponent(test[0].outerHTML));
-
+    function exportReportToExcel() {
         var downloadLink;
         var dataType = 'application/vnd.ms-excel';
         let tableSelect = document.querySelector(".export-table");
         var tableHTML = encodeURIComponent(tableSelect.outerHTML);
 
-        filename = filename?filename+'.xls':'Report.xls';
+        filename = $('#export-title').text()+'.xls';
         downloadLink = document.createElement("a");
 
         document.body.appendChild(downloadLink);
