@@ -260,7 +260,7 @@
                 <br>
                 <strong>Deliver to:</strong> {{isset($purchaseOrder->Unit->hr_unit_name)?$purchaseOrder->Unit->hr_unit_name:''}}
                 <div>
-                    {!! isset($purchaseOrder->Unit->hr_unit_address)?$purchaseOrder->Unit->hr_unit_address:'' !!}
+                    {!! isset($purchaseOrder->Unit->delivery_address) ? $purchaseOrder->Unit->delivery_address : '' !!}
                 </div>
                 <br>
                 <strong>Order is valid till: {{ isset($purchaseOrder->relQuotation->delivery_date) ? date('d-M-y', strtotime($purchaseOrder->relQuotation->delivery_date)) : '' }}</strong>
@@ -356,9 +356,10 @@
         <thead>
         <tr class="text-center">
             <td style="text-align:  center;width: 5% !important"><strong>Item No.</strong></td>
-            <td style="text-align:  center;width: 15% !important"><strong>Product</strong></td>
-            <td style="text-align:  center;width: 30% !important"><strong>Description</strong></td>
-            <td style="text-align:  center;width: 10% !important"><strong>Quantity</strong></td>
+            <td style="text-align:  center;width: 10% !important"><strong>Sub Category</strong></td>
+            <td style="text-align:  center;width: 16% !important"><strong>Product</strong></td>
+            <td style="text-align:  center;width: 21% !important"><strong>Description</strong></td>
+            <td style="text-align:  center;width: 8% !important"><strong>Qty</strong></td>
             <td style="text-align:  center;width: 10% !important"><strong>Unit Price</strong></td>
             {{-- @if($purchaseOrder->relPurchaseOrderItems->sum('vat') > 0)
                 <td style="text-align:  center;width: 7.5% !important"><strong>Item Total</strong></td>
@@ -373,6 +374,9 @@
         @foreach($purchaseOrder->relPurchaseOrderItems as $key=>$item)
             <tr>
                 <td class="text-center">{{ $key+1}}</td>
+                <td>
+                    {{ isset($item->relProduct->category->name) ? $item->relProduct->category->name : '' }}
+                </td>
                 <td>
                     {{ isset($item->relProduct->name) ? $item->relProduct->name : '' }} {{ getProductAttributesFaster($item->relProduct) }} {{ getProductAttributesFaster($requisitionItems->where('uid', $item->uid)->first()) }} ({{ isset($item->relProduct->productUnit->unit_name) ? $item->relProduct->productUnit->unit_name : '' }})
                 </td>
@@ -390,20 +394,20 @@
         @endforeach
 
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 <strong>Total</strong>
             </td>
             <td class="text-right"><strong>{{ systemMoneyFormat($purchaseOrder->relPurchaseOrderItems->sum('sub_total_price')) }}</strong></td>
         </tr>
         <tr>
-            <td colspan="5" class="text-right">
+            <td colspan="6" class="text-right">
                 {{-- <strong>VAT ({{ ucwords($purchaseOrder->relPurchaseOrderItems->first()->vat_type) }} {{ $purchaseOrder->relPurchaseOrderItems->first()->vat_percentage > 0 ? ', '.$purchaseOrder->relPurchaseOrderItems->first()->vat_percentage.'%' : '' }})</strong> --}}
                 <strong>VAT ({{ $purchaseOrder->relPurchaseOrderItems->first()->vat_percentage.'%' }})</strong>
             </td>
             <td class="text-right"><strong>{{ systemMoneyFormat($purchaseOrder->vat) }}</strong></td>
         </tr>
         <tr>
-            <td colspan="4">
+            <td colspan="5">
                 Total In word: <strong>{{ inWordBn(systemDoubleValue($purchaseOrder->relPurchaseOrderItems->sum('total_price'), 2), true, $purchaseOrder->relQuotation->exchangeRate->currency->name, $purchaseOrder->relQuotation->exchangeRate->currency->hundreds) }} only</strong>
             </td>
             <td class="text-right">
@@ -520,4 +524,4 @@
 
 </div>
 </body>
-</html>																																																								
+</html>                                                                                                                                                                                                                             

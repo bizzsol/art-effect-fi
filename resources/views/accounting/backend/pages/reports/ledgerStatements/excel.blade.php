@@ -83,9 +83,9 @@
                     <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
                        data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
                         <p>
-                            Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') }}</p>
+                            Debit: {{ $entry->items->where('debit_credit', 'D')->count() > 0 ? $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') : '' }}</p>
                         <p>
-                            Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') }}</p>
+                            Credit: {{ $entry->items->where('debit_credit', 'C')->count() > 0 ? $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') : '' }}</p>
                     </a>
                 </td>
                 <td>
