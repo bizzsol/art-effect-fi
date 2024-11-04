@@ -3,10 +3,13 @@
 @section('page-css')
 <style type="text/css">
     .am5exporting-menu.am5exporting-valign-top{
-        top: -60px !important;
+        top: -80px !important;
     }
     .am5exporting-icon{
-        width: 75px !important;
+        font-size: 20px !important;
+        height: 35px !important;
+        width: 35px !important;
+        padding: 1px 7px !important;
         color: #fff !important;
         background-color: black !important;
         border-color: #1e7e34 !important;
@@ -26,61 +29,110 @@
 @endsection
 @section('main-content')
 <div class="row pt-4">
-    <div class="col-md-12 mb-4">
-        <form action="{{ url('accounting') }}" method="get">
-            <div class="form-group row">
-                <div class="col-md-2">
-                    <label for="fiscal_year_id"><strong>Fiscal Year</strong></label>
-                    <select class="form-control" name="fiscal_year_id" id="fiscal_year_id" onchange="printDate()">
-                        @if(isset($fiscalYears[0]))
-                        @foreach($fiscalYears as $fy)
-                        <option value="{{ $fy->id }}" data-start="{{ $fy->start }}" data-end="{{ $fy->end }}" {{ $fiscal_year_id == $fy->id ? 'selected' : '' }}>{{ $fy->title }}</option>
-                        @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="from"><strong>From</strong></label>
-                    <input type="date" class="form-control" name="from" id="from" value="{{ $from }}">
-                </div>
-                <div class="col-md-2">
-                    <label for="to"><strong>To</strong></label>
-                    <input type="date" class="form-control" name="to" id="to" value="{{ $to }}">
-                </div>
-                <div class="col-md-2 pt-4">
-                    <button class="btn btn-success mt-2 btn-md btn-block text-white"><i class="las la-search"></i>&nbsp;Search</button>
-                </div>
-            </div>
-        </form>
-    </div>
     <div class="col-md-12">
         <div class="row">
-            @if(isset($companies[0]))
-            @foreach($companies as $company)
-            @php
-                $chart_title = $company->code.' Transactions ('.$fiscalYears->where('id', $fiscal_year_id)->first()->title.' | '.$from.' to '.$to.')';
-            @endphp
-            <div class="col-md-6 mb-4">
+            @foreach ($transactions as $slug => $transaction)
+            <div class="col-md-6 mb-5">
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0 text-white" id="company-entries-title-{{ $company->id }}"><strong>{{ $chart_title }}</strong></h6>
+                        <h4 class="mb-0 text-white"><strong>{{ $transaction['name'] }}</strong></h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-2">
                         <div class="row">
-                            <div class="col-md-12">
-                                <div id="company-entries-{{ $company->id }}" style="height: 375px;"></div>
+                            <div class="col-md-12 mb-3">
+                                <form action="{{ url('accounting') }}?get-chart&slug={{ $slug }}" method="get" class="chart-form chart-form-{{ $slug }}" chart-type="{{ $slug }}">
+                                    <div class="form-group row">
+                                        <div class="col-md-4 pr-0">
+                                            <label for="{{ $slug }}_company_id"><strong>Company</strong></label>
+                                            <select class="form-control" name="company_id" id="{{ $slug }}_company_id" @if(isset($transaction['ledger']) && $transaction['ledger'])  onchange="chooseFiscalYear('{{ $slug }}');getCOA('{{ $slug }}')" @else  onchange="chooseFiscalYear('{{ $slug }}')" @endif>
+                                                @if(isset($companies[0]))
+                                                @foreach($companies as $company)
+                                                <option value="{{ $company->id }}" active-fiscal-year="{{ isset($activeFiscalYears[$company->id]->id) ? $activeFiscalYears[$company->id]->id : 0 }}">{{ $company->code }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 pr-0">
+                                            <label for="{{ $slug }}_fiscal_year_id"><strong>Fiscal Year</strong></label>
+                                            <select class="form-control" name="fiscal_year_id" id="{{ $slug }}_fiscal_year_id" onchange="printDate('{{ $slug }}')">
+                                                @if(isset($fiscalYears[0]))
+                                                @foreach($fiscalYears as $fy)
+                                                <option value="{{ $fy->id }}" data-start="{{ $fy->start }}" data-end="{{ $fy->end }}">{{ $fy->title }}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="{{ $slug }}_to"><strong>Date</strong></label>
+                                            <input type="date" class="form-control" name="to" id="{{ $slug }}_to" value="{{ isset($currentFiscalYear->end) ? $currentFiscalYear->end : '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        @if(isset($transaction['group']) && $transaction['group'])
+                                        <div class="col-md-9 pr-0">
+                                            <label for="{{ $slug }}_account_group_id"><strong>Group</strong></label>
+                                            <select class="form-control" name="account_group_id" id="{{ $slug }}_account_group_id">
+                                                <option value="0">All Account Groups</option>
+                                                {!! $groups !!}
+                                            </select>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($transaction['dual']) && $transaction['dual'])
+                                        <div class="col-md-9 pr-0">
+                                            <div class="row">
+                                                <div class="col-md-5 pr-0">
+                                                    <label for="{{ $slug }}_positive_account_group_id"><strong>Positive Group</strong></label>
+                                                    <select class="form-control" name="positive_account_group_id" id="{{ $slug }}_positive_account_group_id">
+                                                        <option value="0">All Account Groups</option>
+                                                        {!! $groups !!}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2 pt-5 text-center">
+                                                    <div class="row">
+                                                        <div class="col-md-6 offset-2">
+                                                            <div style="width: 100%;border-top: 3px solid black"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-5 pl-0">
+                                                    <label for="{{ $slug }}_negative_account_group_id"><strong>Negative Group</strong></label>
+                                                    <select class="form-control" name="negative_account_group_id" id="{{ $slug }}_negative_account_group_id">
+                                                        <option value="0">All Account Groups</option>
+                                                        {!! $groups !!}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
+
+                                        @if(isset($transaction['ledger']) && $transaction['ledger'])
+                                        <div class="col-md-9 pr-0">
+                                            <label for="{{ $slug }}_chart_of_account_id"><strong>Group</strong></label>
+                                            <select class="form-control" name="chart_of_account_id" id="{{ $slug }}_chart_of_account_id">
+                                                <option value="0">All Ledgers</option>
+                                                
+                                            </select>
+                                        </div>
+                                        @endif
+
+                                        <div class="col-md-2 pt-4">
+                                            <button class="btn btn-success mt-2 btn-md btn-block text-white chart-button-{{ $slug }}" type="submit"><i class="las la-search"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        
+                                    </div>
+                                </form>
                             </div>
-                            <div class="col-md-12 mt-3">
-                                <p class="text-center">
-                                    {{ $chart_title }}
-                                </p>
+                            <div class="col-md-12 chart-view-{{ $slug }}">
+                                
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             @endforeach
-            @endif
         </div>
     </div>
 </div>
@@ -91,133 +143,53 @@
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="//cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
 <script type="text/javascript">
-    function printDate(){
-        $('#from').val($('#fiscal_year_id').find(':selected').attr('data-start'));
-        $('#to').val($('#fiscal_year_id').find(':selected').attr('data-end'));
+    $(document).ready(function() {
+        $.each($('.chart-form'), function(index, val) {
+            var chart_form = $(this);
+            $(this).submit(function(event) {
+                event.preventDefault();
+
+                var chart_type = chart_form.attr('chart-type');
+                var chart_button = $('.chart-button-'+chart_type);
+                var chart_button_content = chart_button.html();
+                chart_button.html('<i class="las la-spinner la-spin"></i>').prop('disabled', true);
+
+                $.ajax({
+                    url: chart_form.attr('action'),
+                    type: chart_form.attr('method'),
+                    data: chart_form.serializeArray(),
+                })
+                .done(function(response) {
+                    $('.chart-view-'+chart_type).html(response);
+                    chart_button.html(chart_button_content).prop('disabled', false);
+                });
+            });
+        });
+
+        $.each(<?php echo json_encode(array_keys($transactions)); ?>, function(index, val) {
+            $('#'+val+'_company_id').change();
+            $('.chart-form-'+val).submit();
+        });
+    });
+
+    function chooseFiscalYear(slug) {
+        $('#'+slug+'_fiscal_year_id').val($('#'+slug+'_company_id').find(':selected').attr('active-fiscal-year')).change();
+    }
+
+    function getCOA(slug) {
+        $('#'+slug+'_chart_of_account_id').html('<option value="0">Please Wait...</option>');
+        $.ajax({
+            url: "{{ url('accounting') }}?get-ledgers&company_id="+$('#'+slug+'_company_id').val(),
+            type: 'GET',
+            data: {},
+        })
+        .done(function(response) {
+            $('#'+slug+'_chart_of_account_id').html('<option value="0">All Ledgers</option>'+response);
+        });
+    }
+
+    function printDate(slug){
+        $('#'+slug+'_to').val($('#'+slug+'_fiscal_year_id').find(':selected').attr('data-end'));
     }
 </script>
-@if(isset($companies[0]))
-@foreach($companies as $company)
-<script>
-am5.ready(function() {
-
-    var root = am5.Root.new("company-entries-{{ $company->id }}");
-
-    root.setThemes([
-      am5themes_Animated.new(root)
-    ]);
-
-    var chart = root.container.children.push(am5xy.XYChart.new(root, {
-      panX: true,
-      panY: true,
-      wheelX: "panX",
-      wheelY: "zoomX",
-      pinchZoomX: true,
-      paddingLeft:0,
-      paddingRight:1
-    }));
-
-    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
-    cursor.lineY.set("visible", false);
-
-    var xRenderer = am5xy.AxisRendererX.new(root, { 
-      minGridDistance: 30, 
-      minorGridEnabled: true
-    });
-
-    xRenderer.labels.template.setAll({
-      rotation: -90,
-      centerY: am5.p50,
-      centerX: am5.p100,
-      paddingRight: 15
-    });
-
-    xRenderer.grid.template.setAll({
-      location: 1
-    })
-
-    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-      maxDeviation: 0.3,
-      categoryField: "entry_type",
-      renderer: xRenderer,
-      tooltip: am5.Tooltip.new(root, {})
-    }));
-
-    var yRenderer = am5xy.AxisRendererY.new(root, {
-      strokeOpacity: 0.1
-    })
-
-    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-      maxDeviation: 0.3,
-      renderer: yRenderer
-    }));
-
-    var series = chart.series.push(am5xy.ColumnSeries.new(root, {
-      name: "Series 1",
-      xAxis: xAxis,
-      yAxis: yAxis,
-      valueYField: "value",
-      sequencedInterpolation: true,
-      categoryXField: "entry_type",
-      tooltip: am5.Tooltip.new(root, {
-        labelText: "{valueY}"
-      })
-    }));
-
-    series.columns.template.setAll({ cornerRadiusTL: 5, cornerRadiusTR: 5, strokeOpacity: 0 });
-    series.columns.template.adapters.add("fill", function (fill, target) {
-      return chart.get("colors").getIndex(series.columns.indexOf(target));
-    });
-
-    series.columns.template.adapters.add("stroke", function (stroke, target) {
-      return chart.get("colors").getIndex(series.columns.indexOf(target));
-    });
-
-    var data = <?php echo json_encode($entries[$company->id]) ?>;
-
-    xAxis.data.setAll(data);
-    series.data.setAll(data);
-
-    series.appear(1000);
-    chart.appear(1000, 100);
-
-    var title = $('#company-entries-title-{{ $company->id }}').text();
-    var exporting = am5plugins_exporting.Exporting.new(root, {
-      menu: am5plugins_exporting.ExportingMenu.new(root, {}),
-      filePrefix: title,
-      dataSource: data,
-      pdfOptions: {
-        pageSize: "A4",
-        pageOrientation: "landscape",
-      }
-    });
-
-    exporting.events.on("pdfdocready", function(event) {
-      // Add title to the beginning
-      event.doc.content.unshift({
-        text: title,
-        margin: [0, 10],
-        style: {
-          fontSize: 14,
-          bold: true,
-        }
-      });
-
-      // Add a two-column intro
-      event.doc.content.push({
-        alignment: 'justify',
-        columns: [{
-          text: title
-        }],
-        columnGap: 0,
-        margin: [0, 10]
-      });
-    });
-
-    $('.am5exporting-icon').html('<i class="las la-file-export"></i>&nbsp;&nbsp;Export');
-
-});
-</script>
-@endforeach
-@endif
 @endsection
