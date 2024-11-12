@@ -52,7 +52,7 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-4 pr-0">
+                                        <div class="col-md-3 pr-0">
                                             <label for="{{ $slug }}_fiscal_year_id"><strong>Fiscal Year</strong></label>
                                             <select class="form-control" name="fiscal_year_id" id="{{ $slug }}_fiscal_year_id" onchange="printDate('{{ $slug }}')">
                                                 @if(isset($fiscalYears[0]))
@@ -62,16 +62,23 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label for="{{ $slug }}_to"><strong>Date</strong></label>
                                             <input type="date" class="form-control" name="to" id="{{ $slug }}_to" value="{{ isset($currentFiscalYear->end) ? $currentFiscalYear->end : '' }}">
+                                        </div>
+                                        <div class="col-md-2 pl-0">
+                                            <label for="{{ $slug }}_view"><strong>View</strong></label>
+                                            <select class="form-control" name="view" id="{{ $slug }}_view">
+                                                <option value="chart">Chart</option>
+                                                <option value="table">Table</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         @if(isset($transaction['group']) && $transaction['group'])
                                         <div class="col-md-9 pr-0">
                                             <label for="{{ $slug }}_account_group_id"><strong>Group</strong></label>
-                                            <select class="form-control" name="account_group_id" id="{{ $slug }}_account_group_id">
+                                            <select class="form-control account-groups" name="account_group_id" id="{{ $slug }}_account_group_id" data-selected="{{ isset($revenue->id) ? $revenue->id : 0 }}">
                                                 <option value="0">All Account Groups</option>
                                                 {!! $groups !!}
                                             </select>
@@ -83,7 +90,7 @@
                                             <div class="row">
                                                 <div class="col-md-5 pr-0">
                                                     <label for="{{ $slug }}_positive_account_group_id"><strong>Positive Group</strong></label>
-                                                    <select class="form-control" name="positive_account_group_id" id="{{ $slug }}_positive_account_group_id">
+                                                    <select class="form-control account-groups" name="positive_account_group_id" id="{{ $slug }}_positive_account_group_id" data-selected="{{ isset($currentAssets->id) ? $currentAssets->id : 0 }}">
                                                         <option value="0">All Account Groups</option>
                                                         {!! $groups !!}
                                                     </select>
@@ -97,7 +104,7 @@
                                                 </div>
                                                 <div class="col-md-5 pl-0">
                                                     <label for="{{ $slug }}_negative_account_group_id"><strong>Negative Group</strong></label>
-                                                    <select class="form-control" name="negative_account_group_id" id="{{ $slug }}_negative_account_group_id">
+                                                    <select class="form-control account-groups" name="negative_account_group_id" id="{{ $slug }}_negative_account_group_id" data-selected="{{ isset($currentLiabilities->id) ? $currentLiabilities->id : 0 }}">
                                                         <option value="0">All Account Groups</option>
                                                         {!! $groups !!}
                                                     </select>
@@ -169,6 +176,10 @@
         $.each(<?php echo json_encode(array_keys($transactions)); ?>, function(index, val) {
             $('#'+val+'_company_id').change();
             $('.chart-form-'+val).submit();
+        });
+
+        $.each($('.account-groups'), function(index, val) {
+            $(this).val($(this).attr('data-selected')).change();
         });
     });
 
