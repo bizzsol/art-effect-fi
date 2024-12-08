@@ -50,13 +50,21 @@
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label for="company_id"><strong>Company</strong></label>
-                                                        <select name="company_id" id="company_id" class="form-control">
+                                                        <select name="company_id" id="company_id" class="form-control" onchange="getCostCentres()">
                                                             <option value="{{ null }}">All Companies</option>
                                                             @if(isset($companies[0]))
                                                             @foreach($companies as $key => $company)
                                                             <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>[{{ $company->code }}] {{ $company->name }}</option>
                                                             @endforeach
                                                             @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label for="cost_centre_id"><strong>Cost Centre</strong></label>
+                                                        <select name="cost_centre_id" id="cost_centre_id" class="form-control">
+                                                            
                                                         </select>
                                                     </div>
                                                 </div>
@@ -230,6 +238,19 @@
         function openModal(requisitionId) {
             $('#tableData').load('{{URL::to(Request()->route()->getPrefix()."/store-inventory-compare")}}/' + requisitionId);
             $('#requisitionDetailModal').modal('show');
+        }
+
+        getCostCentres();
+        function getCostCentres() {
+            $('#cost_centre_id').html('<option value="{{ null }}">Please wait...</option>');
+            $.ajax({
+                url: "{{ url('accounting/requisition-finance-approval') }}?get-cost-centres&company_id="+$('#company_id').val(),
+                type: 'GET',
+                data: {},
+            })
+            .done(function(response) {
+                $('#cost_centre_id').html(response).select2();
+            });
         }
     </script>
 @endsection
