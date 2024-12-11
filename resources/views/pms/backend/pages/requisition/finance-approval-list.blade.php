@@ -80,6 +80,16 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
+                                                        <label for="type"><strong>Assigned Type</strong></label>
+                                                        <select name="type" id="type" class="form-control">
+                                                            <option value="single" {{ $type == 'single' ? 'selected' : '' }}>Individual</option>
+                                                            <option value="all" {{ $type == 'all' ? 'selected' : '' }}>All Units</option>
+                                                        
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
                                                         <label for="from"><strong>Start Date</strong></label>
                                                         <input type="date" name="from" id="from" value="{{ $from }}" class="form-control">
                                                     </div>

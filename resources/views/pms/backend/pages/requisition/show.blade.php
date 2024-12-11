@@ -25,6 +25,9 @@
                             {{date('d-m-Y',strtotime($requisition->requisition_date))}}</li>
                         <li><strong>{{__('Reference No')}}:</strong> {{$requisition->reference_no}}</li>
                         <li><strong>Saleable:</strong> {{ ucwords($requisition->saleable) }}</li>
+                        <li><strong>Assigned To (For Finance Approval):</strong> {{ ucwords
+                        ($requisition->assignedFinanceUser->name?? '')
+                        }}</li>
                     </ul>
                 </div>
             </div>

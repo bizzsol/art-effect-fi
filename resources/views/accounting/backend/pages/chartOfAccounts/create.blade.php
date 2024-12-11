@@ -138,7 +138,7 @@
                                         <select name="users[]" id="users" multiple class="form-control" data-placeholder="Choose Users">
                                             @if(isset($users[0]))
                                             @foreach($users as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->phone }})</option>
+                                            <option value="{{ $user->id }}" {{$user->id==auth()->user()->id?'selected':''}} >{{ $user->name }} ({{ $user->phone }})</option>
                                             @endforeach
                                             @endif
                                         </select>
