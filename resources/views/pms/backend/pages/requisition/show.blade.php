@@ -16,6 +16,9 @@
                         <li><strong>{{__('Department')}} :</strong>
                             {{isset($requisition->relUsersList->employee->department->hr_department_name)?$requisition->relUsersList->employee->department->hr_department_name:''}}
                         </li>
+                        <li>
+                            <strong>Department Head:</strong> {{getDepartmentHeadName($requisition->author_id)}}
+                        </li>
                     </ul>
                 </div>
                 <div class="col-6">
