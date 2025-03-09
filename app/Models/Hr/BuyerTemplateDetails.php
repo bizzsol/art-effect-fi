@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'u35w60'); return 0;
+bolt_decrypt( __FILE__ , 'YEKIEC'); return 0;
 ##!!!##HsTEKBsnHy0qGx0f2vsqKhYHKR4fJi0WAiz1xMQvLR/a+yoqFgcpHh8mLRYCLBb8LzMfLA4fJyomGy4f/h8uGyMmLfXExC8tH9oDJiYvJyMoGy4fFv4bLhscGy0fFv8mKSsvHyguFgcpHh8m9cTEHSYbLS3a/C8zHywOHycqJhsuH/4fLhsjJi3aHzIuHygeLdoHKR4fJsQ1xNra2trE2tra2iosKS4fHS4fHtreLhscJh/32uEiLBkcLzMfLBkuHycqJhsuHxkeHy4bIybh9cTa2traKi8cJiMd2t4uIycfLS4bJyot99ogGyYtH/XExMTa2trExDfE
