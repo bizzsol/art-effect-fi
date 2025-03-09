@@ -150,57 +150,79 @@
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="//cdn.amcharts.com/lib/5/plugins/exporting.js"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        $.each($('.chart-form'), function(index, val) {
-            var chart_form = $(this);
-            $(this).submit(function(event) {
+   $(document).ready(function () {
+    // Delay execution to avoid initial loading issues
+    setTimeout(function () {
+        // Cache selectors to avoid repeated DOM lookups
+        const chartForms = $('.chart-form');
+        const accountGroups = $('.account-groups');
+
+        // Optimize chart form submission handling
+        chartForms.each(function () {
+            const chartForm = $(this);
+            const chartType = chartForm.attr('chart-type');
+            const chartButton = $(`.chart-button-${chartType}`);
+
+            chartForm.on('submit', function (event) {
                 event.preventDefault();
 
-                var chart_type = chart_form.attr('chart-type');
-                var chart_button = $('.chart-button-'+chart_type);
-                var chart_button_content = chart_button.html();
-                chart_button.html('<i class="las la-spinner la-spin"></i>').prop('disabled', true);
+                const chartButtonContent = chartButton.html();
+                chartButton.html('<i class="las la-spinner la-spin"></i>').prop('disabled', true);
 
                 $.ajax({
-                    url: chart_form.attr('action'),
-                    type: chart_form.attr('method'),
-                    data: chart_form.serializeArray(),
-                })
-                .done(function(response) {
-                    $('.chart-view-'+chart_type).html(response);
-                    chart_button.html(chart_button_content).prop('disabled', false);
+                    url: chartForm.attr('action'),
+                    type: chartForm.attr('method'),
+                    data: chartForm.serialize(),
+                }).done(function (response) {
+                    $(`.chart-view-${chartType}`).html(response);
+                }).always(function () {
+                    // Re-enable the button after the AJAX call
+                    chartButton.html(chartButtonContent).prop('disabled', false);
                 });
             });
         });
 
-        $.each(<?php echo json_encode(array_keys($transactions)); ?>, function(index, val) {
-            $('#'+val+'_company_id').change();
-            $('.chart-form-'+val).submit();
+        // Pre-submit chart forms for transactions
+        const transactionKeys = <?php echo json_encode(array_keys($transactions)); ?>;
+        transactionKeys.forEach(function (key) {
+            $(`#${key}_company_id`).trigger('change');
+            $(`.chart-form-${key}`).trigger('submit');
         });
 
-        $.each($('.account-groups'), function(index, val) {
-            $(this).val($(this).attr('data-selected')).change();
+        // Set account groups to their default values and trigger change
+        accountGroups.each(function () {
+            const group = $(this);
+            group.val(group.data('selected')).trigger('change');
         });
+    }, 2000); // Delay of 2 seconds
+});
+
+// Helper function to update fiscal year
+function chooseFiscalYear(slug) {
+    const companySelect = $(`#${slug}_company_id`);
+    const fiscalYearSelect = $(`#${slug}_fiscal_year_id`);
+
+    fiscalYearSelect.val(companySelect.find(':selected').attr('active-fiscal-year')).trigger('change');
+}
+
+// Helper function to fetch Chart of Accounts (COA)
+function getCOA(slug) {
+    const coaSelect = $(`#${slug}_chart_of_account_id`);
+    coaSelect.html('<option value="0">Please Wait...</option>');
+
+    $.ajax({
+        url: `{{ url('accounting') }}?get-ledgers&company_id=${$(`#${slug}_company_id`).val()}`,
+        type: 'GET',
+    }).done(function (response) {
+        coaSelect.html('<option value="0">All Ledgers</option>' + response);
     });
+}
 
-    function chooseFiscalYear(slug) {
-        $('#'+slug+'_fiscal_year_id').val($('#'+slug+'_company_id').find(':selected').attr('active-fiscal-year')).change();
-    }
+// Helper function to set the end date based on fiscal year
+function printDate(slug) {
+    const fiscalYear = $(`#${slug}_fiscal_year_id`).find(':selected');
+    $(`#${slug}_to`).val(fiscalYear.attr('data-end'));
+}
 
-    function getCOA(slug) {
-        $('#'+slug+'_chart_of_account_id').html('<option value="0">Please Wait...</option>');
-        $.ajax({
-            url: "{{ url('accounting') }}?get-ledgers&company_id="+$('#'+slug+'_company_id').val(),
-            type: 'GET',
-            data: {},
-        })
-        .done(function(response) {
-            $('#'+slug+'_chart_of_account_id').html('<option value="0">All Ledgers</option>'+response);
-        });
-    }
-
-    function printDate(slug){
-        $('#'+slug+'_to').val($('#'+slug+'_fiscal_year_id').find(':selected').attr('data-end'));
-    }
 </script>
 @endsection
