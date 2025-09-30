@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'BotadA'); return 0;
+bolt_decrypt( __FILE__ , '1fdVxb'); return 0;
 ##!!!##NTWZjJiQnpuMjpBLbJubZjU1oJ6QS3SXl6CYlJmMn5CHb4yfjI2MnpCHcJeanKCQmZ+HeJqPkJdmNTWOl4yenkt7eH54mo+Ql3OMnnuQnZiUnp6UmplLkKOfkJmPnkt4mo+QlzWmNUtLS0ubnZqfkI6fkI9LT5+MjZeQS2hLTZiaj5CXipOMnoqbkJ2YlJ6elJqZnk1mNUtLS0uboI2XlI5LT5GUl5eMjZeQS2hLhjVLS0tLS0tLS1KbkJ2YlJ6elJqZipSPUlc1S0tLS0tLS0tSmJqPkJeKn6SbkFJXNUtLS0tLS0tLUpiaj5CXipSPUjVLS0tLiGY1S0tLS5ugjZeUjktPn5SYkJ6fjJibnktoS5GMl56QZjWoNQ==
