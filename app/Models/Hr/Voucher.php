@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'Hatasa'); return 0;
-##!!!##XFzAs7+3xcKztbdyk8LCrp/Btre+xa6axI1cXMfFt3Kbvr7Hv7vAs8a3rpazxrO0s8W3rpe+wcPHt8DGrp/Btre+jVxctb6zxcVyqMHHtbq3xHK3ysa3wLbFcp/Btre+XM1cW8LEwca3tca3tnJ2xrO0vrdyj3J5usSxyMHHtbq3xHmNXHJycnLCxMHGt7XGt7ZydrnHs8S2t7Zyj3Ktr41cXHJycnLCxMHGt7XGt7ZydrazxrfFco9yrVxycnJycnJycnm1xLezxre2sbPGeX5yecfCtrPGt7axs8Z5XHJycnKvjVzPXA==
+bolt_decrypt( __FILE__ , 'Fy60Ya'); return 0;
+##!!!##6elNQExEUk9AQkT/IE9POyxOQ0RLUjsnURrp6VRSRP8oS0tUTEhNQFNEOyNAU0BBQFJEOyRLTlBURE1TOyxOQ0RLGunpQktAUlL/NU5UQkdEUf9EV1NETUNS/yxOQ0RL6Vrp6E9RTlNEQlNEQ/8DU0BBS0T/HP8GR1E+VU5UQkdEUQYa6f////9PUU5TREJTREP/A0ZUQFFDREP/HP86PBrp6f////9PUU5TREJTREP/A0NAU0RS/xz/Oun//////////wZCUURAU0RDPkBTBgv/BlRPQ0BTREM+QFMG6f////88Gulc6Q==
