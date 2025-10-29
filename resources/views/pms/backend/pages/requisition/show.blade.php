@@ -70,7 +70,7 @@
                         <th>Approved Qty</th>
                     @endif
                     <th class="text-right">Budgeted Price</th>
-                    <th class="text-right">Estimated Amoount</th>
+                    <th class="text-right">Estimated Amount</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -83,9 +83,8 @@
                     @endphp
                     @foreach($requisition->items as $key=>$item)
                         @php
-                            $stockQty = isset($item->product->relInventoryDetails)? collect($item->product->relInventoryDetails)->when(isset(auth()->user()->employee->as_unit_id), function($query){
-                                    return $query->where('hr_unit_id',auth()->user()->employee->as_unit_id);
-                                })->sum('qty'):0;
+                            $stockQty = verifyAvailableStock($item->requisition_id, $item->id);
+
                             $totalEstimation += $item->unit_price*($requisition->status == 1 ? $item->qty : $item->requisition_qty);
                         @endphp
                         <tr>
