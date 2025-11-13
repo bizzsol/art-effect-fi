@@ -26,6 +26,9 @@
                         @endif
                         <td style="width: 10%;border-top: none !important">
                             <strong>{{ $entry->date }}</strong>
+                           Time: {{$entry->created_at->format('Y-m-d H:i:s')}} <br>
+                            {{$entry->createdBy ? $entry->createdBy->name : ''}}
+
                         </td>
                         <td style="width: 15%;border-top: none !important">
                             <strong>{{ entryCompanies($entry) }}</strong>
@@ -150,6 +153,57 @@
                     @endif
                     </tfoot>
                 </table>
+
+                @if(isset($deletedLedgers) && count($deletedLedgers) > 0)
+                    <div class="alert alert-danger mt-4">
+                        <h6><strong>⚠️ Warning: Deleted Ledger Accounts Found</strong></h6>
+                        <p>These ledger accounts were deleted after posting. This may cause debit-credit imbalance.</p>
+
+                        <table class="table table-sm table-bordered mt-3 mb-0">
+                            <thead>
+                            <tr class="table-secondary">
+                                <th style="width:8%">Item ID</th>
+                                <th style="width:8%">Ledger ID</th>
+                                <th style="width:15%">Ledger Code</th>
+                                <th style="width:25%">Ledger Name</th>
+                                <th style="width:8%">Side</th>
+                                <th style="width:12%">Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($deletedLedgers as $d)
+                                <tr>
+                                    <td>{{ $d['item_id'] }}</td>
+                                    <td>{{ $d['ledger_id'] }}</td>
+                                    <td>
+                                        @if($d['ledger_code'] !== 'N/A')
+                                            [{{ $d['ledger_code'] }}]
+                                        @else
+                                            <span class="text-danger">N/A</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($d['ledger_name'] !== 'Deleted Permanently')
+                                            {{ $d['ledger_name'] }}
+                                        @else
+                                            <span class="text-danger">Deleted Permanently</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $d['debit_credit'] == 'D' ? 'Debit' : 'Credit' }}</td>
+                                    <td class="text-right">{{ systemMoneyFormat($d['amount']) }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
+
+                {{-- Optional extra warning if difference and deleted ledgers both exist --}}
+                @if(($d_deference > 0 || $c_deference > 0) && count($deletedLedgers) > 0)
+                    <div class="alert alert-warning mt-3">
+                        <strong>Note:</strong> The difference detected may be due to deleted ledger accounts listed above.
+                    </div>
+                @endif
 
                 <p class="mb-2">In words ({{ $entry->exchangeRate->currency->code }}):
                     <strong>{{ inWordBn($entry->debit, true, $entry->exchangeRate->currency->name, $entry->exchangeRate->currency->hundreds) }}
