@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'Gt32Q9'); return 0;
-##!!!##tLQYCxcPHRoLDQ/K6xoaBvcZDg8WHQbyHOW0tB8dD8rzFhYfFxMYCx4PBu4LHgsMCx0PBu8WGRsfDxgeBvcZDg8W5bS0DRYLHR3KARMeEhkfHvoLI8oPIh4PGA4dyvcZDg8WtCW0ysrKyhocGR4PDR4PDsrOHgsMFg/nyswSHAkhEx4SGR8eCRoLI8zltMrKysq0ysrKyhofDBYTDcrKysrOHhMXDx0eCxcaHcrnyhALFh0P5cq0J7Q=
+bolt_decrypt( __FILE__ , 'UNxSWG'); return 0;
+##!!!##FhZ6bXlxf3xtb3EsTXx8aFl7cHF4f2hUfkcWFoF/cSxVeHiBeXV6bYBxaFBtgG1ubX9xaFF4e32BcXqAaFl7cHF4RxYWb3htf38sY3WAdHuBgFxthSxxhIBxenB/LFl7cHF4FocWLCwsLHx+e4Bxb4BxcCwwgG1ueHFJLC50fmuDdYB0e4GAa3xthS5HFiwsLCwWLCwsLHyBbnh1bywsLCwwgHV5cX+AbXl8fyxJLHJteH9xRywWiRY=
