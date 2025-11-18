@@ -88,6 +88,24 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="missing_side"><strong>Missing Side</strong></label>
+                                        <select name="missing_side" class="form-control" id="missing_side">
+                                            <option value="{{null}}">Both (Default)</option>
+                                            <option value="debit" {{ request()->get('missing_side') == 'debit' ? 'selected' : '' }}>Debit Only</option>
+                                            <option value="credit" {{ request()->get('missing_side') == 'credit' ? 'selected' : '' }}>Credit Only</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="missing_side"><strong>Missing Side</strong></label>
+                                        <input type="text" name="search_text" class="form-control" id="search_text"
+                                               placeholder="Search..." value="{{ request()->get('search_text') }}"/>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-2 pt-4">
                                     <div class="btn-group mt-2" style="width: 100%">
                                         <button type="submit" class="btn btn-success btn-sm" style="width: 50%"><i
