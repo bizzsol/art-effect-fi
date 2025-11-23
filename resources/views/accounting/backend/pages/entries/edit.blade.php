@@ -335,8 +335,8 @@
             total_credit += parseFloat($(this).val() != "" ? $(this).val() : 0);
         });
 
-        $('.total-debit').html(total_debit.toFixed(2));
-        $('.total-credit').html(total_credit.toFixed(2));
+        $('.total-debit').html(total_debit.toFixed(4));
+        $('.total-credit').html(total_credit.toFixed(4));
 
         if (total_debit == total_credit) {
             $('.total-debit').removeClass('bg-danger').addClass('bg-success');
@@ -348,10 +348,10 @@
             $('.total-credit').removeClass('bg-success').addClass('bg-danger');
             if (total_debit > total_credit) {
                 $('.debit-difference').html('');
-                $('.credit-difference').html((total_debit - total_credit).toFixed(2));
+                $('.credit-difference').html((total_debit - total_credit).toFixed(4));
             } else {
                 $('.credit-difference').html('');
-                $('.debit-difference').html((total_credit - total_debit).toFixed(2));
+                $('.debit-difference').html((total_credit - total_debit).toFixed(4));
             }
         }
     }
