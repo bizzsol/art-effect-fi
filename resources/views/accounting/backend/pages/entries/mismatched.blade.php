@@ -95,12 +95,13 @@
                                             <option value="{{null}}">Both (Default)</option>
                                             <option value="debit" {{ request()->get('missing_side') == 'debit' ? 'selected' : '' }}>Debit Only</option>
                                             <option value="credit" {{ request()->get('missing_side') == 'credit' ? 'selected' : '' }}>Credit Only</option>
+                                            <option value="none" {{ request()->get('missing_side') == 'none' ? 'selected' : '' }}>None</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="missing_side"><strong>Missing Side</strong></label>
+                                        <label for="missing_side"><strong>Search Text</strong></label>
                                         <input type="text" name="search_text" class="form-control" id="search_text"
                                                placeholder="Search..." value="{{ request()->get('search_text') }}"/>
                                     </div>

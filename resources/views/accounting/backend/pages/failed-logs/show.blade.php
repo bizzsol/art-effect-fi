@@ -1,6 +1,13 @@
 @extends('accounting.backend.layouts.master-layout')
 @section('title', session()->get('system-information')['name']. ' | '.$title)
-
+@section('page-css')
+    <style type="text/css">
+        .col-form-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+    </style>
+    @include('yajra.css')
 @endsection
 @section('main-content')
     <div class="content">
@@ -8,16 +15,11 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">{{ $title }}</h5>
                 <div>
-                    <a href="{{ route('accounting.failed-logs.index') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('accounting.failed.entries.logs') }}" class="btn btn-secondary btn-sm">
                         <i class="las la-arrow-left"></i> Back to List
                     </a>
 
                     @if($log->status == 'pending')
-                        @can('entry-edit')
-                            <a href="{{ route('accounting.failed-logs.edit', $log->id) }}" class="btn btn-primary btn-sm">
-                                <i class="las la-edit"></i> Edit & Fix
-                            </a>
-                        @endcan
 
                         <button onclick="fixEntry({{ $log->id }})" class="btn btn-success btn-sm">
                             <i class="las la-check"></i> Auto Fix
@@ -435,97 +437,96 @@
         </div>
     </div>
 
-    @push('scripts')
-{{--        <script>--}}
-{{--            function fixEntry(id) {--}}
-{{--                if(!confirm('Are you sure you want to try to fix this entry automatically?')) return;--}}
+        <script>
+            function fixEntry(id) {
+                if(!confirm('Are you sure you want to try to fix this entry automatically?')) return;
 
-{{--                $.ajax({--}}
-{{--                    url: "{{ url('accounting/failed-logs') }}/" + id + "/fix",--}}
-{{--                    method: 'POST',--}}
-{{--                    data: {--}}
-{{--                        _token: "{{ csrf_token() }}"--}}
-{{--                    },--}}
-{{--                    beforeSend: function() {--}}
-{{--                        $('button').prop('disabled', true);--}}
-{{--                    },--}}
-{{--                    success: function(response) {--}}
-{{--                        if(response.success) {--}}
-{{--                            toastr.success(response.message);--}}
-{{--                            setTimeout(function() {--}}
-{{--                                window.location.reload();--}}
-{{--                            }, 1500);--}}
-{{--                        } else {--}}
-{{--                            toastr.error(response.message);--}}
-{{--                            $('button').prop('disabled', false);--}}
-{{--                        }--}}
-{{--                    },--}}
-{{--                    error: function() {--}}
-{{--                        toastr.error('An error occurred while fixing the entry.');--}}
-{{--                        $('button').prop('disabled', false);--}}
-{{--                    }--}}
-{{--                });--}}
-{{--            }--}}
+                $.ajax({
+                    url: "{{ url('accounting/failed-logs') }}/" + id + "/fix",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    beforeSend: function() {
+                        $('button').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message);
+                            $('button').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        toastr.error('An error occurred while fixing the entry.');
+                        $('button').prop('disabled', false);
+                    }
+                });
+            }
 
-{{--            function ignoreEntry(id) {--}}
-{{--                if(!confirm('Are you sure you want to ignore this entry?')) return;--}}
+            function ignoreEntry(id) {
+                if(!confirm('Are you sure you want to ignore this entry?')) return;
 
-{{--                $.ajax({--}}
-{{--                    url: "{{ url('accounting/failed-logs') }}/" + id + "/ignore",--}}
-{{--                    method: 'POST',--}}
-{{--                    data: {--}}
-{{--                        _token: "{{ csrf_token() }}"--}}
-{{--                    },--}}
-{{--                    beforeSend: function() {--}}
-{{--                        $('button').prop('disabled', true);--}}
-{{--                    },--}}
-{{--                    success: function(response) {--}}
-{{--                        if(response.success) {--}}
-{{--                            toastr.success(response.message);--}}
-{{--                            setTimeout(function() {--}}
-{{--                                window.location.reload();--}}
-{{--                            }, 1500);--}}
-{{--                        } else {--}}
-{{--                            toastr.error(response.message);--}}
-{{--                            $('button').prop('disabled', false);--}}
-{{--                        }--}}
-{{--                    },--}}
-{{--                    error: function() {--}}
-{{--                        toastr.error('An error occurred while ignoring the entry.');--}}
-{{--                        $('button').prop('disabled', false);--}}
-{{--                    }--}}
-{{--                });--}}
-{{--            }--}}
+                $.ajax({
+                    url: "{{ url('accounting/failed-logs') }}/" + id + "/ignore",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    beforeSend: function() {
+                        $('button').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message);
+                            $('button').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        toastr.error('An error occurred while ignoring the entry.');
+                        $('button').prop('disabled', false);
+                    }
+                });
+            }
 
-{{--            function deleteFailedLog(id) {--}}
-{{--                if(!confirm('Are you sure you want to delete this failed log? This action cannot be undone.')) return;--}}
+            function deleteFailedLog(id) {
+                if(!confirm('Are you sure you want to delete this failed log? This action cannot be undone.')) return;
 
-{{--                $.ajax({--}}
-{{--                    url: "{{ url('accounting/failed-logs') }}/" + id,--}}
-{{--                    method: 'DELETE',--}}
-{{--                    data: {--}}
-{{--                        _token: "{{ csrf_token() }}"--}}
-{{--                    },--}}
-{{--                    beforeSend: function() {--}}
-{{--                        $('button').prop('disabled', true);--}}
-{{--                    },--}}
-{{--                    success: function(response) {--}}
-{{--                        if(response.success) {--}}
-{{--                            toastr.success(response.message);--}}
-{{--                            setTimeout(function() {--}}
-{{--                                window.location.href = "{{ route('accounting.failed-logs.index') }}";--}}
-{{--                            }, 1500);--}}
-{{--                        } else {--}}
-{{--                            toastr.error(response.message);--}}
-{{--                            $('button').prop('disabled', false);--}}
-{{--                        }--}}
-{{--                    },--}}
-{{--                    error: function() {--}}
-{{--                        toastr.error('An error occurred while deleting the log.');--}}
-{{--                        $('button').prop('disabled', false);--}}
-{{--                    }--}}
-{{--                });--}}
-{{--            }--}}
-{{--        </script>--}}
-    @endpush
+                $.ajax({
+                    url: "{{ url('accounting/failed-logs') }}/" + id,
+                    method: 'DELETE',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    beforeSend: function() {
+                        $('button').prop('disabled', true);
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.href = "{{ route('accounting.failed.entries.logs') }}";
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message);
+                            $('button').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        toastr.error('An error occurred while deleting the log.');
+                        $('button').prop('disabled', false);
+                    }
+                });
+            }
+        </script>
+
 @endsection

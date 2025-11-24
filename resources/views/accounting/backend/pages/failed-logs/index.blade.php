@@ -152,4 +152,95 @@
             });
         });
     </script>
+    <script>
+        function fixEntry(id) {
+            if(!confirm('Are you sure you want to try to fix this entry automatically?')) return;
+
+            $.ajax({
+                url: "{{ url('accounting/failed-logs') }}/" + id + "/fix",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function() {
+                    $('button').prop('disabled', true);
+                },
+                success: function(response) {
+                    if(response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        toastr.error(response.message);
+                        $('button').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    toastr.error('An error occurred while fixing the entry.');
+                    $('button').prop('disabled', false);
+                }
+            });
+        }
+
+        function ignoreEntry(id) {
+            if(!confirm('Are you sure you want to ignore this entry?')) return;
+
+            $.ajax({
+                url: "{{ url('accounting/failed-logs') }}/" + id + "/ignore",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function() {
+                    $('button').prop('disabled', true);
+                },
+                success: function(response) {
+                    if(response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        toastr.error(response.message);
+                        $('button').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    toastr.error('An error occurred while ignoring the entry.');
+                    $('button').prop('disabled', false);
+                }
+            });
+        }
+
+        function deleteFailedLog(id) {
+            if(!confirm('Are you sure you want to delete this failed log? This action cannot be undone.')) return;
+
+            $.ajax({
+                url: "{{ url('accounting/failed-logs') }}/" + id,
+                method: 'DELETE',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function() {
+                    $('button').prop('disabled', true);
+                },
+                success: function(response) {
+                    if(response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function() {
+                            window.location.href = "{{ route('accounting.failed.entries.logs') }}";
+                        }, 1500);
+                    } else {
+                        toastr.error(response.message);
+                        $('button').prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    toastr.error('An error occurred while deleting the log.');
+                    $('button').prop('disabled', false);
+                }
+            });
+        }
+    </script>
 @endsection
