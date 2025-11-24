@@ -26,9 +26,6 @@
                         @endif
                         <td style="width: 10%;border-top: none !important">
                             <strong>{{ $entry->date }}</strong>
-                           Time: {{$entry->created_at->format('Y-m-d H:i:s')}} <br>
-                            {{$entry->createdBy ? $entry->createdBy->name : ''}}
-
                         </td>
                         <td style="width: 15%;border-top: none !important">
                             <strong>{{ entryCompanies($entry) }}</strong>
