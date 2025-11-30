@@ -338,6 +338,7 @@
         $('.total-debit').html(total_debit.toFixed(4));
         $('.total-credit').html(total_credit.toFixed(4));
 
+        console.log(total_credit + '==' + total_debit);
         if (total_debit == total_credit) {
             $('.total-debit').removeClass('bg-danger').addClass('bg-success');
             $('.total-credit').removeClass('bg-danger').addClass('bg-success');
