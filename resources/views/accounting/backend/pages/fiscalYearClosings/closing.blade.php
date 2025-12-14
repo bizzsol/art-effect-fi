@@ -86,7 +86,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if($balanceSheetLedgers->count() > 0)
+                                                    {{-- @if($balanceSheetLedgers->count() > 0)
                                                     @foreach($balanceSheetLedgers as $key => $ledger)
                                                     <tr>
                                                         <td>{{ $ledger->chartOfAccount->code }}</td>
@@ -95,7 +95,9 @@
                                                         <td class="text-right">{{ systemMoneyFormat($ledger->carry_forwarding_amount) }}</td>
                                                     </tr>
                                                     @endforeach
-                                                    @endif
+                                                    @endif --}}
+
+                                                    {!! $balanceSheets !!}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -112,7 +114,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if($profitLossLedgers->count() > 0)
+                                                    {{-- @if($profitLossLedgers->count() > 0)
                                                     @foreach($profitLossLedgers as $key => $ledger)
                                                     <tr>
                                                         <td>{{ $ledger->chartOfAccount->code }}</td>
@@ -121,7 +123,9 @@
                                                         <td class="text-right">{{ systemMoneyFormat($ledger->carry_forwarding_amount) }}</td>
                                                     </tr>
                                                     @endforeach
-                                                    @endif
+                                                    @endif --}}
+
+                                                    {!! $profitLosses !!}
                                                 </tbody>
                                             </table>
                                         </div>
