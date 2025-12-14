@@ -10,8 +10,4 @@
     @if($opening->status == 'opened')
         <a class="btn btn-xs mb-1 btn-success" href="{{ url('accounting/fiscal-year-openings/'.$opening->id.'/edit') }}"><i class="las la-check-circle"></i>&nbsp;Close</a>
     @endif
-
-    @if($opening->status == 'closed' && request()->has('re-close'))
-        <a class="btn btn-xs mb-1 btn-success" href="{{ url('accounting/fiscal-year-openings/'.$opening->id.'/edit') }}"><i class="las la-check-circle"></i>&nbsp;Re-Close</a>
-    @endif
 @endif

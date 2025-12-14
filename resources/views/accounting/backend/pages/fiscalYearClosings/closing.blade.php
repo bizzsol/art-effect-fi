@@ -86,17 +86,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {{-- @if($balanceSheetLedgers->count() > 0)
-                                                    @foreach($balanceSheetLedgers as $key => $ledger)
-                                                    <tr>
-                                                        <td>{{ $ledger->chartOfAccount->code }}</td>
-                                                        <td>{{ $ledger->chartOfAccount->name }}</td>
-                                                        <td class="text-right">{{ systemMoneyFormat($ledger->previous_balance) }}</td>
-                                                        <td class="text-right">{{ systemMoneyFormat($ledger->carry_forwarding_amount) }}</td>
-                                                    </tr>
-                                                    @endforeach
-                                                    @endif --}}
-
                                                     {!! $balanceSheets !!}
                                                 </tbody>
                                             </table>
@@ -114,17 +103,6 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {{-- @if($profitLossLedgers->count() > 0)
-                                                    @foreach($profitLossLedgers as $key => $ledger)
-                                                    <tr>
-                                                        <td>{{ $ledger->chartOfAccount->code }}</td>
-                                                        <td>{{ $ledger->chartOfAccount->name }}</td>
-                                                        <td class="text-right">{{ systemMoneyFormat($ledger->previous_balance) }}</td>
-                                                        <td class="text-right">{{ systemMoneyFormat($ledger->carry_forwarding_amount) }}</td>
-                                                    </tr>
-                                                    @endforeach
-                                                    @endif --}}
-
                                                     {!! $profitLosses !!}
                                                 </tbody>
                                             </table>
