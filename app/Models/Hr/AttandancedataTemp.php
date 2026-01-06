@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'f60prd'); return 0;
-##!!!##HByAc393hYJzdXcyU4KCbl+Bdnd+hW5ahE0cHIeFdzJbfn6Hf3uAc4Z3blZzhnN0c4V3bld+gYOHd4CGbl+Bdnd+TRwcdX5zhYUyU4aGc4B2c4B1d3ZzhnNmd3+CMneKhneAdoUyX4F2d34cjRwyMjIygoSBhnd1hnd2MjaGc3R+d08yNHqEcXOGhnF2c4ZzcYZ3f4I0TRwyMjIygod0fnt1MjaGe393hYZzf4KFMk8yeHN+hXdNHDIyMjKChIGGd3WGd3YyNnmHc4R2d3YyTzJtb00cjxw=
+bolt_decrypt( __FILE__ , 'FFEMQK'); return 0;
+##!!!##xMQoGycfLSobHR/a+yoqFgcpHh8mLRYCLPXExC8tH9oDJiYvJyMoGy4fFv4bLhscGy0fFv8mKSsvHyguFgcpHh8m9cTEHSYbLS3a+y4uGygeGygdHx4bLhsOHycq2h8yLh8oHi3aBykeHybENcTa2traKiwpLh8dLh8e2t4uGxwmH/fa3CIsGRsuLhkeGy4bGS4fJyrc9cTa2traKi8cJiMd2t4uIycfLS4bJyot2vfaIBsmLR/1xNra2toqLCkuHx0uHx7a3iEvGyweHx7a99oVF/XEN8Q=

@@ -117,8 +117,7 @@
                                 </div>
                                 <div class="row mt-3">
                                     <div class="col-md-12">
-                                        <h5 class="mb-2"><strong><i class="lar la-hand-point-right"></i>&nbsp;Original
-                                                Transactions</strong></h5>
+                                        <h5 class="mb-2"><strong><i class="lar la-hand-point-right"></i>Original Transactions</strong></h5>
                                         <table class="table table-hover table-bordered">
                                             <thead>
                                             <tr>
