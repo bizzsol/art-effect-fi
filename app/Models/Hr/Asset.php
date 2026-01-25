@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'g4mBvC'); return 0;
-##!!!##DQ1xZHBodnNkZmgjRHNzX1ByZ2hvdl9LdT4NDXh2aCNMb294cGxxZHdoX0dkd2RlZHZoX0hvcnR4aHF3X1ByZ2hvPg0NZm9kdnYjRHZ2aHcjaHt3aHFndiNQcmdobw1+DSMjIyNzdXJ3aGZ3aGcjJ3dkZW9oQCMjKmt1YmR2dmh3YmR2dmxqcSo+DSMjIyMNIyMjI3N4ZW9sZiMnd2xwaHZ3ZHBzdkAjaWRvdmg+DYAN
+bolt_decrypt( __FILE__ , 'VINfTT'); return 0;
+##!!!##BQVpXGhgbmtcXmAbPGtrV0hqX2BnbldDbTYFBXBuYBtEZ2dwaGRpXG9gVz9cb1xdXG5gV0BnamxwYGlvV0hqX2BnNgUFXmdcbm4bPG5uYG8bYHNvYGlfbhtIal9gZwV2BRsbGxtrbWpvYF5vYF8bH29cXWdgOBsbImNtWlxubmBvWlxubmRiaSI2BRsbGxsFGxsbG2twXWdkXhsfb2RoYG5vXGhrbjgbYVxnbmA2BXgF
