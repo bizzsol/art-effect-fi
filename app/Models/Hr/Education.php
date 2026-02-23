@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'Axum91'); return 0;
-##!!!##Dw9zZnJqeHVmaGolRnV1YVJ0aWpxeGFNd0APD3p4aiVOcXF6cm5zZnlqYUlmeWZnZnhqYUpxdHZ6anN5YVJ0aWpxQA8PaHFmeHglSml6aGZ5bnRzJWp9eWpzaXglUnRpanEPgA8lJSUldXd0eWpoeWppJSl5ZmdxakIlJ213ZGppemhmeW50cydADyUlJSV1emdxbmglKXlucmp4eWZydXhCJWtmcXhqQA+CDw==
+bolt_decrypt( __FILE__ , 'VLCVTd'); return 0;
+##!!!##/f1hVGBYZmNUVlgTNGNjT0BiV1hfZk87ZS79/WhmWBM8X19oYFxhVGdYTzdUZ1RVVGZYTzhfYmRoWGFnT0BiV1hfLv39Vl9UZmYTOFdoVlRnXGJhE1hrZ1hhV2YTQGJXWF/9bv0TExMTY2ViZ1hWZ1hXExdnVFVfWDATFVtlUlhXaFZUZ1xiYRUu/RMTExNjaFVfXFYTF2dcYFhmZ1RgY2YwE1lUX2ZYLv1w/Q==
