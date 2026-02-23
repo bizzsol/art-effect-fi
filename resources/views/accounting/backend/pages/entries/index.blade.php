@@ -27,7 +27,7 @@
                                 <div class="col-md-4">
                                     <a class="btn btn-warning btn-sm" target="__blank"
                                        href="{{route('accounting.failed.entries.logs')}}"><i class="la la-clipboard-list"></i>
-                                        Failed Logs</a>
+                                        Failed Logs @if(isset($pendingFailedLogCount) && $pendingFailedLogCount > 0) <span class="badge badge-danger badge-pill" style="margin-top: -5px; font-weight: bold; border: 1px solid white;">{{ $pendingFailedLogCount }}</span> @endif</a>
                                 </div>
                                 <div class="col-md-4">
                                     <a class="btn btn-danger btn-sm" target="__blank"

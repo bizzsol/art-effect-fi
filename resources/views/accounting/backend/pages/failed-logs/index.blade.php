@@ -35,8 +35,8 @@
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="company_id_"><strong>Company</strong></label>
-                                        <select name="company_id" id="company_id_" class="form-control"
-                                                onchange="getLedgers();">
+                                        <select name="company_id" id="company_id_" class="form-control">
+                                            <option value="">All Companies</option>
                                             @if(isset($companies[0]))
                                                 @foreach($companies as $key => $company)
                                                     <option value="{{ $company->id }}" {{ request()->get('company_id') == $company->id ? 'selected' : '' }}>
@@ -113,11 +113,9 @@
                         </form>
                     </div>
 
-                    @if($company_id > 0)
-                        <div class="panel-body">
-                            @include('yajra.datatable')
-                        </div>
-                    @endif
+                    <div class="panel-body">
+                        @include('yajra.datatable')
+                    </div>
 
                 </div>
             </div>
