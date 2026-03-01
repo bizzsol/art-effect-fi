@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , '2oYS3i'); return 0;
+bolt_decrypt( __FILE__ , 'GBIDra'); return 0;
 ##!!!##8/NXSlZOXFlKTE4JKllZRTZYTU5VXEUxWyTz815cTgkyVVVeVlJXSl1ORS1KXUpLSlxORS5VWFpeTlddRTZYTU5VJPPzTFVKXFwJLF8JTmFdTldNXAk2WE1OVfNk8wkJCQkYGPNm8w==
