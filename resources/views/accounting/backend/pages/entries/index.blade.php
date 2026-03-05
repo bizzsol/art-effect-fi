@@ -27,7 +27,7 @@
                                 <div class="col-md-4">
                                     <a class="btn btn-warning btn-sm" target="__blank"
                                        href="{{route('accounting.failed.entries.logs')}}"><i class="la la-clipboard-list"></i>
-                                        Failed Logs @if(isset($pendingFailedLogCount) && $pendingFailedLogCount > 0) <span class="badge badge-danger badge-pill" style="margin-top: -5px; font-weight: bold; border: 1px solid white;">{{ $pendingFailedLogCount }}</span> @endif</a>
+                                        Failed Logs <span id="failed-log-badge"></span></a>
                                 </div>
                                 <div class="col-md-4">
                                     <a class="btn btn-danger btn-sm" target="__blank"
@@ -290,8 +290,6 @@
                 });
         }
 
-        getLedgers();
-
         function getLedgers() {
             $('#debit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
             $('#credit_ledger_id_').html('<option value="{{ null }}">Please wait...</option>');
@@ -320,7 +318,21 @@
             $('#to_').val($('#fiscal_year_id_').find(':selected').attr('data-end'));
         }
 
+        // Load ledgers after DOM is ready (non-blocking)
         $(document).ready(function () {
+            getLedgers();
+            
+            // Load failed log count asynchronously
+            $.ajax({
+                url: "{{ url('accounting/entries') }}?get-failed-log-count",
+                type: 'GET',
+                dataType: 'json',
+            }).done(function(response) {
+                if (response.count > 0) {
+                    $('#failed-log-badge').html('<span class="badge badge-danger badge-pill" style="margin-top: -5px; font-weight: bold; border: 1px solid white;">' + response.count + '</span>');
+                }
+            });
+
             $.each($('.select-me'), function (index, val) {
                 $(this).select2().val($(this).attr('data-selected')).trigger("change");
             });

@@ -105,7 +105,7 @@
                                                             $payable_account = (isset($supplier->payable_account_id) && $supplier->payable_account_id > 0 ? $supplier->payable_account_id : $accountDefaultSettings['supplier_payable_account']);
                                                             $credit_account = $accountDefaultSettings['bank_account'];
 
-                                                            $getPODueAmount = getPODueAmount($purchaseOrder);
+                                                            $getPODueAmount = $purchaseOrder->precomputed_due_amount ?? 0;
                                                         @endphp
                                                         @if($getPODueAmount > 0)
                                                             <option value="{{ $purchaseOrder->id }}"
@@ -402,21 +402,63 @@
     <div id="cc" style="display: none">
         {!! $costCentres !!}
     </div>
+    <div id="coa-loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.7);z-index:9999;justify-content:center;align-items:center;">
+        <div style="text-align:center;">
+            <i class="las la-spinner la-spin" style="font-size:48px;color:#4a90d9;"></i>
+            <p style="font-size:16px;color:#333;margin-top:10px;">Loading ledger data...</p>
+        </div>
+    </div>
 @endsection
 @section('page-script')
     <script type="text/javascript">
         var session_items = parseInt("{{ isset(session()->get('entries-items')[0]) ? count(session()->get('entries-items')) : 0 }}");
+        var coaLoaded = false;
+
+        // Load COA & Cost Centre data in background via AJAX
+        (function loadCOAData() {
+            // Show loading indicator on dropdowns area
+            var overlay = document.getElementById('coa-loading-overlay');
+            if (overlay) overlay.style.display = 'flex';
+
+            $.ajax({
+                url: "{{ url('accounting/entries/create') }}?get-coa-options&company={{ request()->get('company') }}&entry_type_id={{ $entryType->id }}",
+                type: 'GET',
+                dataType: 'json',
+                timeout: 60000
+            }).done(function(response) {
+                if (response.coa) {
+                    $('#coa').html(response.coa);
+                }
+                if (response.cc) {
+                    $('#cc').html(response.cc);
+                }
+                coaLoaded = true;
+
+                // Now initialize the entry rows
+                if (session_items > 0) {
+                    calculation();
+                } else {
+                    add();
+                    add();
+                }
+
+                if (overlay) overlay.style.display = 'none';
+            }).fail(function() {
+                toastr.error('Failed to load ledger data. Please refresh the page.');
+                if (overlay) overlay.style.display = 'none';
+
+                // Still initialize with empty dropdowns so page is usable
+                if (session_items > 0) {
+                    calculation();
+                } else {
+                    add();
+                    add();
+                }
+            });
+        })();
+
         if(session_items > 0){
-            // $.each($('.choose-cc'), function(index, val) {
-            //     $(this).html($('#cc').html()).select2().val($(this).attr('data-selected')).trigger("change");
-            // });
-            // $.each($('.choose-coa'), function(index, val) {
-            //     $(this).html($('#coa').html()).select2().val($(this).attr('data-selected')).trigger("change");
-            // });
             calculation();
-        }else{
-            add();
-            add();
         }
 
         function add() {
