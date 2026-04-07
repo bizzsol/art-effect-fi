@@ -155,7 +155,7 @@
         function financeApproval(element) {
             swal({
                 title: "Are you sure ?",
-                text: "Once you Approve, You can not rollback from there.'",
+                text: "Once you Approve, You can not rollback from there.",
                 icon: "warning",
                 dangerMode: false,
                 buttons: {
