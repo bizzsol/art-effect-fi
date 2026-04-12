@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-<redoc spec-url='{{asset('openapi.json')}}'></redoc>
+<redoc spec-url='{{ route('api-docs.openapi') }}'></redoc>
 <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
 </body>
 </html>
