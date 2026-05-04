@@ -38,7 +38,7 @@
                                     <div class="col-md-2">
                                         <label for="code"><strong>{{ __('Code') }}:<span class="text-danger">&nbsp;*</span></strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
-                                            <input type="text" name="code" id="code" value="{{ $company->code }}" readonly class="form-control rounded">
+                                            <input type="text" name="code" id="code" value="{{ $company->code }}" class="form-control rounded">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
