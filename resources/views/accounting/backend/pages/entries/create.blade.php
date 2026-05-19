@@ -55,6 +55,7 @@
                         <form action="{{ route('accounting.entries.store') }}?type={{ request()->get('type') }}&company={{ request()->get('company') }}"
                               method="post" accept-charset="utf-8" class="entry-form">
                             @csrf
+                            <input type="hidden" name="submission_items_json" id="submission-items-json" value="">
                             @if(request()->get('type') == "payment")
                                 <div class="row pr-3">
                                     <div class="col-md-2">
@@ -595,18 +596,37 @@
                                 button.html(content).prop('disabled', false);
                             }
                         },
-                        yes: {
-                            text: '<i class="la la-check"></i>&nbsp;Yes',
-                            btnClass: 'btn-success',
-                            action: function () {
-                                $.ajax({
-                                    url: form.attr('action'),
-                                    type: form.attr('method'),
-                                    dataType: 'json',
-                                    processData: false,
-                                    contentType: false,
-                                    data: new FormData(form[0]),
-                                })
+                            yes: {
+                                text: '<i class="la la-check"></i>&nbsp;Yes',
+                                btnClass: 'btn-success',
+                                action: function () {
+                                    // Serialize entry rows into JSON to avoid max_input_vars limit
+                                    var items = [];
+                                    $('.entries tr').each(function() {
+                                        var cc = $(this).find('[name="cost_centre_id[]"]').val();
+                                        if (cc) {
+                                            items.push({
+                                                cost_centre_id: cc,
+                                                chart_of_account_id: $(this).find('[name="chart_of_account_id[]"]').val(),
+                                                sub_ledgers: $(this).find('[name="sub_ledgers[]"]').val(),
+                                                debit: $(this).find('[name="debit[]"]').val(),
+                                                credit: $(this).find('[name="credit[]"]').val(),
+                                                narration: $(this).find('[name="narration[]"]').val(),
+                                            });
+                                        }
+                                    });
+                                    $('#submission-items-json').val(JSON.stringify(items));
+                                    // Remove array inputs so they don't count toward max_input_vars
+                                    $('[name="cost_centre_id[]"], [name="chart_of_account_id[]"], [name="sub_ledgers[]"], [name="debit[]"], [name="credit[]"], [name="narration[]"]').remove();
+                                    
+                                    $.ajax({
+                                        url: form.attr('action'),
+                                        type: form.attr('method'),
+                                        dataType: 'json',
+                                        processData: false,
+                                        contentType: false,
+                                        data: new FormData(form[0]),
+                                    })
                                     .done(function (response) {
                                         if (response.success) {
                                             toastr.success(response.message);
