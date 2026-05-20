@@ -596,10 +596,34 @@
                                 button.html(content).prop('disabled', false);
                             }
                         },
-                            yes: {
+                    yes: {
                                 text: '<i class="la la-check"></i>&nbsp;Yes',
                                 btnClass: 'btn-success',
                                 action: function () {
+                                    // Save ALL form field values before submit
+                                    var savedForm = {
+                                        number: $('#number').val(),
+                                        currency_id: $('#currency_id').val(),
+                                        datetime: $('#datetime').val(),
+                                        fiscal_year_id: $('#fiscal_year_id').val(),
+                                        notes: $('#notes').val(),
+                                    };
+
+                                    // Store row data before removing inputs (for post-save restore)
+                                    var savedRows = [];
+                                    $('.entries tr').each(function() {
+                                        var $row = $(this);
+                                        var cc = $row.find('[name="cost_centre_id[]"]').val();
+                                        if (cc) {
+                                            savedRows.push({
+                                                cost_centre_id: cc,
+                                                chart_of_account_id: $row.find('[name="chart_of_account_id[]"]').val(),
+                                                sub_ledgers: $row.find('[name="sub_ledgers[]"]').val(),
+                                                narration: $row.find('[name="narration[]"]').val(),
+                                            });
+                                        }
+                                    });
+
                                     // Serialize entry rows into JSON to avoid max_input_vars limit
                                     var items = [];
                                     $('.entries tr').each(function() {
@@ -631,9 +655,92 @@
                                         if (response.success) {
                                             toastr.success(response.message);
 
-                                            $('#number').val('');
-                                            $('.debit').val(0);
-                                            $('.credit').val(0);
+                                            // Restore form fields
+                                            $('#number').val(savedForm.number);
+                                            $('#currency_id').val(savedForm.currency_id).trigger('change');
+                                            $('#datetime').val(savedForm.datetime);
+                                            $('#fiscal_year_id').val(savedForm.fiscal_year_id).trigger('change');
+                                            $('#notes').val(savedForm.notes);
+                                            $('#files').val(''); // Clear file input for security
+
+                                            // Rebuild rows with saved data, clearing only debit/credit
+                                            if (savedRows.length > 0) {
+                                                $('.entries').empty();
+                                                $.each(savedRows, function(index, row) {
+                                                    var rowHtml = '<tr>' +
+                                                        '<td>' +
+                                                            '<select name="cost_centre_id[]" class="form-control cost_centre_id select2" data-selected="' + row.cost_centre_id + '">' + ($('#cc').html() || '') + '</select>' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<div class="row ledger-parent">' +
+                                                                '<div class="col-md-12 ledger">' +
+                                                                    '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="getSubLedgers($(this));Entries();" data-selected="' + row.chart_of_account_id + '">' + ($('#coa').html() || '') + '</select>' +
+                                                                '</div>' +
+                                                                '<div class="col-md-12 sub-ledger mt-2" style="display: none">' +
+                                                                    '<select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="' + (row.sub_ledgers || '') + '">' +
+                                                                        '<option value="">Without Sub-Ledger</option>' +
+                                                                    '</select>' +
+                                                                '</div>' +
+                                                            '</div>' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="number" min="0" step="any" name="debit[]" class="form-control debit text-right" onchange="debitChanged($(this))" onkeyup="debitChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="number" min="0" step="any" name="credit[]" class="form-control credit text-right" onchange="creditChanged($(this))" onkeyup="creditChanged($(this))" onkeydown="return event.keyCode !== 69 && event.keyCode !== 189 && event.keyCode !== 187" value="0">' +
+                                                        '</td>' +
+                                                        '<td>' +
+                                                            '<input type="text" name="narration[]" class="form-control narration" value="' + (row.narration || '') + '">' +
+                                                        '</td>' +
+                                                        '<td class="text-center">' +
+                                                            '<a onclick="remove($(this))" class="action-buttons"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>' +
+                                                        '</td>' +
+                                                    '</tr>';
+                                                    $('.entries').append(rowHtml);
+                                                });
+
+                                                // Reinitialize select2 and set values
+                                                $('.entries').find('.cost_centre_id').each(function() {
+                                                    $(this).select2().val($(this).attr('data-selected')).trigger('change');
+                                                });
+                                                $('.entries').find('.chart_of_account_id').each(function() {
+                                                    $(this).select2().val($(this).attr('data-selected')).trigger('change');
+                                                });
+                                                $('.entries').find('.sub-ledger-select2').each(function() {
+                                                    $(this).select2().val($(this).attr('data-selected')).trigger('change');
+                                                });
+
+                                                // Load sub-ledgers for rows that have them
+                                                $('.entries').find('.sub-ledger-select2').each(function() {
+                                                    var selected = $(this).attr('data-selected');
+                                                    if (selected && selected !== '') {
+                                                        var $select = $(this);
+                                                        var chartOfAccountId = $select.closest('tr').find('.chart_of_account_id').val();
+                                                        if (chartOfAccountId) {
+                                                            $.ajax({
+                                                                url: "{{ url('accounting/entries/create?get-sub-ledgers') }}&chart_of_account_id=" + chartOfAccountId,
+                                                                type: 'GET',
+                                                                dataType: 'json',
+                                                            }).done(function(res) {
+                                                                if (res.count > 0) {
+                                                                    var options = '<option value="">Without Sub-Ledger</option>';
+                                                                    $.each(res.sub_ledgers, function(i, sl) {
+                                                                        options += '<option value="' + sl.id + '" ' + (sl.id == selected ? 'selected' : '') + '>[' + sl.code + '] ' + sl.name + '</option>';
+                                                                    });
+                                                                    $select.html(options).val(selected).trigger('change');
+                                                                    $select.closest('.sub-ledger').show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+
+                                                Entries();
+                                            } else {
+                                                // No saved rows, add two empty rows
+                                                add();
+                                                add();
+                                            }
 
                                             $.dialog({
                                                 title: response.entry_type + " Voucher #" + response.code,
