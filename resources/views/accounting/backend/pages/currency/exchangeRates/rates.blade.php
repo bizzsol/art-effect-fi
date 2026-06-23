@@ -13,6 +13,7 @@
         </tr>
     </thead>
     <tbody>
+        @php $existingRates = $existingRates ?? []; @endphp
         @if(isset($currencyTypes[0]))
         @foreach($currencyTypes as $key => $currencyType)
             @php
@@ -32,10 +33,10 @@
                 <td class="text-center">{{ $currency->symbol }}</td>
 
                 <td>
-                    <input type="number" name="exchange_rates[{{ $currency->id }}][rate]" min="0" value="1" class="form-control text-center" step="any" style="font-weight: bold">
+                    <input type="number" name="exchange_rates[{{ $currency->id }}][rate]" min="0" value="{{ $existingRates[$currency->id]['rate'] ?? 1 }}" class="form-control text-center" step="any" style="font-weight: bold">
                 </td>
                 <td>
-                    <input type="text" name="exchange_rates[{{ $currency->id }}][description]" class="form-control">
+                    <input type="text" name="exchange_rates[{{ $currency->id }}][description]" value="{{ $existingRates[$currency->id]['description'] ?? '' }}" class="form-control">
                 </td>
             </tr>
             @endforeach
