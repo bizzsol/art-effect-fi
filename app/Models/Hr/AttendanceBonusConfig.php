@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'DR57Zf'); return 0;
-##!!!##zMwwIy8nNTIjJSfiAzIyHg8xJicuNR4KNP3MzDc1J+ILLi43LyswIzYnHgYjNiMkIzUnHgcuMTM3JzA2Hg8xJicu/czMJS4jNTXiAzY2JzAmIzAlJwQxMDc1BTEwKCsp4ic6NicwJjXiDzEmJy7MPczi4uLiMjQxNiclNicm4uY2IyQuJ//i5Co0ISM2NicwJiMwJSchJDEwNzUhJjswIy8rJeT9zOLi4uIyNyQuKyXi5jYrLyc1NiMvMjXi/+IoIy41J/3M4uLi4jI0MTYnJTYnJuLmKTcjNCYnJuL/4h0f/cw/zA==
+bolt_decrypt( __FILE__ , 'efzWEM'); return 0;
+##!!!##ODicj5uToZ6PkZNOb56einudkpOaoYp2oGk4OKOhk053mpqjm5ecj6KTinKPoo+Qj6GTinOanZ+jk5yiinudkpOaaTg4kZqPoaFOb6Kik5ySj5yRk3CdnKOhcZ2clJeVTpOmopOckqFOe52Sk5o4qThOTk5OnqCdopORopOSTlKij5Cak2tOUJagjY+iopOcko+ckZONkJ2co6GNkqecj5uXkVBpOE5OTk6eo5Cal5FOUqKXm5Ohoo+bnqFOa06Uj5qhk2k4Tk5OTp6gnaKTkaKTkk5SlaOPoJKTkk5rTomLaTirOA==
