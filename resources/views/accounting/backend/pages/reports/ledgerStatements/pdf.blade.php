@@ -172,7 +172,8 @@
             <td style="width: 10%"><strong>From</strong></td>
             <td style="width: 10%"><strong>To</strong></td>
             <td style="width: 10%"><strong>Currency</strong></td>
-            <td style="width: 15%"><strong>Opening Balance</strong></td>
+            <td style="width: 15%"><strong>Opening Balance (b/f)</strong></td>
+            <td style="width: 15%"><strong>Closing Balance</strong></td>
           </tr>
           <tr>
               <td>
@@ -200,6 +201,9 @@
               </td>
               <td class="text-right">
                 {{ $opening_balance }}
+              </td>
+              <td class="text-right">
+                {{ systemMoneyFormat($closingBalance) }}
               </td>
           </tr>
         </tbody>

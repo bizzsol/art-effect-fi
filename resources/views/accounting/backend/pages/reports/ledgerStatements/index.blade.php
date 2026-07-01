@@ -108,6 +108,20 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
+                                    <label for="fiscal_year_id"><strong>Fiscal Year</strong></label>
+                                    <div class="input-group input-group-md mb-3 d-">
+                                        <select name="fiscal_year_id" id="fiscal_year_id" class="form-control" onchange="getDates()">
+                                            @if(isset($fiscalYears[0]))
+                                            @foreach($fiscalYears as $key => $fiscalYear)
+                                                <option value="{{ $fiscalYear->id }}" data-start="{{ date('Y-m-d', strtotime($fiscalYear->start)) }}" data-end="{{ date('Y-m-d', strtotime($fiscalYear->end)) }}" {{ (isset($selectedFiscalYearId) && $selectedFiscalYearId == $fiscalYear->id) ? 'selected' : '' }}>{{ $fiscalYear->title }}&nbsp;|&nbsp;{{ date('d-M-y', strtotime($fiscalYear->start)).' to '.date('d-M-y', strtotime($fiscalYear->end)) }}</option>
+                                            @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
                                     <label for="currency_id"><strong>Currency</strong></label>
                                     <div class="input-group input-group-md mb-3 d-">
                                         <select name="currency_id" id="currency_id" class="form-control">
@@ -128,8 +142,8 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="from"><strong>Start Date</strong></label>
-                                    <input type="date" name="from" id="from" value="{{ date('Y-m-d', strtotime($from)) }}" class="form-control">
+                                    <label for="from"><strong>Start Date</strong> <small class="text-muted">(FY start)</small></label>
+                                    <input type="date" name="from" id="from" value="{{ date('Y-m-d', strtotime($from)) }}" class="form-control" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -138,10 +152,10 @@
                                     <input type="date" name="to" id="to" value="{{ date('Y-m-d', strtotime($to)) }}" class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6 pt-4">
+                            <div class="col-md-4 pt-4">
                                 @can('ledger-statement-excel')
                                     @include('accounting.backend.pages.reports.buttons', [
-                                        'url' => url('accounting/ledger-statement?chart_of_account_id='.request()->get('chart_of_account_id').'&from='.request()->get('from').'&to='.request()->get('to')),
+                                        'url' => url('accounting/ledger-statement?chart_of_account_id='.request()->get('chart_of_account_id').'&fiscal_year_id='.request()->get('fiscal_year_id').'&from='.request()->get('from').'&to='.request()->get('to')),
                                         'normalExcel' => true
                                     ])
                                 @endcan
