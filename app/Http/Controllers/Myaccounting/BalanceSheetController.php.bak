@@ -1,0 +1,281 @@
+<?php
+
+namespace App\Http\Controllers\Myaccounting;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+use \App\Models\PmsModels\Accounts\Company;
+use \App\Models\PmsModels\Accounts\ProfitCentre;
+use \App\Models\PmsModels\Accounts\CostCentre;
+use \App\Models\PmsModels\Accounts\AccountGroup;
+use \App\Models\PmsModels\Accounts\FiscalYear;
+use \App\Models\PmsModels\Accounts\EntryType;
+use \App\Models\PmsModels\Accounts\Tag;
+use \App\Models\PmsModels\Accounts\ChartOfAccount;
+use \App\Models\PmsModels\Accounts\Entry;
+use \App\Models\PmsModels\Accounts\EntryItem;
+
+use \App\Models\PmsModels\Accounts\CurrencyType;
+use \App\Models\PmsModels\Accounts\Currency;
+use \App\Models\PmsModels\Accounts\ExchangeRate;
+
+use \App\Models\PmsModels\Accounts\FiscalYearClosing;
+use \App\Models\PmsModels\Accounts\FiscalYearClosingLedger;
+
+use App, DB, DataTables;
+use Illuminate\Support\Facades\Auth;
+
+class BalanceSheetController extends Controller
+{
+    public function index(Request $request)
+    {
+        try {
+            $title = 'Report - Balance Sheet';
+            
+            $fiscalYear = getActiveFiscalYear();
+            $accountDefaultSettings = accountDefaultSettings();
+            $systemCurrency = systemCurrency();
+
+            $assets = '';
+            $liabilities = '';
+            $groupWise = false;
+            if(request()->has('report_type')){
+
+                $currency_id = request()->has('currency_id') ? $request->currency_id : 0;
+                $company_id = request()->has('company_id') ? $request->company_id : 0;
+                $profit_centre_id = request()->has('profit_centre_id') ? $request->profit_centre_id : 0;
+                $cost_centre_id = request()->has('cost_centre_id') ? $request->cost_centre_id : 0;
+                $fiscal_year_id = request()->has('fiscal_year_id') ? $request->fiscal_year_id : 0;
+                $fiscalYear = FiscalYear::findOrFail($fiscal_year_id);
+                $all = getAllGroupAndLedgers(false, false, [1, 2, 3], [$company_id]);
+
+                $rate = 1;
+                if($systemCurrency->id != $currency_id){
+                    $rates = getExchangeRates($systemCurrency->id);
+                    $rate = isset($rates['rates'][$currency_id]['rate']) ? $rates['rates'][$currency_id]['rate'] : 1;
+                }
+
+                $debitEntryItems = EntryItem::join('entries', 'entries.id', '=', 'entry_items.entry_id')
+                ->join('cost_centres', 'cost_centres.id', '=', 'entry_items.cost_centre_id')
+                ->join('profit_centres', 'profit_centres.id', '=', 'cost_centres.profit_centre_id')
+
+                ->join('chart_of_accounts', 'chart_of_accounts.id', '=', 'entry_items.chart_of_account_id')
+                ->join('account_groups', 'account_groups.id', '=', 'chart_of_accounts.account_group_id')
+
+                ->whereIn('account_groups.account_class_id', [1, 2, 3])
+
+                ->where('entries.is_approved', 'approved')
+                ->where('entries.date', '>=', $request->from)
+                ->where('entries.date', '<=', $request->to)
+                ->where('entries.fiscal_year_id', $fiscal_year_id)
+                ->where('profit_centres.company_id', $company_id)
+
+                ->when($profit_centre_id > 0, function($query) use($profit_centre_id){
+                    return $query->where('cost_centres.profit_centre_id', $profit_centre_id);
+                })
+                ->when($cost_centre_id > 0, function($query) use($cost_centre_id){
+                    return $query->where('entry_items.cost_centre_id', $cost_centre_id);
+                })
+
+                ->where('entry_items.debit_credit', 'D')
+
+                ->groupBy('entry_items.chart_of_account_id')
+
+                ->whereNull('entries.deleted_at')
+                ->whereNull('entry_items.deleted_at')
+                ->whereNull('chart_of_accounts.deleted_at')
+
+                ->get([
+                    'account_groups.account_class_id',
+                    'entry_items.chart_of_account_id',
+                    DB::raw('sum(entry_items.reporting_amount) as reporting_amount')
+                ]);
+
+                $creditEntryItems = EntryItem::join('entries', 'entries.id', '=', 'entry_items.entry_id')
+                ->join('cost_centres', 'cost_centres.id', '=', 'entry_items.cost_centre_id')
+                ->join('profit_centres', 'profit_centres.id', '=', 'cost_centres.profit_centre_id')
+
+                ->join('chart_of_accounts', 'chart_of_accounts.id', '=', 'entry_items.chart_of_account_id')
+                ->join('account_groups', 'account_groups.id', '=', 'chart_of_accounts.account_group_id')
+
+                ->whereIn('account_groups.account_class_id', [1, 2, 3])
+
+                ->where('entries.is_approved', 'approved')
+                ->where('entries.date', '>=', $request->from)
+                ->where('entries.date', '<=', $request->to)
+                ->where('entries.fiscal_year_id', $fiscal_year_id)
+                ->where('profit_centres.company_id', $company_id)
+
+                ->when($profit_centre_id > 0, function($query) use($profit_centre_id){
+                    return $query->where('cost_centres.profit_centre_id', $profit_centre_id);
+                })
+                ->when($cost_centre_id > 0, function($query) use($cost_centre_id){
+                    return $query->where('entry_items.cost_centre_id', $cost_centre_id);
+                })
+                
+                ->where('entry_items.debit_credit', 'C')
+
+                ->groupBy('entry_items.chart_of_account_id')
+
+                ->whereNull('entries.deleted_at')
+                ->whereNull('entry_items.deleted_at')
+                ->whereNull('chart_of_accounts.deleted_at')
+
+                ->get([
+                    'account_groups.account_class_id',
+                    'entry_items.chart_of_account_id',
+                    DB::raw('sum(entry_items.reporting_amount) as reporting_amount')
+                ]);
+
+                $carryForwarded = FiscalYearClosingLedger::join('fiscal_year_closings', 'fiscal_year_closings.id', '=', 'fiscal_year_closing_ledgers.fiscal_year_closing_id')
+
+                ->join('chart_of_accounts', 'chart_of_accounts.id', '=', 'fiscal_year_closing_ledgers.chart_of_account_id')
+                ->join('account_groups', 'account_groups.id', '=', 'chart_of_accounts.account_group_id')
+
+                ->whereIn('account_groups.account_class_id', [1, 2, 3])
+                
+                ->where('fiscal_year_closings.company_id', $company_id)
+                ->where('fiscal_year_closings.to_fiscal_year_id', $fiscalYear->id)
+                ->whereNotIn('fiscal_year_closings.reference', carryForwardIgnoreList())
+                
+                ->groupBy('fiscal_year_closing_ledgers.chart_of_account_id')
+
+                ->whereNull('chart_of_accounts.deleted_at')
+
+                ->get([
+                    'account_groups.account_class_id',
+                    'fiscal_year_closing_ledgers.chart_of_account_id',
+                    DB::raw('sum(fiscal_year_closing_ledgers.carry_forwarding_amount) as carry_forwarding_amount')
+                ]);
+
+                $assetGroups = AccountGroup::doesntHave('parent')->whereIn('account_class_id', [1])->get();
+                $liabilityGroups = AccountGroup::doesntHave('parent')->whereIn('account_class_id', [2, 3])->get();
+
+                $assetBalances = [];
+                $liabilityBalances = [];
+
+                $groupWise = ($request->group_wise == 1);
+                if($groupWise){
+                    if($assetGroups->count() > 0){
+                        foreach($assetGroups as $key => $group){
+                            $assets .= '<tr class="group-'.$group->id.'">
+                                <td><strong>'.$group->code.'</strong></td>
+                                <td><strong>'.$group->name.'</strong></td>
+                                <td style="text-align: right" class="closing_balance_column"><strong>'.systemMoneyFormat(groupClosingBalance($group, ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate)['balance']).'</strong></td>
+                            </tr>';
+
+                            $assets .= balanceSheet($company_id,$group, $request->from, $request->to, 0, !(request()->has('report_type') && $request->report_type == 'pdf'), ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate);
+                        }
+                    }
+                    $assets .= '<tr>
+                        <td colspan="2"><strong>Total '.$assetGroups->pluck('name')->implode(', ').':</strong></td>
+                        <td style="text-align: right"><strong>'.systemMoneyFormat(($debitEntryItems->whereIn('account_class_id', [1])->sum('reporting_amount')-$creditEntryItems->whereIn('account_class_id', [1])->sum('reporting_amount')+$carryForwarded->whereIn('account_class_id', [1])->sum('carry_forwarding_amount'))).'</strong></td>
+                    </tr>';
+                }else{
+                    $chartOfAccounts = ChartOfAccount::with([
+                        'accountGroup.accountClass'
+                    ])
+                    ->whereHas('accountGroup', function($query){
+                        return $query->whereIn('account_class_id', [1]);
+                    })
+                    ->whereHas('companies', function($query) use($company_id){
+                        return $query->where('company_id', $company_id);
+                    })
+                    ->orderBy('code', 'asc')
+                    ->get();
+                    if($chartOfAccounts->count() > 0){
+                        foreach($chartOfAccounts as $key => $account){
+                            $balanceSheetLedger = balanceSheetLedger($company_id,$account, $request->from, $request->to, 0, !(request()->has('report_type') && $request->report_type == 'pdf'), ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate);
+                            
+                            $assets .= $balanceSheetLedger['data'];
+                            array_push($assetBalances, $balanceSheetLedger['balance']);
+                        }
+
+                        $assets .= '<tr>
+                            <td colspan="2"><strong>Total '.$assetGroups->pluck('name')->implode(', ').':</strong></td>
+                            <td style="text-align: right"><strong>'.systemMoneyFormat(array_sum($assetBalances)).'</strong></td>
+                        </tr>';
+                    }
+                }
+
+                if($groupWise){
+                    if($liabilityGroups->count() > 0){
+                        foreach($liabilityGroups as $key => $group){
+                            $liabilities .= '<tr class="group-'.$group->id.'">
+                                <td><strong>'.$group->code.'</strong></td>
+                                <td><strong>'.$group->name.'</strong></td>
+                                <td style="text-align: right" class="closing_balance_column"><strong>'.systemMoneyFormat(groupClosingBalance($group, ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate)['balance']).'</strong></td>
+                            </tr>';
+
+                            $liabilities .= balanceSheet($company_id,$group, $request->from, $request->to, 0, !(request()->has('report_type') && $request->report_type == 'pdf'), ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate);
+                        }
+                    }
+                    $liabilities .= '<tr>
+                        <td colspan="2"><strong>Total '.$liabilityGroups->pluck('name')->implode(', ').':</strong></td>
+                        <td style="text-align: right"><strong>'.systemMoneyFormat(($debitEntryItems->whereIn('account_class_id', [2, 3])->sum('reporting_amount')-$creditEntryItems->whereIn('account_class_id', [2, 3])->sum('reporting_amount')+$carryForwarded->whereIn('account_class_id', [2, 3])->sum('carry_forwarding_amount'))).'</strong></td>
+                    </tr>';
+                }else{
+                    $chartOfAccounts = ChartOfAccount::with([
+                        'accountGroup.accountClass'
+                    ])
+                    ->whereHas('accountGroup', function($query){
+                        return $query->whereIn('account_class_id', [2, 3]);
+                    })
+                    ->orderBy('code', 'asc')->get();
+                    if($chartOfAccounts->count() > 0){
+                        foreach($chartOfAccounts as $key => $account){
+                            $balanceSheetLedger = balanceSheetLedger($company_id,$account, $request->from, $request->to, 0, !(request()->has('report_type') && $request->report_type == 'pdf'), ['D' => $debitEntryItems, 'C' => $creditEntryItems], $all, $carryForwarded, $rate);
+                            
+                            $liabilities .= $balanceSheetLedger['data'];
+                            array_push($liabilityBalances, $balanceSheetLedger['balance']);
+                        }
+
+                        $liabilities .= '<tr>
+                            <td colspan="2"><strong>Total '.$liabilityGroups->pluck('name')->implode(', ').':</strong></td>
+                            <td style="text-align: right"><strong>'.systemMoneyFormat(array_sum($liabilityBalances)).'</strong></td>
+                        </tr>';
+                    }
+                }
+            }
+
+            $companies = Company::has('profitCentres.costCentres')
+            ->whereHas('users', function($query){
+                return $query->where('user_id', auth()->user()->id);
+            })
+            ->get();
+
+            $data = [
+                'title' => reportTitle(request()->all(), $title),
+                'currencyTypes' => CurrencyType::with('currencies')->get(),
+                'currency' => Currency::find($request->currency_id),
+                'assetGroups' => isset($assetGroups) ? $assetGroups : [],
+                'liabilityGroups' => isset($liabilityGroups) ? $liabilityGroups : [],
+                'groupWise' => $groupWise,
+                'assets' => $assets,
+                'liabilities' => $liabilities,
+                'fiscalYear' => $fiscalYear,
+                'accountDefaultSettings' => $accountDefaultSettings,
+                'companies' => $companies,
+                'profitCentres' => ProfitCentre::where('company_id', $companies->first()->id)->orderBy('code', 'asc')->get(),
+                'fiscalYears' => FiscalYear::all(),
+            ];
+
+            if(request()->has('report_type') && $request->report_type == 'pdf'){
+                return viewMPDF('accounting.backend.pages.reports.balanceSheet.pdf', $data, $title, $title);
+            }
+
+            if(request()->has('report_type') && $request->report_type == 'report'){
+                return view('accounting.backend.pages.reports.balanceSheet.report', $data);
+            }
+
+            return view('accounting.backend.pages.reports.balanceSheet.index', $data);
+        }catch (\Throwable $th){
+            if(request()->has('report_type') && $request->report_type == 'report'){
+                return $th->getMessage();
+            }
+
+            return $this->backWithError($th->getMessage());
+        }
+    }
+}

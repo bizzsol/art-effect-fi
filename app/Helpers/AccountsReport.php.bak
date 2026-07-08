@@ -1,0 +1,630 @@
+<?php
+
+function actualValue($amount = 0, $type = 'D'){
+    $positive = isPositive($type);
+    $amount = ($positive ? $amount : ($amount*(-1)));
+    return ($amount == -0 ? 0 : $amount);
+}
+
+function isPositive($type){
+    $positive = false;
+    if($type == "D"){
+        $positive = true;
+    }elseif($type == "C"){
+        $positive = false;
+    }
+
+    return $positive;
+}
+
+// old
+// old
+function ledgerClosingBalance($group, $account, $entryItems = [], $all = [], $carryForwarded = [], $rate = 1, $openings = [], $sub_ledgers = []){
+    $opening_balance = 0;
+    $debit = 0;
+    $credit = 0;
+    if(isset($account->id)){
+        $coa_id = $account->id;
+
+        // Opening Balance (Carry Forward)
+        if (count($carryForwarded) > 0) {
+            if ($carryForwarded->has($coa_id) && $carryForwarded->get($coa_id)->chart_of_account_id == $coa_id) {
+                $opening_balance = $carryForwarded->get($coa_id)->carry_forwarding_amount * $rate;
+            } else {
+                $opening_balance = $carryForwarded->where('chart_of_account_id', $coa_id)->sum('carry_forwarding_amount') * $rate;
+            }
+        }
+
+        // Opening Transactions
+        $opening_debit = 0;
+        if (isset($openings['D']) && $openings['D']->count() > 0) {
+            if ($openings['D']->has($coa_id) && $openings['D']->get($coa_id)->chart_of_account_id == $coa_id) {
+                $opening_debit = $openings['D']->get($coa_id)->reporting_amount * $rate;
+            } else {
+                $opening_debit = $openings['D']->where('chart_of_account_id', $coa_id)->sum('reporting_amount') * $rate;
+            }
+        }
+
+        $opening_credit = 0;
+        if (isset($openings['C']) && $openings['C']->count() > 0) {
+            if ($openings['C']->has($coa_id) && $openings['C']->get($coa_id)->chart_of_account_id == $coa_id) {
+                $opening_credit = $openings['C']->get($coa_id)->reporting_amount * $rate;
+            } else {
+                $opening_credit = $openings['C']->where('chart_of_account_id', $coa_id)->sum('reporting_amount') * $rate;
+            }
+        }
+
+        // Period Transactions
+        if(isset($sub_ledgers[0])){
+            $debit = $entryItems['D']->where('chart_of_account_id', $coa_id)->whereIn('sub_ledger_id', $sub_ledgers)->sum('reporting_amount')*$rate;
+            $credit = $entryItems['C']->where('chart_of_account_id', $coa_id)->whereIn('sub_ledger_id', $sub_ledgers)->sum('reporting_amount')*$rate;
+        }else{
+            if (isset($entryItems['D'])) {
+                if ($entryItems['D']->has($coa_id) && $entryItems['D']->get($coa_id)->chart_of_account_id == $coa_id) {
+                    $debit = $entryItems['D']->get($coa_id)->reporting_amount * $rate;
+                } else {
+                    $debit = $entryItems['D']->where('chart_of_account_id', $coa_id)->sum('reporting_amount') * $rate;
+                }
+            }
+
+            if (isset($entryItems['C'])) {
+                if ($entryItems['C']->has($coa_id) && $entryItems['C']->get($coa_id)->chart_of_account_id == $coa_id) {
+                    $credit = $entryItems['C']->get($coa_id)->reporting_amount * $rate;
+                } else {
+                    $credit = $entryItems['C']->where('chart_of_account_id', $coa_id)->sum('reporting_amount') * $rate;
+                }
+            }
+        }
+    }
+
+    $opening_balance = $opening_balance + actualValue($opening_debit, 'D') + actualValue($opening_credit, 'C');
+    return [
+        'opening_balance' => $opening_balance,
+        'debit' => $debit,
+        'credit' => $credit,
+        'balance' => $opening_balance + actualValue($debit, 'D') + actualValue($credit, 'C'),
+    ];
+}
+//new
+
+//function ledgerClosingBalance($group, $account, $entryItems = [], $all = [], $carryForwarded = null, $rate = 1, $openings = [], $sub_ledgers = [])
+//{
+//    if (!isset($account->id)) {
+//        return [
+//            'opening_balance' => 0,
+//            'debit' => 0,
+//            'credit' => 0,
+//            'balance' => 0,
+//        ];
+//    }
+//
+//    /* ---------------------------------------------------
+//     *  1. CARRY FORWARD BALANCE
+//     * ---------------------------------------------------*/
+//    $carryForwardedSum = 0;
+//
+//    if ($carryForwarded instanceof \Illuminate\Support\Collection) {
+//        $carryForwardedSum = $carryForwarded
+//                ->where('chart_of_account_id', $account->id)
+//                ->sum('carry_forwarding_amount') * $rate;
+//
+//    } elseif (is_array($carryForwarded)) {
+//        $carryForwardedSum = collect($carryForwarded)
+//                ->where('chart_of_account_id', $account->id)
+//                ->sum('carry_forwarding_amount') * $rate;
+//    }
+//
+//    /* ---------------------------------------------------
+//     *  2. OPENING DEBIT / CREDIT
+//     * ---------------------------------------------------*/
+//    $opening_debit  = (isset($openings['D']) && $openings['D'])
+//        ? $openings['D']->where('chart_of_account_id', $account->id)->sum('reporting_amount') * $rate
+//        : 0;
+//
+//    $opening_credit = (isset($openings['C']) && $openings['C'])
+//        ? $openings['C']->where('chart_of_account_id', $account->id)->sum('reporting_amount') * $rate
+//        : 0;
+//
+//    /* --------------- STANDARD ACCOUNTING ----------------
+//       Opening Balance = Carry Fwd + Opening Debit – Opening Credit
+//    -------------------------------------------------------*/
+//    $opening_balance = $carryForwardedSum + ($opening_debit - $opening_credit);
+//
+//    /* ---------------------------------------------------
+//     * 3. PERIOD ENTRY ITEMS (WITH/WITHOUT SUB-LEDGERS)
+//     * ---------------------------------------------------*/
+//    $filter = function ($q) use ($sub_ledgers) {
+//        return !empty($sub_ledgers) ?
+//            $q->whereIn('sub_ledger_id', $sub_ledgers) :
+//            $q;
+//    };
+//
+//    $period_debit = (isset($entryItems['D']) ?
+//            $filter($entryItems['D'])->where('chart_of_account_id', $account->id)->sum('reporting_amount')
+//            : 0) * $rate;
+//
+//    $period_credit = (isset($entryItems['C']) ?
+//            $filter($entryItems['C'])->where('chart_of_account_id', $account->id)->sum('reporting_amount')
+//            : 0) * $rate;
+//
+//    /* --------------- STANDARD ACCOUNTING ----------------
+//       Debit = +ve
+//       Credit = -ve
+//       Closing = Opening + Debit – Credit
+//    -------------------------------------------------------*/
+//    $balance = $opening_balance + $period_debit - $period_credit;
+//
+//    return [
+//        'opening_balance' => $opening_balance,
+//        'debit' => $period_debit,        // always +ve
+//        'credit' => $period_credit,      // always +ve
+//        'balance' => $balance,           // signed
+//    ];
+//}
+
+
+//function groupClosingBalance($group, $entryItems = [], $all = [], $carryForwarded = [], $rate = 1, $openings = []){
+//    $accounts = call_user_func_array('array_merge', getAllAccounts($group->id, [], $all) ?: [[]]);
+//    $accounts = array_merge($accounts, $all['accounts']->where('account_group_id', $group->id)->pluck('id')->toArray());
+//
+//    $opening_balance = (isset($carryForwarded[0]) ? $carryForwarded->whereIn('chart_of_account_id', $accounts)->sum('carry_forwarding_amount')*$rate : 0);
+//
+//    $opening_debit = (isset($openings['D']) ? $openings['D']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount')*$rate : 0);
+//    $opening_credit = (isset($openings['D']) ? $openings['C']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount')*$rate : 0);
+//
+//    $debit = $entryItems['D']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount')*$rate;
+//    $credit = $entryItems['C']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount')*$rate;
+//
+//    $opening_balance = $opening_balance+actualValue($opening_debit, 'D')+actualValue($opening_credit, 'C');
+//    return [
+//        'opening_balance' => $opening_balance,
+//        'debit' => actualValue($debit, 'D'),
+//        'credit' => actualValue($credit, 'C'),
+//        'balance' => actualValue($debit, 'D')+actualValue($credit, 'C')+$opening_balance,
+//    ];
+//}
+
+function groupClosingBalance($group, $entryItems = [], $all = [], $carryForwarded = [], $rate = 1, $openings = [])
+{
+    // Initialize totals
+    $opening_balance = 0;
+    $debit = 0;
+    $credit = 0;
+    
+    // --- Step 1: Add ledger balances of current group ---
+    $accounts = $all['accounts']
+        ->where('account_group_id', $group->id)
+        ->pluck('id')
+        ->toArray();
+
+    if (!empty($accounts)) {
+        // 1.1 Carry Forward
+        if (count($carryForwarded) > 0) {
+            $opening_balance += $carryForwarded->whereIn('chart_of_account_id', $accounts)->sum('carry_forwarding_amount') * $rate;
+        }
+        
+        // 1.2 Opening Transactions (D/C before start date)
+        $opening_debit = 0;
+        if (isset($openings['D']) && count($openings['D']) > 0) {
+            $opening_debit = $openings['D']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount') * $rate;
+        }
+        
+        $opening_credit = 0;
+        if (isset($openings['C']) && count($openings['C']) > 0) {
+            $opening_credit = $openings['C']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount') * $rate;
+        }
+        
+        $opening_balance += actualValue($opening_debit, 'D') + actualValue($opening_credit, 'C');
+
+        // 1.3 Period Transactions
+        if (isset($entryItems['D'])) {
+            $debit += $entryItems['D']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount') * $rate;
+        }
+
+        if (isset($entryItems['C'])) {
+            $credit += $entryItems['C']->whereIn('chart_of_account_id', $accounts)->sum('reporting_amount') * $rate;
+        }
+    }
+    
+    // --- Step 2: Add balances of all child groups recursively ---
+    $childGroups = $all['groups']->where('parent_id', $group->id);
+    
+    foreach ($childGroups as $child) {
+        $childBalance = groupClosingBalance($child, $entryItems, $all, $carryForwarded, $rate, $openings);
+        
+        $opening_balance += $childBalance['opening_balance'];
+        $debit += $childBalance['debit'];
+        $credit += $childBalance['credit'];
+    }
+    
+    // --- Step 3: Return total for this group (including subgroups & ledgers) ---
+    return [
+        'opening_balance' => $opening_balance, // Net signed
+        'debit' => $debit,                      // Gross positive
+        'credit' => $credit,                    // Gross positive
+        'balance' => $opening_balance + actualValue($debit, 'D') + actualValue($credit, 'C'), // Net signed
+    ];
+}
+
+
+function balanceSheet($company_id, $group, $from, $to, $step = 0, $link = true, $entryItems = [], $all = [], $carryForwarded = [], $rate = 1){
+    $data = '';
+
+    $chartOfAccounts = $all['accounts']->where('account_group_id', $group->id);
+    if($chartOfAccounts->count() > 0){
+        foreach($chartOfAccounts as $key => $account){
+            $data .= '<tr class="account-'.$account->id.'">
+                        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+                        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name.($link ? '</a>' : '').'</td>
+                        <td class="amount closing_balance_column" style="text-align: right">'.systemMoneyFormat(ledgerClosingBalance($group, $account, $entryItems, $all, $carryForwarded, $rate)['balance']).'</td>
+                    </tr>';
+        }
+    }
+
+    $groups = collect($all['groups']->where('parent_id', $group->id))->sortBy('code');
+    if($groups->count() > 0){
+        foreach ($groups as $key => $group) {
+            $childrenGroups = $all['groups']->where('parent_id', $group->id);
+            $chartOfAccounts = $all['accounts']->where('account_group_id', $group->id);
+
+            if($chartOfAccounts->count() > 0 || $childrenGroups->count() > 0){
+                $data .= '<tr class="group-'.$group->id.'">
+                            <td><strong>'.$group->code.'</strong></td>
+                            <td><strong>'.$group->name.'</strong></td>
+                            <td style="text-align: right" class="closing_balance_column"><strong>'.systemMoneyFormat(groupClosingBalance($group, $entryItems, $all, $carryForwarded, $rate)['balance']).'</strong></td>
+                       </tr>';
+            }
+
+            if($chartOfAccounts->count() > 0){
+                foreach($chartOfAccounts as $key => $account){
+                    $data .= '<tr class="account-'.$account->id.'">
+                                <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+                                <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name.($link ? '</a>' : '').'</td>
+                                <td class="amount closing_balance_column" style="text-align: right">'.systemMoneyFormat(ledgerClosingBalance($group, $account, $entryItems, $all, $carryForwarded, $rate)['balance']).'</td>
+                            </tr>';
+                }
+            }
+
+            if($childrenGroups->count() > 0){
+                $data .= balanceSheet($company_id, $group, $from, $to, $step+1, $link, $entryItems, $all, $carryForwarded, $rate);
+            }
+        }
+    }
+    
+    return $data;
+}
+
+function balanceSheetLedger($company_id, $account, $from, $to, $step = 0, $link = true, $entryItems = [], $all = [], $carryForwarded = [], $rate = 1){
+    $balance = ledgerClosingBalance($account->accountGroup, $account, $entryItems, $all, $carryForwarded, $rate);
+    $data = '<tr class="account-'.$account->id.'">
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$from.'&to='.$to.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name.($link ? '</a>' : '').'</td>
+        <td class="amount closing_balance_column" style="text-align: right">'.systemMoneyFormat($balance['balance']).'</td>
+    </tr>';
+
+    return [
+        'balance' => $balance['balance'],
+        'data' => $data,
+    ];
+}
+
+function trialbalanceGroupData($group, $entryItems, $all, $carryForwarded, $rate, $openings, $step = 0){
+    $group_balance = groupClosingBalance($group, $entryItems, $all, $carryForwarded, $rate, $openings);
+    $padding = $step * 20;
+    return '<tr class="group-'.$group->id.'">
+        <td><strong style="padding-left: '.$padding.'px">'.$group->code.'</strong></td>
+        <td><strong style="padding-left: '.$padding.'px">'.$group->name.'</strong></td>
+        <td class="opening_balance_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['opening_balance']).'</strong></td>
+        <td class="debit_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['debit']).'</strong></td>
+        <td class="credit_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['credit']).'</strong></td>
+        <td class="closing_balance_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['balance']).'</strong></td>
+    </tr>';
+}
+
+function trialbalanceLedgerData($group, $account, $entryItems, $all, $carryForwarded, $rate, $openings, $link, $company_id, $start, $end, $step = 0){
+    $ledger_balance = ledgerClosingBalance($group, $account, $entryItems, $all, $carryForwarded, $rate, $openings);
+    $padding = ($step + 1) * 20;
+    return '<tr class="account-'.$account->id.'">
+        <td style="padding-left: '.$padding.'px">'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+        <td style="padding-left: '.$padding.'px">'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name.($link ? '</a>' : '').'</td>
+        <td class="opening_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['opening_balance']).'</td>
+        <td class="debit_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['debit']).'</td>
+        <td class="credit_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['credit']).'</td>
+        <td class="closing_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['balance']).'</td>
+    </tr>';
+}
+
+function trialbalance($company_id, $group, $start, $end, $step = 0, $link = true, $openings = [], $entryItems = [], $all = [], $carryForwarded = [], $rate = 1){
+    $data = '';
+
+    // 1. Show individual ledgers belong to THIS group
+    $chartOfAccounts = $all['accounts']->where('account_group_id', $group->id);
+    if($chartOfAccounts->count() > 0){
+        foreach($chartOfAccounts as $key => $account){
+            $data .= trialbalanceLedgerData($group, $account, $entryItems, $all, $carryForwarded, $rate, $openings, $link, $company_id, $start, $end, $step);
+        }
+    }
+    
+    // 2. Show Child Groups
+    $groups = collect($all['groups']->where('parent_id', $group->id))->sortBy('code');
+    if($groups->count() > 0){
+        foreach ($groups as $key => $childGroup) {
+            $childrenGroupsCount = $all['groups']->where('parent_id', $childGroup->id)->count();
+            $chartOfAccountsCount = $all['accounts']->where('account_group_id', $childGroup->id)->count();
+            
+            if($chartOfAccountsCount > 0 || $childrenGroupsCount > 0){
+                // Show child group total row
+                $data .= trialbalanceGroupData($childGroup, $entryItems, $all, $carryForwarded, $rate, $openings, $step + 1);
+                
+                // Recurse into child group (this will handle child ledgers and sub-sub-groups)
+                $data .= trialbalance($company_id, $childGroup, $start, $end, $step + 1, $link, $openings, $entryItems, $all, $carryForwarded, $rate);
+            }
+        }
+    }
+
+    return $data;
+}
+
+function trialbalanceLedger($company_id, $account, $start, $end, $link = true, $openings = [], $entryItems = [], $all = [], $carryForwarded = [], $rate = 1){
+    
+    //$companyCode = optional($account->companies->where('id',$company_id))->pluck('company.code')->join(', ');
+    $companyCode = $account->companies->where('company_id',$company_id)->pluck('company.code')->join(', ');
+    
+    $ledger_balance = ledgerClosingBalance($account->accountGroup, $account, $entryItems, $all, $carryForwarded, $rate, $openings);
+    $data = '<tr class="account-'.$account->id.'">
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?company_id='.$company_id.'&chart_of_account_id='
+                .$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name .'( '.
+        $companyCode .')' .
+        ($link ?
+            '</a>' : '').'</td>
+        <td class="opening_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['opening_balance']).'</td>
+        <td class="debit_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['debit']).'</td>
+        <td class="credit_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['credit']).'</td>
+        <td class="closing_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['balance']).'</td>
+    </tr>';
+
+    return [
+        'balance' => $ledger_balance,
+        'data' => $data,
+    ];
+}
+
+function trialbalanceOnlyClosingBalance($group, $start, $end, $currency_id = 1, $step = 0, $link = true, $exchangeRates = [], $entryItems = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = []){
+    $data = '';
+    
+    // 1. Show ledgers of current group
+    $chartOfAccounts = $all['accounts']->where('account_group_id', $group->id);
+    if($chartOfAccounts->count() > 0){
+        foreach($chartOfAccounts as $key => $account){
+            $ledger_balance = ledgerClosingBalance($group, $account, $start, $end, $currency_id, $exchangeRates, $entryItems, $all, $company_id, $fiscal_year_id, $carryForwarded);
+            $padding = ($step + 1) * 20;
+            $data .= '<tr class="account-'.$account->id.'">
+                        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').'<span style="padding-left: '.$padding.'px">['.$account->code.'] '.$account->name.'</span>'.($link ? '</a>' : '').'</td>
+                        <td class="opening_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['opening_balance']).'</td>
+                        <td class="closing_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['balance']).'</td>
+                    </tr>';
+        }
+    }
+
+    // 2. Show Child Groups
+    $groups = collect($all['groups']->where('parent_id', $group->id))->sortBy('code');
+    foreach ($groups as $key => $childGroup) {
+        $childrenGroupsCount = $all['groups']->where('parent_id', $childGroup->id)->count();
+        $chartOfAccountsCount = $all['accounts']->where('account_group_id', $childGroup->id)->count();
+        
+        if($chartOfAccountsCount > 0 || $childrenGroupsCount > 0){
+            $group_balance = groupClosingBalance($childGroup, $start, $end, $currency_id, [], $exchangeRates, $entryItems, $all, $company_id, $fiscal_year_id, $carryForwarded);
+            $padding = ($step + 1) * 20;
+            $data .= '<tr class="group-'.$childGroup->id.'">
+                            <td><strong style="padding-left: '.$padding.'px">['.$childGroup->code.'] '.$childGroup->name.'</strong></td>
+                            <td class="opening_balance_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['opening_balance']).'</strong></td>
+                            <td class="closing_balance_column" style="text-align: right"><strong>'.systemMoneyFormat($group_balance['balance']).'</strong></td>
+                       </tr>';
+
+            // Recurse
+            $data .= trialbalanceOnlyClosingBalance($childGroup, $start, $end, $currency_id, $step + 1, $link, $exchangeRates, $entryItems, $all, $company_id, $fiscal_year_id, $carryForwarded);
+        }
+    }
+
+    return $data;
+}
+
+function trialbalanceOnlyClosingBalanceLedger($account, $start, $end, $currency_id = 1, $link = true, $exchangeRates = [], $entryItems = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = []){
+    $ledger_balance = ledgerClosingBalance($account->accountGroup, $account, $start, $end, $currency_id, $exchangeRates, $entryItems, $all, $company_id, $fiscal_year_id, $carryForwarded);
+    $data = '<tr class="account-'.$account->id.'">
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->code.($link ? '</a>' : '').'</td>
+        <td>'.($link ? '<a href="'.url('accounting/ledger-statement?chart_of_account_id='.$account->id.'&from='.$start.'&to='.$end.'&fiscal_year_id='.request()->get('fiscal_year_id')).'" target="_blank">' : '').$account->name.($link ? '</a>' : '').'</td>
+        <td class="opening_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['opening_balance']).'</td>
+        <td class="closing_balance_column" style="text-align: right">'.systemMoneyFormat($ledger_balance['balance']).'</td>
+    </tr>';
+
+    return [
+        'balance' => $ledger_balance,
+        'data' => $data,
+    ];
+}
+
+/*
+function groupBalance($group, $type, $from = false, $to = false, $currency_id = 1, $accounts = [], $exchangeRates = [], $entryItems = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = [], $rate = 1){
+    
+    $items = $entryItems->whereIn('chart_of_account_id', $accounts)->where('debit_credit', $type);
+    $items->all();
+    $amount = $items->sum('reporting_amount')*$rate;
+
+    if(isset($exchangeRates[0])){
+        $exchangeRates = $exchangeRates->where('currency_id', '!=', $currency_id);
+        $exchangeRates = $exchangeRates->filter(function ($entity, $key) use($accounts, $type) {
+            return $entity->entries->filter(function ($entity, $key) use($accounts, $type) {
+                return $entity->items->filter(function ($entity, $key) use($accounts, $type) {
+                    return $entity->whereIn('chart_of_account_id', $accounts)
+                                  ->where('debit_credit', $type);
+                });
+            });
+        });
+        $exchangeRates->all();
+
+        if($exchangeRates->count() > 0){
+            foreach ($exchangeRates as $key => $exchangeRate) {
+                $rate = (isset(json_decode($exchangeRate->rates, true)[$currency_id]['rate']) ? json_decode($exchangeRate->rates, true)[$currency_id]['rate'] : 1);
+
+                $itemAmounts = $entryItems->whereIn('chart_of_account_id', $accounts)->where('debit_credit', $type);
+                $itemAmounts = $itemAmounts->filter(function ($entity, $key) use($exchangeRate) {
+                    return isset($entity->entry->exchange_rate_id) && $entity->entry->exchange_rate_id == $exchangeRate->id;
+                });
+                $itemAmounts->all();
+                $itemAmount = $itemAmounts->sum('amount');
+
+                $amount += ($itemAmount*$rate);
+            }
+        }
+    }
+
+    return actualValue($group->accountClass, $type, $amount);
+}
+*/
+
+/*
+function ledgerOpeningBalance($group, $account, $currency_id = 1, $company_id = 0, $fiscalYear = false, $carryForwarded = [], $rate = 1){
+    $opening_balance = 0;
+
+    
+    $rate = ($currency_id != $account->exchangeRate->currency_id ? exchangeRate($account->exchangeRate, $currency_id) : 1);
+    $opening_balance = actualValue($group->accountClass, $account->type, $account->opening_balance*$rate);
+    
+
+    
+    $carryForwardedAmount = 0;
+    if(isset($carryForwarded[0]) && $carryForwarded->where('chart_of_account_id', $account->id)->count() > 0){
+        foreach($carryForwarded->where('chart_of_account_id', $account->id) as $key => $carry){
+            $rate = ($currency_id != $carry->fiscalYearClosing->exchangeRate->currency_id ? exchangeRate($carry->fiscalYearClosing->exchangeRate, $currency_id) : 1);
+            $carryForwardedAmount += $carry->carry_forwarding_amount*$rate;
+        }
+    }
+    
+
+    $carryForwardedAmount = 0;
+    if(isset($carryForwarded[0])){
+        foreach($carryForwarded as $key => $fiscalYearClosing){
+            if($fiscalYearClosing->ledgers->where('chart_of_account_id', $account->id)->count() > 0){
+                foreach($fiscalYearClosing->ledgers->where('chart_of_account_id', $account->id) as $key => $ledger){
+                    $carryForwardedAmount += $ledger->carry_forwarding_amount*$rate;
+                }
+            }
+        }
+    }
+
+    return $opening_balance+$carryForwardedAmount;
+}
+*/
+
+/*
+function ledgerBalance($group, $account, $type, $from = false, $to = false, $currency_id = 1, $exchangeRates = [], $entryItems = [], $all = [], $company_id = 0, $fiscalYear = false, $rate = 1){
+    $items = $entryItems->where('entry.date', '>=', $from)
+    ->where('entry.date', '<=', $to)
+    ->where('chart_of_account_id', $account->id)
+    ->where('debit_credit', $type);
+    
+    $amount = $items->sum('reporting_amount')*$rate;
+
+    if(isset($exchangeRates[0])){
+        $exchangeRates = $exchangeRates->where('currency_id', '!=', $currency_id);
+        $exchangeRates = $exchangeRates->filter(function ($entity, $key) use($account, $type) {
+            return $entity->entries->filter(function ($entity, $key) use($account, $type) {
+                return $entity->items->filter(function ($entity, $key) use($account, $type) {
+                    return $entity->where('chart_of_account_id', $account->id)
+                                  ->where('debit_credit', $type);
+                });
+            });
+        });
+        $exchangeRates->all();
+
+        if($exchangeRates->count() > 0){
+            foreach($exchangeRates as $key => $exchangeRate){
+                $rate = (isset(json_decode($exchangeRate->rates, true)[$currency_id]['rate']) ? json_decode($exchangeRate->rates, true)[$currency_id]['rate'] : 1);
+
+                $itemAmounts = $entryItems->where('entry.date', '>=', $from)
+                ->where('entry.date', '<=', $to)
+                ->where('chart_of_account_id', $account->id)
+                ->where('debit_credit', $type);
+                $itemAmounts = $itemAmounts->filter(function ($entity, $key) use($exchangeRate) {
+                    return isset($entity->entry->exchange_rate_id) && $entity->entry->exchange_rate_id == $exchangeRate->id;
+                });
+                $itemAmounts->all();
+                $itemAmount = $itemAmounts->sum('amount');
+
+                $amount += ($itemAmount*$rate);
+            }
+        }
+    }
+
+    return actualValue($group->accountClass, $type, $amount);
+}
+*/
+
+/*
+function getGroupAmount($group, $accounts, $type, $currency_id, $exchangeRates = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = [], $rate = 1){
+    $array = $all['accounts']->whereIn('id', $accounts)
+    ->where('type', $type);
+    
+    $array = $array->filter(function ($entity, $key) use($currency_id) {
+        return $entity->exchangeRate->currency_id == $currency_id;
+    });
+    $array->all();
+
+    $amount = $array->sum('opening_balance');
+
+    $amount = ($type == 'D' ? $amount : $amount*(-1));
+
+    $exchangeAmount = getGroupExchangeRateAmount($group, $accounts, $type, $currency_id, $exchangeRates, $all, $company_id, $fiscal_year_id, $carryForwarded);
+
+    return $amount+$exchangeAmount;
+}
+*/
+
+/*
+function getGroupExchangeRateAmount($group, $accounts, $type, $currency_id, $exchangeRates = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = []){
+    $total_amount = 0;
+    $exchangeRates = $exchangeRates->filter(function ($entity, $key) use($group, $type) {
+        return $group->chartOfAccounts->where('type', $type)->count() > 0;
+    });
+    $exchangeRates->all();
+
+    if($exchangeRates->count() > 0){
+        foreach ($exchangeRates as $key => $exchangeRate) {
+            $rate = (isset(json_decode($exchangeRate->rates, true)[$currency_id]['rate']) ? json_decode($exchangeRate->rates, true)[$currency_id]['rate'] : 1);
+            
+            $array = $all['accounts']->whereIn('id', $accounts)
+            ->where('type', $type)
+            ->where('exchange_rate_id', $exchangeRate->id);
+
+            $amount = $array->sum('opening_balance');
+
+            $total_amount += ($amount*$rate);
+        }
+    }
+
+    $total_amount = ($type == 'D' ? $total_amount : $total_amount*(-1));
+
+    return $total_amount;
+}
+*/
+
+/*
+function groupOpeningBalance($group, $currency_id = 1, $accounts = [], $exchangeRates = [], $all = [], $company_id = 0, $fiscal_year_id = 0, $carryForwarded = [], $rate = 1){
+    $debit = getGroupAmount($group, $accounts, 'D', $currency_id, $exchangeRates, $all, $company_id, $fiscal_year_id, $carryForwarded, $rate);
+    $credit = getGroupAmount($group, $accounts, 'C', $currency_id, $exchangeRates, $all, $company_id, $fiscal_year_id, $carryForwarded, $rate);
+    
+    $carryForwardedAmount = 0;
+    if(isset($accounts[0])){
+        foreach ($accounts as $key => $account) {
+            if($carryForwarded->where('chart_of_account_id', $account)->count() > 0){
+                $carry = $carryForwarded->where('chart_of_account_id', $account)->first();
+                $carryForwardedAmount += $carry->carry_forwarding_amount*$rate;
+            }
+        }
+    }
+
+    return $debit+$credit+$carryForwardedAmount;
+}
+*/

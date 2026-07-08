@@ -142,8 +142,8 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="from"><strong>Start Date</strong> <small class="text-muted">(FY start)</small></label>
-                                    <input type="date" name="from" id="from" value="{{ date('Y-m-d', strtotime($from)) }}" class="form-control" readonly>
+                                    <label for="from"><strong>Start Date</strong> <small class="text-muted">(within fiscal year)</small></label>
+                                    <input type="date" name="from" id="from" value="{{ date('Y-m-d', strtotime($from)) }}" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">
