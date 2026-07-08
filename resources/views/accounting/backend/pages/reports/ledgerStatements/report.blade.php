@@ -73,22 +73,34 @@
                 @php
                     $debit = 0;
                     $credit = 0;
-                    if ($entry->items->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray())->count() > 0) {
-                        foreach ($entry->items->whereIn('chart_of_account_id', $searchAccounts->pluck('id')->toArray()) as $key => $item) {
-                            $debit += ($item->debit_credit == "D" ? $item->amount : 0);
-                            $credit += ($item->debit_credit == "C" ? $item->amount : 0);
+                    $repDebit = 0;
+                    $repCredit = 0;
+
+                    foreach ($entry->items as $item) {
+                        if (!in_array($item->chart_of_account_id, $searchAccountIds)) continue;
+                        if (isset($sub_ledger_id[0]) && !in_array($item->sub_ledger_id, $sub_ledger_id)) continue;
+                        if ($cost_centre_id > 0 && $item->cost_centre_id != $cost_centre_id) continue;
+                        if ($profit_centre_id > 0 && $item->costCentre && $item->costCentre->profit_centre_id != $profit_centre_id) continue;
+                        if ($company_id > 0 && $item->costCentre && $item->costCentre->profitCentre && $item->costCentre->profitCentre->company_id != $company_id) continue;
+
+                        if ($item->debit_credit == "D") {
+                            $debit += $item->amount;
+                            $repDebit += $item->reporting_amount;
+                        } else {
+                            $credit += $item->amount;
+                            $repCredit += $item->reporting_amount;
                         }
                     }
+                @endphp
+                @if($debit > 0 || $credit > 0)
+                @php
+                    $reportingDebit = $repDebit > 0 ? $repDebit * $rate : 0;
+                    $reportingCredit = $repCredit > 0 ? $repCredit * $rate : 0;
 
-                    $exchangeRate = 1;
-                    if ($entry->exchangeRate->currency_id != $currency->id) {
-                        $exchangeRate = json_decode($entry->exchangeRate->rates, true)[$currency->id]['rate'];
-                    }
+                    $total_debit += $reportingDebit;
+                    $total_credit += $reportingCredit;
 
-                    $total_debit += ($debit > 0 ? $debit * $exchangeRate : 0);
-                    $total_credit += ($credit > 0 ? $credit * $exchangeRate : 0);
-
-                    $closing_balance = ($closing_balance + (($debit > 0 ? $debit * $exchangeRate : 0) - ($credit > 0 ? $credit * $exchangeRate : 0)));
+                    $closing_balance = $closing_balance + ($reportingDebit - $reportingCredit);
                 @endphp
                 <tr>
                     <td>{{ $entry->date }}</td>
@@ -128,13 +140,14 @@
                     <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
                     <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
                     <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
-                    <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit * $exchangeRate) : '' }}</td>
-                    <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit * $exchangeRate) : '' }}</td>
+                    <td class="text-right">{{ $reportingDebit > 0 ? systemMoneyFormat($reportingDebit) : '' }}</td>
+                    <td class="text-right">{{ $reportingCredit > 0 ? systemMoneyFormat($reportingCredit) : '' }}</td>
                     <td class="text-right">
                         {{ systemMoneyFormat($closing_balance) }}
                     </td>
                     <td>{{ $entry->notes }}</td>
                 </tr>
+                @endif
             @endforeach
         @endif
 
