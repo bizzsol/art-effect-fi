@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'NAFMA2'); return 0;
-##!!!##n58D9gL6CAX2+Pq11gUF8eIE+foBCPHdB9CfnwoI+rXeAQEKAv4D9gn68dn2Cfb39gj68doBBAYK+gMJ8eIE+foB0J+f+AH2CAi17AQHAPoHtfoNCfoD+Qi14gT5+gGfEJ+1tbW1BQcECfr4Cfr5tbkJ9vcB+tK1t/0H9AwEBwD6B/QH+vgHCv4JAvoDCbfQn7W1tbUFCvcB/vi1uQn+AvoICfYCBQjStfv2AQj60LWfEp8=
+bolt_decrypt( __FILE__ , 'uYxFbz'); return 0;
+##!!!##cnLWydXN29jJy82IqdjYxLXXzM3U28Sw2qNyct3bzYix1NTd1dHWydzNxKzJ3MnKydvNxK3U19ndzdbcxLXXzM3Uo3Jyy9TJ29uIv9fa083aiM3g3M3WzNuItdfMzdRy43KIiIiI2NrX3M3L3M3MiIzcycrUzaWIitDax9/X2tPN2sfazcva3dHc1c3W3IqjcoiIiIjY3crU0cuIjNzR1c3b3MnV2NuliM7J1NvNo4hy5XI=
