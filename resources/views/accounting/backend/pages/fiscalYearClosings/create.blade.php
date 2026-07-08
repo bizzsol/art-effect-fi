@@ -95,7 +95,7 @@
                                                         @if($balanceSheetLedgers->count() > 0)
                                                         @foreach($balanceSheetLedgers as $key => $ledger)
                                                         @php
-                                                            $balance = $ledgerBalances[$ledger->id] ?? 0;
+                                                            $balance = ledgerClosingBalance($ledger->accountGroup, $ledger, ['D' => $debitTransactions, 'C' => $creditTransactions], $getAllGroupAndLedgers, $carryForwarded)['balance'];
 
                                                             $balanceSheetBalance += $balance;
                                                         @endphp
@@ -136,7 +136,7 @@
                                                         @if($profitLossLedgers->count() > 0)
                                                         @foreach($profitLossLedgers as $key => $ledger)
                                                         @php
-                                                            $balance = $ledgerBalances[$ledger->id] ?? 0;
+                                                            $balance = ledgerClosingBalance($ledger->accountGroup, $ledger, ['D' => $debitTransactions, 'C' => $creditTransactions], $getAllGroupAndLedgers, $carryForwarded)['balance'];
 
                                                             $profitLossBalance += $balance;
                                                         @endphp
@@ -202,8 +202,8 @@
                                                         @if($balanceSheetLedgers->count() > 0)
                                                         @foreach($balanceSheetLedgers as $key => $ledger)
                                                         @php
-                                                            $balance = $ledgerBalances[$ledger->id] ?? 0;
-
+                                                            $balance = ledgerClosingBalance($ledger->accountGroup, $ledger, ['D' => $debitTransactions, 'C' => $creditTransactions], $getAllGroupAndLedgers, $carryForwarded)['balance'];
+                                                            
                                                             if($accountDefaultSettings['retained_earnings'] == $ledger->id){
                                                                 $balance += $profitLossBalance;
                                                             }
