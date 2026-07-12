@@ -67,6 +67,7 @@
             $total_debit = 0;
             $total_credit = 0;
             $closing_balance = $opening_balance;
+            $currency_id = $currency->id;
         @endphp
         @if(isset($entries[0]))
             @foreach($entries as $key => $entry)
@@ -77,11 +78,16 @@
                     $repCredit = 0;
 
                     foreach ($entry->items as $item) {
-                        if (!in_array($item->chart_of_account_id, $searchAccountIds)) continue;
-                        if (isset($sub_ledger_id[0]) && !in_array($item->sub_ledger_id, $sub_ledger_id)) continue;
-                        if ($cost_centre_id > 0 && $item->cost_centre_id != $cost_centre_id) continue;
-                        if ($profit_centre_id > 0 && $item->costCentre && $item->costCentre->profit_centre_id != $profit_centre_id) continue;
-                        if ($company_id > 0 && $item->costCentre && $item->costCentre->profitCentre && $item->costCentre->profitCentre->company_id != $company_id) continue;
+                        if (!in_array($item->chart_of_account_id, $searchAccountIds))
+                            continue;
+                        if (isset($sub_ledger_id[0]) && !in_array($item->sub_ledger_id, $sub_ledger_id))
+                            continue;
+                        if ($cost_centre_id > 0 && $item->cost_centre_id != $cost_centre_id)
+                            continue;
+                        if ($profit_centre_id > 0 && $item->costCentre && $item->costCentre->profit_centre_id != $profit_centre_id)
+                            continue;
+                        if ($company_id > 0 && $item->costCentre && $item->costCentre->profitCentre && $item->costCentre->profitCentre->company_id != $company_id)
+                            continue;
 
                         if ($item->debit_credit == "D") {
                             $debit += $item->amount;
@@ -93,60 +99,69 @@
                     }
                 @endphp
                 @if($debit > 0 || $credit > 0)
-                @php
-                    $reportingDebit = $repDebit > 0 ? $repDebit * $rate : 0;
-                    $reportingCredit = $repCredit > 0 ? $repCredit * $rate : 0;
+                    @php
 
-                    $total_debit += $reportingDebit;
-                    $total_credit += $reportingCredit;
+                        $exchangeRate = 1;
+                        $rates = [];
+                        if ($entry->exchangeRate) {
+                            $rates = json_decode($entry->exchangeRate->rates, true);
+                            $exchangeRate = isset($rates[$currency_id]['rate']) ? $rates[$currency_id]['rate'] : 1;
+                        }
 
-                    $closing_balance = $closing_balance + ($reportingDebit - $reportingCredit);
-                @endphp
-                <tr>
-                    <td>{{ $entry->date }}</td>
-                    <td>{{ $entry->number }}</td>
-                    <td>
-                        <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
-                            data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
-                            <p>
-                                Debit:
-                                {{ $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') }}
-                            </p>
-                            <p>
-                                Credit:
-                                {{ $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') }}
-                            </p>
-                        </a>
-                    </td>
-                    <td>
-                        <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
-                            data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
-                            @if($entry->items->where('debit_credit', 'D')->whereNotNull('sub_ledger_id')->count() > 0)
+
+                        $reportingDebit = $repDebit > 0 ? $repDebit * $exchangeRate : 0;
+                        $reportingCredit = $repCredit > 0 ? $repCredit * $exchangeRate : 0;
+
+                        $total_debit += $reportingDebit;
+                        $total_credit += $reportingCredit;
+
+                        $closing_balance = $closing_balance + ($reportingDebit - $reportingCredit);
+                    @endphp
+                    <tr>
+                        <td>{{ $entry->date }}</td>
+                        <td>{{ $entry->number }}</td>
+                        <td>
+                            <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
+                                data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
                                 <p>
-                                    Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('subLedger.name')->implode(', ') }}
+                                    Debit:
+                                    {{ $entry->items->where('debit_credit', 'D')->pluck('chartOfAccount.code')->implode(', ') }}
                                 </p>
-                            @endif
-                            @if($entry->items->where('debit_credit', 'C')->whereNotNull('sub_ledger_id')->count() > 0)
                                 <p>
-                                    Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('subLedger.name')->implode(', ') }}
+                                    Credit:
+                                    {{ $entry->items->where('debit_credit', 'C')->pluck('chartOfAccount.code')->implode(', ') }}
                                 </p>
-                            @endif
-                        </a>
-                    </td>
-                    <td>
-                        {{ getEntryVendor($entry) }}
-                    </td>
-                    <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
-                    <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
-                    <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
-                    <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
-                    <td class="text-right">{{ $reportingDebit > 0 ? systemMoneyFormat($reportingDebit) : '' }}</td>
-                    <td class="text-right">{{ $reportingCredit > 0 ? systemMoneyFormat($reportingCredit) : '' }}</td>
-                    <td class="text-right">
-                        {{ systemMoneyFormat($closing_balance) }}
-                    </td>
-                    <td>{{ $entry->notes }}</td>
-                </tr>
+                            </a>
+                        </td>
+                        <td>
+                            <a class="text-primary" onclick="getShortDetails($(this))" data-id="{{ $entry->id }}"
+                                data-entry-type="{{ $entry->entryType->name }}" data-code="{{ $entry->code }}">
+                                @if($entry->items->where('debit_credit', 'D')->whereNotNull('sub_ledger_id')->count() > 0)
+                                    <p>
+                                        Debit: {{ $entry->items->where('debit_credit', 'D')->pluck('subLedger.name')->implode(', ') }}
+                                    </p>
+                                @endif
+                                @if($entry->items->where('debit_credit', 'C')->whereNotNull('sub_ledger_id')->count() > 0)
+                                    <p>
+                                        Credit: {{ $entry->items->where('debit_credit', 'C')->pluck('subLedger.name')->implode(', ') }}
+                                    </p>
+                                @endif
+                            </a>
+                        </td>
+                        <td>
+                            {{ getEntryVendor($entry) }}
+                        </td>
+                        <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
+                        <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
+                        <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
+                        <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
+                        <td class="text-right">{{ $reportingDebit > 0 ? systemMoneyFormat($reportingDebit) : '' }}</td>
+                        <td class="text-right">{{ $reportingCredit > 0 ? systemMoneyFormat($reportingCredit) : '' }}</td>
+                        <td class="text-right">
+                            {{ systemMoneyFormat($closing_balance) }}
+                        </td>
+                        <td>{{ $entry->notes }}</td>
+                    </tr>
                 @endif
             @endforeach
         @endif

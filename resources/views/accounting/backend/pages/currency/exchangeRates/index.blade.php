@@ -79,9 +79,19 @@
                     </div>
                 </div>
                 <div class="panel panel-info mt-2 p-2">
+                    <form action="{{ route('accounting.exchange-rates.fix-usd') }}" method="POST" id="fixUsdRatesForm">
+                        @csrf
+                        @if(auth()->user()->hasRole('Super Admin') || auth()->user()->id == 1)
+                            <div class="mb-2 pb-2 text-right">
+                                <button type="button" class="btn btn-warning btn-sm" id="fixUsdRatesBtn"><i class="la la-exchange"></i>&nbsp;Process (Fix USD Rates)</button>
+                            </div>
+                        @endif
                     <table class="table table-bordered" cellspacing="0" width="100%" id="dataTable">
                         <thead>
                             <tr>
+                                <th class="text-center" style="width: 2.5%;vertical-align: middle !important" rowspan="2">
+                                    <input type="checkbox" id="checkAll">
+                                </th>
                                 <th class="text-center" style="width: 2.5%;vertical-align: middle !important" rowspan="2">SL
                                 </th>
                                 <th class="text-center" style="width: 7.5%;vertical-align: middle !important" rowspan="2">
@@ -115,6 +125,9 @@
         $decodedRates = json_decode($exchangeRate->rates, true) ?: [];
                                     @endphp
                                     <tr>
+                                        <td class="text-center">
+                                            <input type="checkbox" name="exchange_rate_ids[]" value="{{ $exchangeRate->id }}" class="row-checkbox">
+                                        </td>
                                         <td>{{ $exchangeRates->firstItem() + $key }}</td>
                                         <td class="text-center">{{ $exchangeRate->currency->currencyType->name }}</td>
                                         <td class="text-center">{{ $exchangeRate->currency->code }}</td>
@@ -164,6 +177,7 @@
                             @endif
                         </tbody>
                     </table>
+                    </form>
                     @if($exchangeRates->hasPages())
                         <div class="d-flex justify-content-end mt-2">
                             {{ $exchangeRates->appends(request()->query())->links() }}
@@ -324,6 +338,37 @@
                     }
                 });
             })
+
+            $('#checkAll').on('change', function() {
+                $('.row-checkbox').prop('checked', $(this).prop('checked'));
+            });
+
+            $('#fixUsdRatesBtn').on('click', function() {
+                if($('.row-checkbox:checked').length == 0) {
+                    toastr.warning('Please select at least one exchange rate record.');
+                    return;
+                }
+                
+                swal({
+                    title: "{{__('Are you sure?')}}",
+                    text: "{{__('This will recalculate and fix the USD exchange rate (1 / Rate) for selected records.')}}",
+                    icon: "warning",
+                    dangerMode: true,
+                    buttons: {
+                        cancel: true,
+                        confirm: {
+                            text: "Process",
+                            value: true,
+                            visible: true,
+                            closeModal: true
+                        },
+                    },
+                }).then((value) => {
+                    if (value) {
+                        $('#fixUsdRatesForm').submit();
+                    }
+                });
+            });
         })(jQuery)
     </script>
 @endsection
