@@ -105,7 +105,7 @@
                                     Exchange Rates</th>
                                 <th class="text-center" style="width: 10%;vertical-align: middle !important" rowspan="2">
                                     Description</th>
-                                @if(auth()->user()->hasPermissionTo('exchange-rate-edit'))
+                                @if(auth()->user()->can('exchange-rate-edit'))
                                     <th class="text-center" style="width: 5%;vertical-align: middle !important" rowspan="2">
                                         Action</th>
                                 @endif
@@ -165,7 +165,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $exchangeRate->desc }}</td>
-                                        @if(auth()->user()->hasPermissionTo('exchange-rate-edit'))
+                                        @if(auth()->user()->can('exchange-rate-edit'))
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-xs btn-primary editBtn" title="Edit"
                                                     data-url="{{ route('accounting.exchange-rates.edit', $exchangeRate->id) }}"><i
