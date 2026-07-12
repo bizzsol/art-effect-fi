@@ -74,8 +74,6 @@
                 @php
                     $debit = 0;
                     $credit = 0;
-                    $repDebit = 0;
-                    $repCredit = 0;
 
                     foreach ($entry->items as $item) {
                         if (!in_array($item->chart_of_account_id, $searchAccountIds))
@@ -91,10 +89,8 @@
 
                         if ($item->debit_credit == "D") {
                             $debit += $item->amount;
-                            $repDebit += $item->reporting_amount;
                         } else {
                             $credit += $item->amount;
-                            $repCredit += $item->reporting_amount;
                         }
                     }
                 @endphp
@@ -109,8 +105,8 @@
                         }
 
 
-                        $reportingDebit = $repDebit > 0 ? $repDebit * $exchangeRate : 0;
-                        $reportingCredit = $repCredit > 0 ? $repCredit * $exchangeRate : 0;
+                        $reportingDebit = $debit > 0 ? $debit * $exchangeRate : 0;
+                        $reportingCredit = $credit > 0 ? $credit * $exchangeRate : 0;
 
                         $total_debit += $reportingDebit;
                         $total_credit += $reportingCredit;

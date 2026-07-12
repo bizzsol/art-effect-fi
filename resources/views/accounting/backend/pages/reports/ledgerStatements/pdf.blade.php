@@ -262,8 +262,6 @@
           @php
             $debit = 0;
             $credit = 0;
-            $repDebit = 0;
-            $repCredit = 0;
 
             foreach ($entry->items as $item) {
               if (!in_array($item->chart_of_account_id, $searchAccountIds))
@@ -279,10 +277,8 @@
 
               if ($item->debit_credit == "D") {
                 $debit += $item->amount;
-                $repDebit += $item->reporting_amount;
               } else {
                 $credit += $item->amount;
-                $repCredit += $item->reporting_amount;
               }
             }
           @endphp
@@ -295,12 +291,12 @@
                 $rates = json_decode($entry->exchangeRate->rates, true);
               }
 
-              if ($entry->exchangeRate->currency_id != $currency_id) {
+              if ($entry->exchangeRate && $entry->exchangeRate->currency_id != $currency_id) {
                 $exchangeRate = isset($rates[$currency_id]['rate']) ? $rates[$currency_id]['rate'] : 1;
               }
 
-              $reportingDebit = $repDebit > 0 ? $repDebit * $exchangeRate : 0;
-              $reportingCredit = $repCredit > 0 ? $repCredit * $exchangeRate : 0;
+              $reportingDebit = $debit > 0 ? $debit * $exchangeRate : 0;
+              $reportingCredit = $credit > 0 ? $credit * $exchangeRate : 0;
 
               $total_debit += $reportingDebit;
               $total_credit += $reportingCredit;
@@ -336,7 +332,7 @@
                 {{ getEntryVendor($entry) }}
               </td>
               <td>{{ $entry->entryType ? $entry->entryType->name : '' }}</td>
-              <td class="text-center">{{ $entry->exchangeRate->currency->code }}</td>
+              <td class="text-center">{{ $entry->exchangeRate ? $entry->exchangeRate->currency->code : '' }}</td>
               <td class="text-right">{{ $debit > 0 ? systemMoneyFormat($debit) : '' }}</td>
               <td class="text-right">{{ $credit > 0 ? systemMoneyFormat($credit) : '' }}</td>
               <td class="text-right">{{ $reportingDebit > 0 ? systemMoneyFormat($reportingDebit) : '' }}</td>
