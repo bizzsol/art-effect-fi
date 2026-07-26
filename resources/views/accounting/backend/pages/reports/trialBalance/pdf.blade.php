@@ -160,10 +160,12 @@
          <tr>
             <td style="width: 10%;font-size: 12px !important"><strong>Code</strong></td>
             <td style="width: 30%;font-size: 12px !important"><strong>Ledger</strong></td>
-            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Opening</strong></td>
-            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Debit</strong></td>
-            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Credit</strong></td>
-            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Closing</strong></td>
+            {{-- Amounts are in the selected reporting currency; name it so a printed copy is unambiguous. --}}
+            @php($currencyLabel = isset($currency->code) ? ' ('.$currency->code.')' : '')
+            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Opening{{ $currencyLabel }}</strong></td>
+            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Debit{{ $currencyLabel }}</strong></td>
+            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Credit{{ $currencyLabel }}</strong></td>
+            <td style="width: 15%;font-size: 12px !important" class="text-right"><strong>Closing{{ $currencyLabel }}</strong></td>
          </tr>
          {!! $trialBalance !!}
       </table>
