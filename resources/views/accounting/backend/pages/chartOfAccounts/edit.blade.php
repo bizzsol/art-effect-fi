@@ -166,13 +166,14 @@
                                         <label for="users"><strong>User Control:</strong></label>
                                         <div class="input-group input-group-md mb-3 d-">
                                             <select name="users[]" id="users" multiple class="form-control" data-placeholder="Choose Users">
-                                                @if(isset($users[0]))
                                                 @foreach($users as $user)
-                                                <option value="{{ $user->id }}" {{ in_array($user->id, $account->users->pluck('user_id')->toArray()) ? 'selected' : '' }}>{{ $user->name }} ({{ $user->phone }})</option>
+                                                <option value="{{ $user->id }}" selected>{{ $user->name }} ({{ $user->phone }})</option>
                                                 @endforeach
-                                                @endif
                                             </select>
                                         </div>
+                                        <small class="text-muted">Ticking a company loads its Accounts-role users
+                                            automatically. You can also search any Accounts user by name, phone or
+                                            email.</small>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -213,7 +214,7 @@
                                       @if(isset($companies[0]))
                                       @foreach($companies as $company)
                                       <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="company{{ $company->id }}" name="companies[]" value="{{ $company->id }}" {{ in_array($company->id, $account->companies->pluck('company_id')->toArray()) ? 'checked' : '' }}>
+                                        <input type="checkbox" id="company{{ $company->id }}" name="companies[]" value="{{ $company->id }}" class="companies" {{ in_array($company->id, $account->companies->pluck('company_id')->toArray()) ? 'checked' : '' }}>
                                         <label for="company{{ $company->id }}" class="text-primary">
                                           {{ $company->name }}&nbsp;&nbsp;&nbsp;
                                         </label>
@@ -270,4 +271,5 @@
                 });
         }
     </script>
+    @include('accounting.backend.pages.chartOfAccounts.partials.user-control-script')
 @endsection
