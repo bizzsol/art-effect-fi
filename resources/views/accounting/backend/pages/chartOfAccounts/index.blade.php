@@ -28,6 +28,9 @@
             </div>
 
             <div class="page-content">
+
+                @include('accounting.backend.pages.chartOfAccounts.partials.reclose-banner')
+
                 <div class="row" style="margin-top: -15px">
                     <div class="col-md-6 pt-3">
                         <form action="{{ url('accounting/chart-of-accounts') }}" method="get">
@@ -69,6 +72,11 @@
                         @can('chart-of-accounts-create')
                             <a class="btn btn-sm btn-success pull-right ml-2"
                                href="{{ url('accounting/chart-of-accounts/create') }}"><i class="la la-plus"></i>&nbsp;New Ledger</a>
+                        @endcan
+
+                        @can('chart-of-accounts-restore')
+                            <a class="btn btn-sm btn-danger pull-right ml-2"
+                               href="{{ url('accounting/chart-of-accounts-trash') }}"><i class="las la-trash"></i>&nbsp;Trash</a>
                         @endcan
 
                         @can('account-groups-create')
@@ -127,6 +135,8 @@
     </div>
 
     @include('accounting.backend.pages.approval-scripts')
+    @include('accounting.backend.pages.chartOfAccounts.partials.usage-modal')
+    @include('accounting.backend.pages.chartOfAccounts.partials.history-modal')
 
     <script type="text/javascript">
         function showAlert(status, erro) {
@@ -149,6 +159,36 @@
         }
 
         function deleteMe(element) {
+            var row_class = element.attr('data-row-class');
+            var ledgerId = element.attr('data-ledger-id');
+
+            // Account groups have no ledger id and no company-scoped usage, so
+            // they keep the plain confirm.
+            if (!ledgerId) {
+                return confirmAndDelete(element, row_class);
+            }
+
+            // Pre-flight: a ledger in use gets the usage modal with the counts
+            // and a per-company transfer option, rather than a dead-end message.
+            fetchLedgerUsage(ledgerId).done(function (response) {
+                if (response.success && response.total_items === 0 && response.blockers.length === 0) {
+                    return confirmAndDelete(element, row_class);
+                }
+
+                $('#ledgerUsageTitle').text(response.ledger ? response.ledger.code + ' - ' + response.ledger.name : '');
+                $('#ledgerUsageBody').html(
+                    '<div class="alert alert-danger">This ledger cannot be deleted while it is still in use. ' +
+                    'Transfer or clear the references below first.</div>' + renderLedgerUsage(response)
+                );
+                $('#ledgerUsageModal').modal('show');
+            }).fail(function () {
+                // If the pre-flight itself fails, fall back to the plain path -
+                // the server-side guard in destroy() still protects the data.
+                confirmAndDelete(element, row_class);
+            });
+        }
+
+        function confirmAndDelete(element, row_class) {
             swal({
                 title: "Are you sure ?",
                 text: "Once you delete, You can not recover this data and related files.",
@@ -165,7 +205,6 @@
                 },
             }).then((value) => {
                 if (value) {
-                    var row_class = element.attr('data-row-class');
                     $.ajax({
                         type: 'DELETE',
                         url: element.attr('data-src'),

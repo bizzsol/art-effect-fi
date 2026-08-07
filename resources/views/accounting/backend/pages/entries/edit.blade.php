@@ -116,12 +116,20 @@
                                         @foreach($entry->items as $key => $item)
                                         <tr>
                                             <td>
-                                               <select name="cost_centre_id[]" class="form-control cost_centre_id select2 select-cost-centre" data-selected-cost-centre="{{ $item->cost_centre_id }}"></select>
+                                               <select name="cost_centre_id[]" class="form-control cost_centre_id">
+                                                   @if($item->costCentre)
+                                                   <option value="{{ $item->cost_centre_id }}" selected>[{{ $item->costCentre->code }}] {{ $item->costCentre->name }}{{ $item->costCentre->is_profit_centre == 1 ? ' (BU)' : '' }}</option>
+                                                   @endif
+                                               </select>
                                             </td>
                                             <td>
                                                 <div class="row ledger-parent">
                                                     <div class="col-md-12 ledger">
-                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id select2 select-account" data-selected-account="{{ $item->chart_of_account_id }}" onchange="getSubLedgers($(this));Entries();"></select>
+                                                        <select name="chart_of_account_id[]" class="form-control chart_of_account_id" onchange="getSubLedgers($(this));Entries();">
+                                                            @if($item->chartOfAccount)
+                                                            <option value="{{ $item->chart_of_account_id }}" selected>[{{ $item->chartOfAccount->code }}] {{ $item->chartOfAccount->name }} [{{ systemMoneyFormat($ledgerBalances[$item->chart_of_account_id] ?? 0) }}]</option>
+                                                            @endif
+                                                        </select>
                                                     </div>
                                                     <div class="col-md-12 sub-ledger mt-2" style="display: none">
                                                         <select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ $item->sub_ledger_id }}">
@@ -218,37 +226,137 @@
     </div>
 </div>
 
-<div id="coa" style="display: none">
-    {!! $chartOfAccountsOptions !!}
-</div>
-<div id="cc" style="display: none">
-    {!! $costCentres !!}
-</div>
 @endsection
 @section('page-script')
 <script type="text/javascript">
-    setTimeout(function(){
-        var cc = $('#cc').html();
-        var coa = $('#coa').html();
-        $.each($('.select-cost-centre'), function(index, val) {
-            $(this).html(cc).val($(this).attr('data-selected-cost-centre')).trigger('change');
+    var ledgerSearchUrl = "{{ route('accounting.entries.searchLedgers') }}";
+    var costCentreSearchUrl = "{{ route('accounting.entries.searchCostCentres') }}";
+    var subLedgersBatchUrl = "{{ route('accounting.entries.subLedgersBatch') }}";
+    var companyId = {{ $company->id }};
+    var entryTypeId = {{ $entryType->id }};
+
+    // Ledgers and cost centres are searched on demand instead of preloading the
+    // full company-wide option lists into every row - with hundreds of line
+    // items, cloning those full lists per row used to freeze the page.
+    function initCostCentreSelect2(elements) {
+        elements.each(function () {
+            var $el = $(this);
+            if ($el.hasClass('select2-hidden-accessible')) {
+                // A page-wide `jQuery('select').select2()` initializer (assets/js/custom.js)
+                // runs on document ready before this page's own init and wraps every
+                // <select> already in the DOM - including existing rows - in a plain,
+                // non-ajax select2. Tear that down so the ajax-enabled version below
+                // actually takes over instead of being skipped.
+                $el.select2('destroy');
+            }
+            $el.select2({
+                width: '100%',
+                placeholder: 'Choose Cost Centre',
+                ajax: {
+                    url: costCentreSearchUrl,
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) {
+                        return {q: params.term, company_id: companyId};
+                    },
+                    processResults: function (response) {
+                        return {results: response.results || []};
+                    },
+                    cache: true
+                }
+            });
+        });
+    }
+
+    function initLedgerSelect2(elements) {
+        elements.each(function () {
+            var $el = $(this);
+            if ($el.hasClass('select2-hidden-accessible')) {
+                $el.select2('destroy');
+            }
+            $el.select2({
+                width: '100%',
+                placeholder: 'Choose Ledger',
+                ajax: {
+                    url: ledgerSearchUrl,
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) {
+                        return {q: params.term, company_id: companyId, entry_type_id: entryTypeId};
+                    },
+                    processResults: function (response) {
+                        return {results: response.results || []};
+                    },
+                    cache: true
+                }
+            });
+        });
+    }
+
+    $(document).ready(function () {
+        Entries();
+
+        // Existing rows already carry their current ledger selection server-side.
+        // Their sub-ledger options aren't preloaded, but fetching them one request
+        // per row (up to hundreds on a large entry) queued behind the browser's
+        // connection limit and starved the search-as-you-type requests. One batched
+        // request for every distinct ledger on the entry avoids that entirely.
+        var accountIds = $('.chart_of_account_id').map(function () {
+            return $(this).val();
+        }).get().filter(function (value) {
+            return !!value;
+        });
+        accountIds = accountIds.filter(function (value, index) {
+            return accountIds.indexOf(value) === index;
         });
 
-        $.each($('.select-account'), function(index, val) {
-            $(this).html(coa).val($(this).attr('data-selected-account')).trigger('change');
-        });
-    }, 1000);
+        if (accountIds.length) {
+            $.ajax({
+                url: subLedgersBatchUrl,
+                type: 'GET',
+                dataType: 'json',
+                data: {chart_of_account_ids: accountIds}
+            })
+            .done(function (response) {
+                var subLedgersByAccount = response.sub_ledgers || {};
+                $('.chart_of_account_id').each(function () {
+                    var $el = $(this);
+                    var accountId = $el.val();
+                    if (accountId && subLedgersByAccount[accountId]) {
+                        applySubLedgers($el, subLedgersByAccount[accountId]);
+                    }
+                });
+            });
+        }
+    });
 
-    Entries();
+    function applySubLedgers(element, subLedgerList) {
+        var $row = element.parent().parent();
+        var $select = $row.find('.sub-ledger-select2');
+        var selected = $select.attr('data-selected');
+        var options = '<option value="{{ null }}">Without Sub-Ledger</option>';
+
+        if (subLedgerList && subLedgerList.length) {
+            $.each(subLedgerList, function (index, subLedger) {
+                options += '<option value="'+subLedger.id+'" '+(selected == subLedger.id ? 'selected' : '')+'>['+subLedger.code+'] '+subLedger.name+'</option>';
+            });
+            $select.html(options);
+            $row.find('.sub-ledger').show();
+        } else {
+            $select.html(options);
+            $row.find('.sub-ledger').hide();
+        }
+    }
+
     function add() {
         $('.entries').append('<tr>'+
                                 '<td>'+
-                                   '<select name="cost_centre_id[]" class="form-control cost_centre_id select2">'+($('#cc').html())+'</select>'+
+                                   '<select name="cost_centre_id[]" class="form-control cost_centre_id"></select>'+
                                 '</td>'+
                                 '<td>' +
                                     '<div class="row ledger-parent">' +
                                         '<div class="col-md-12 ledger">' +
-                                            '<select name="chart_of_account_id[]" class="form-control chart_of_account_id select2" onchange="getSubLedgers($(this));Entries();">'+($('#coa').html())+'</select>' +
+                                            '<select name="chart_of_account_id[]" class="form-control chart_of_account_id" onchange="getSubLedgers($(this));Entries();"></select>' +
                                         '</div>' +
                                         '<div class="col-md-12 sub-ledger mt-2" style="display: none">'+
                                             '<select name="sub_ledgers[]" class="form-control sub-ledger-select2" data-selected="{{ null }}"></select>'+
@@ -268,7 +376,6 @@
                                     '<a onclick="remove($(this))"><i class="text-danger la la-trash" style="transform: scale(2, 2)"></i></a>'+
                                 '</td>'+
                             '</tr>');
-        getSubLedgers($('.entries tr:last-child').find('.chart_of_account_id'));
         Entries();
     }
 
@@ -276,6 +383,10 @@
         var subLedgers = '<option value="{{ null }}">Without Sub-Ledger</option>';
         element.parent().parent().find('.sub-ledger-select2').html(subLedgers);
         element.parent().parent().find('.sub-ledger').hide();
+
+        if (!element.val()) {
+            return;
+        }
 
         $.ajax({
             url: "{{ url('accounting/entries/create?get-sub-ledgers') }}&chart_of_account_id="+element.val(),
@@ -301,8 +412,8 @@
     }
 
     function Entries() {
-        $('.cost_centre_id').select2();
-        $('.chart_of_account_id').select2();
+        initCostCentreSelect2($('.cost_centre_id'));
+        initLedgerSelect2($('.chart_of_account_id'));
 
         calculation();
     }

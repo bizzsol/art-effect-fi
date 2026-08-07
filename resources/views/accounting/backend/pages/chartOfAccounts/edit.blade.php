@@ -256,6 +256,8 @@
             </div>
         </div>
     </div>
+
+    @include('accounting.backend.pages.chartOfAccounts.partials.usage-modal')
 @endsection
 @section('page-script')
     <script type="text/javascript">
@@ -270,6 +272,65 @@
                     $('#code').val(code);
                 });
         }
+
+        /*
+         * Company-unassign pre-flight.
+         *
+         * Unassigning a company that still has postings on this ledger would
+         * leave those entries stranded: saveLedgerEntries() rejects every future
+         * posting for that company while the historical entries stay in the
+         * reports. The same rule is enforced server-side in update() - this is
+         * just immediate feedback plus a way through via a transfer.
+         */
+        (function () {
+            var LEDGER_ID = {{ $account->id }};
+            var usageCache = null;
+
+            function loadUsage() {
+                if (usageCache) {
+                    return $.Deferred().resolve(usageCache).promise();
+                }
+
+                return fetchLedgerUsage(LEDGER_ID).then(function (response) {
+                    usageCache = response;
+                    return response;
+                });
+            }
+
+            $(document).on('change', '.companies', function () {
+                var checkbox = $(this);
+
+                // Only unchecking is dangerous; adding a company is always safe.
+                if (checkbox.is(':checked')) return;
+
+                var companyId = parseInt(checkbox.val(), 10);
+
+                loadUsage().done(function (response) {
+                    if (!response || !response.success) return;
+
+                    var row = null;
+                    $.each(response.usage, function (i, r) {
+                        if (r.company_id === companyId) { row = r; }
+                    });
+
+                    if (!row || row.total_items === 0) return;
+
+                    // Put the tick back - the server would reject this anyway.
+                    checkbox.prop('checked', true);
+
+                    $('#ledgerUsageTitle').text(response.ledger.code + ' - ' + response.ledger.name);
+                    $('#ledgerUsageBody').html(
+                        '<div class="alert alert-danger"><strong>' + row.company_code + ' cannot be unassigned.</strong><br>' +
+                        'This ledger still holds <strong>' + row.total_items + '</strong> entry item(s) for ' +
+                        row.company_code + ' (debit ' + money(row.total_debit) + ' / credit ' + money(row.total_credit) + '). ' +
+                        'Removing the assignment would block all future postings for that company while these entries stay in the reports.' +
+                        '<br><br>Transfer them to another ledger in the same account class first.</div>' +
+                        renderLedgerUsage(response)
+                    );
+                    $('#ledgerUsageModal').modal('show');
+                });
+            });
+        })();
     </script>
     @include('accounting.backend.pages.chartOfAccounts.partials.user-control-script')
 @endsection

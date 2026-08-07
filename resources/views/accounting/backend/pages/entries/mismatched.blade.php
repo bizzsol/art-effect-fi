@@ -90,12 +90,12 @@
 
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="missing_side"><strong>Missing Side</strong></label>
-                                        <select name="missing_side" class="form-control" id="missing_side">
-                                            <option value="{{null}}">Both (Default)</option>
-                                            <option value="debit" {{ request()->get('missing_side') == 'debit' ? 'selected' : '' }}>Debit Only</option>
-                                            <option value="credit" {{ request()->get('missing_side') == 'credit' ? 'selected' : '' }}>Credit Only</option>
-                                            <option value="none" {{ request()->get('missing_side') == 'none' ? 'selected' : '' }}>None</option>
+                                        <label for="kind"><strong>Issue Type</strong></label>
+                                        <select name="kind" class="form-control" id="kind">
+                                            <option value="">All types</option>
+                                            @foreach($kindLabels as $key => $label)
+                                                <option value="{{ $key }}" {{ request()->get('kind') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -122,6 +122,45 @@
                     </div>
 
                     @if($company_id > 0)
+                        {{-- Summary chips. Each one filters the table below by
+                             classification; orphan vouchers are part of that table
+                             now rather than a separate panel underneath it. --}}
+                        <div class="panel-body pb-0">
+                            @php
+                                $qs = request()->except(['kind', 'page']);
+                                $chip = function ($k, $label, $colour, $count) use ($qs) {
+                                    $active = request()->get('kind') === $k;
+                                    $url = url('accounting/mitch-match-entries') . '?' . http_build_query(array_merge($qs, $k ? ['kind' => $k] : []));
+                                    return '<a href="' . $url . '" class="btn btn-sm ' . ($active ? 'btn-' . $colour : 'btn-outline-' . $colour) . ' mr-2 mb-2">'
+                                        . $label . ' <span class="badge badge-light">' . number_format($count) . '</span></a>';
+                                };
+                            @endphp
+
+                            {!! $chip(null, 'All issues', 'dark', $summary['total']) !!}
+                            {!! $chip('one_sided', 'One-sided', 'danger', $summary['one_sided']) !!}
+                            {!! $chip('unbalanced', 'Both sides, unbalanced', 'info', $summary['unbalanced']) !!}
+                            {!! $chip('orphan_coa', 'Orphan (ledger deleted)', 'warning', $summary['orphan_coa']) !!}
+
+                            @if(abs($summary['net_difference']) > 0.005)
+                                <span class="float-right pt-1">
+                                    <strong>Net out of balance:</strong>
+                                    <span class="text-danger">{{ number_format($summary['net_difference'], 2) }}</span>
+                                </span>
+                            @endif
+
+                            @if($summary['orphan_coa'] > 0)
+                                <div class="alert alert-warning py-2 mt-1 mb-0">
+                                    <small>
+                                        <strong>Orphan vouchers can look perfectly balanced.</strong>
+                                        A line sitting on a deleted ledger is dropped by every report
+                                        (<code>chart_of_accounts.deleted_at IS NULL</code>), so only the surviving half
+                                        reaches the trial balance. Restoring the ledger, or moving those entries to a live
+                                        one, is what fixes it &mdash; the voucher itself may need no correction at all.
+                                    </small>
+                                </div>
+                            @endif
+                        </div>
+
                         <div class="panel-body">
                             @include('yajra.datatable')
                         </div>
@@ -129,6 +168,7 @@
 
                 </div>
             </div>
+
         </div>
     </div>
 

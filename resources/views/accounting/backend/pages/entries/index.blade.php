@@ -24,17 +24,24 @@
                     <li class="top-nav-btn">
                         @can('entry-create')
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <a class="btn btn-warning btn-sm" target="__blank"
                                        href="{{route('accounting.failed.entries.logs')}}"><i class="la la-clipboard-list"></i>
                                         Failed Logs <span id="failed-log-badge"></span></a>
                                 </div>
-                                <div class="col-md-4">
+                                @can('entries-bulk-delete')
+                                    <div class="col-md-3">
+                                        <a class="btn btn-dark btn-sm" target="__blank"
+                                           href="{{ route('accounting.entries.bulk-delete') }}"><i class="las la-trash-alt"></i>
+                                            Bulk Delete</a>
+                                    </div>
+                                @endcan
+                                <div class="col-md-3">
                                     <a class="btn btn-danger btn-sm" target="__blank"
                                        href="{{route('accounting.entries.mismatch')}}"><i class="la la-not-equal"></i>
                                         Mitch-Match</a>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-success pull-right ml-2 dropdown-toggle"
                                                 style="float: right" type="button" id="dropdownMenuButton"
