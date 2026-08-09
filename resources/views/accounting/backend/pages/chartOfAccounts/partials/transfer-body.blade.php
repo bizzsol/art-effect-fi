@@ -78,7 +78,7 @@
 
         <div class="form-group">
             <label for="target_chart_of_account_id"><strong>Transfer to ledger</strong></label>
-            <select name="target_chart_of_account_id" id="target_chart_of_account_id" class="form-control">
+            <select name="target_chart_of_account_id" id="target_chart_of_account_id" class="form-control select2">
                 <option value="">-- Select a target ledger --</option>
                 @foreach($targets as $target)
                     <option value="{{ $target->id }}">{{ $target->code }} &mdash; {{ $target->name }}</option>
@@ -119,6 +119,10 @@
             var form = $('#ledgerTransferForm');
             var button = $('#runLedgerTransfer');
             var preflightBox = $('#ledgerTransferPreflight');
+
+            $('.select2').select2({
+                dropdownParent: $('#ledgerTransferModal')
+            });
 
             // Dry run as soon as a target is picked, so blockers appear before
             // the operator commits rather than as an error afterwards.
