@@ -159,15 +159,29 @@
             }
         }
 
-        var otherBlockers = $.grep(response.blockers, function (b) { return !b.migratable; });
-        if (otherBlockers.length > 0) {
-            html += '<p class="mb-2"><strong>Other references</strong> &mdash; these must be cleared through their own screens; ' +
-                'they are shared across companies and cannot be moved for one company alone.</p>';
-            html += '<table class="table table-sm table-bordered mb-0"><tbody>';
-            $.each(otherBlockers, function (i, b) {
-                html += '<tr><td>' + b.label + '</td><td class="text-right" style="width:80px"><strong>' + b.count + '</strong></td></tr>';
+        function referenceTable(rows) {
+            var table = '<table class="table table-sm table-bordered mb-3"><tbody>';
+            $.each(rows, function (i, b) {
+                table += '<tr><td>' + b.label + '</td><td class="text-right" style="width:80px"><strong>' + b.count + '</strong></td></tr>';
             });
-            html += '</tbody></table>';
+            return table + '</tbody></table>';
+        }
+
+        // Blocking and advisory references are shown apart. Lumping them
+        // together was what made an unused ledger look undeletable: the only
+        // thing holding it was a pile of 0.00 year-end closing rows.
+        var blocking = $.grep(response.blockers, function (b) { return b.blocking && !b.migratable; });
+        if (blocking.length > 0) {
+            html += '<p class="mb-2"><strong>Blocking references</strong> &mdash; these must be cleared through their own screens; ' +
+                'they are shared across companies and cannot be moved for one company alone.</p>';
+            html += referenceTable(blocking);
+        }
+
+        var advisory = $.grep(response.blockers, function (b) { return !b.blocking; });
+        if (advisory.length > 0) {
+            html += '<p class="mb-2"><strong>Other references</strong> &mdash; shown for information. These do not stop the delete: ' +
+                'a soft delete leaves every row and its links intact and the ledger can be restored from Trash.</p>';
+            html += referenceTable(advisory);
         }
 
         return html;

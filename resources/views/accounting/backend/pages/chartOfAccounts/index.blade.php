@@ -171,8 +171,12 @@
             // Pre-flight: a ledger in use gets the usage modal with the counts
             // and a per-company transfer option, rather than a dead-end message.
             fetchLedgerUsage(ledgerId).done(function (response) {
-                if (response.success && response.total_items === 0 && response.blockers.length === 0) {
-                    return confirmAndDelete(element, row_class);
+                // can_delete is false only for entries, sub-ledgers and bank
+                // accounts. Everything else - year-end closing rows above all,
+                // which exist for every ledger whether it was ever used or not -
+                // is named in the confirmation instead of walling the delete off.
+                if (response.success && response.can_delete) {
+                    return confirmAndDelete(element, row_class, response.soft_blockers);
                 }
 
                 $('#ledgerUsageTitle').text(response.ledger ? response.ledger.code + ' - ' + response.ledger.name : '');
@@ -188,10 +192,20 @@
             });
         }
 
-        function confirmAndDelete(element, row_class) {
+        function confirmAndDelete(element, row_class, softBlockers) {
+            var text = "Once you delete, You can not recover this data and related files.";
+
+            // Nothing here blocks the delete, but the operator should see it
+            // before confirming rather than discover it afterwards.
+            if (softBlockers && softBlockers.length > 0) {
+                text = "This ledger holds no entries, but these still point at it:\n\n" +
+                    $.map(softBlockers, function (b) { return '• ' + b.label + ': ' + b.count; }).join('\n') +
+                    "\n\nDeleting only hides the ledger - the references stay intact and you can restore it from Trash.";
+            }
+
             swal({
                 title: "Are you sure ?",
-                text: "Once you delete, You can not recover this data and related files.",
+                text: text,
                 icon: "warning",
                 dangerMode: true,
                 buttons: {
