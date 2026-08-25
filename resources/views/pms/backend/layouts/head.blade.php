@@ -65,5 +65,16 @@
         .rating-container .rating-stars{
             margin-top:-15px !important;
         }
+
+        /* Hide the up/down spinner buttons on number inputs system-wide */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
     </style>
 </head>

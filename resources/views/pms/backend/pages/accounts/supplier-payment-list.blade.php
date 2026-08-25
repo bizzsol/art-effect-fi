@@ -299,6 +299,10 @@
 			$('input.payment-checkboxes').prop('checked', false);
 		}
 
+		$('input.payment-checkboxes').each(function() {
+			toggleRowInputs($(this));
+		});
+
 		calculateTotal();
 	}
 
@@ -338,9 +342,17 @@
 		calculatePayAmount();
 	}
 
-	$('.payment-checkboxes').on('change', function() {
+	$(document).on('change', '.payment-checkboxes', function() {
+		toggleRowInputs($(this));
 		calculatePayAmount();
 	});
+
+	// Disable an unchecked row's inputs so they neither block HTML5 validation
+	// nor get submitted; re-enable them when the row is checked again.
+	function toggleRowInputs(checkbox) {
+		var inputs = checkbox.closest('tr').find('.payments, .vat_amount, .tax_amount, .pay-amounts, .currency-gain-loss, .system-gain-loss, .advance_clearings, .clearing_amounts');
+		inputs.prop('disabled', !checkbox.is(':checked'));
+	}
 
 	function calculatePayAmount() {
 		var pay_amount = 0;
@@ -374,9 +386,9 @@
 
 		var percentage = value > 0 && due > 0 ? (value/due)*100 : 0;
 
-		parent.find('.vat_amount').val(parseFloat(parseFloat(parent.find('.vat_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value-1);
+		parent.find('.vat_amount').val(parseFloat(parseFloat(parent.find('.vat_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value);
 
-		parent.find('.tax_amount').val(parseFloat(parseFloat(parent.find('.tax_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value-1);
+		parent.find('.tax_amount').val(parseFloat(parseFloat(parent.find('.tax_amount').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4)).attr('max', value);
 
 		parent.find('.pay-amounts').val(parseFloat(parseFloat(parent.find('.pay-amounts').attr('data-real'))*(percentage > 0 ? percentage/100 : 0)).toFixed(4));
 

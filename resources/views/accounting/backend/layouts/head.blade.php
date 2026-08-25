@@ -61,5 +61,16 @@
             background: #fff5f4;
             transition: 1s;
         }
+
+        /* Hide the up/down spinner buttons on number inputs system-wide */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
     </style>
 </head>

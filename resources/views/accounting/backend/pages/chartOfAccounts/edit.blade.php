@@ -320,11 +320,7 @@
 
                     $('#ledgerUsageTitle').text(response.ledger.code + ' - ' + response.ledger.name);
                     $('#ledgerUsageBody').html(
-                        '<div class="alert alert-danger"><strong>' + row.company_code + ' cannot be unassigned.</strong><br>' +
-                        'This ledger still holds <strong>' + row.total_items + '</strong> entry item(s) for ' +
-                        row.company_code + ' (debit ' + money(row.total_debit) + ' / credit ' + money(row.total_credit) + '). ' +
-                        'Removing the assignment would block all future postings for that company while these entries stay in the reports.' +
-                        '<br><br>Transfer them to another ledger in the same account class first.</div>' +
+                        renderUnassignBlocker(response.ledger, row) +
                         renderLedgerUsage(response)
                     );
                     $('#ledgerUsageModal').modal('show');

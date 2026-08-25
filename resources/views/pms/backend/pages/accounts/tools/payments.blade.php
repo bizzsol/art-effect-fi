@@ -27,7 +27,7 @@
 						<label for="vat-amounts-{{ $payment->id }}">
 							<strong>VAT</strong>
 						</label>
-						<input type="number" name="vat_amount[{{ $payment->id }}]" value="{{ $vat }}" data-real="{{ $vat }}" class="form-control vat_amount" min="0" max="{{ $due-1 }}" step="any" onkeypress="return isNumberKey(event)" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this)">
+						<input type="number" name="vat_amount[{{ $payment->id }}]" value="{{ $vat }}" data-real="{{ $vat }}" class="form-control vat_amount" min="0" max="{{ $due }}" step="any" onkeypress="return isNumberKey(event)" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this)">
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -35,7 +35,7 @@
 						<label for="tax-amounts-{{ $payment->id }}">
 							<strong>TAX</strong>
 						</label>
-						<input type="number" name="tax_amount[{{ $payment->id }}]" value="0" data-real="0" min="0" max="{{ $due-1 }}" step="any" class="form-control tax_amount" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))" onkeypress="return isNumberKey(event)">
+						<input type="number" name="tax_amount[{{ $payment->id }}]" value="0" data-real="0" min="0" max="{{ $due }}" step="any" class="form-control tax_amount" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))" onkeypress="return isNumberKey(event)">
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -131,7 +131,7 @@
 						<label for="vat-amounts-{{ $payment->id }}">
 							<strong>VAT</strong>
 						</label>
-						<input type="number" name="vat_amount[{{ $payment->id }}]" value="{{ $vat }}" data-real="{{ $vat }}" class="form-control vat_amount" min="0" max="{{ $due-1 }}" step="any" onkeypress="return isNumberKey(event)" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))">
+						<input type="number" name="vat_amount[{{ $payment->id }}]" value="{{ $vat }}" data-real="{{ $vat }}" class="form-control vat_amount" min="0" max="{{ $due }}" step="any" onkeypress="return isNumberKey(event)" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))">
 					</div>
 				</div>
 				<div class="col-md-4">
@@ -139,7 +139,7 @@
 						<label for="tax-amounts-{{ $payment->id }}">
 							<strong>TAX</strong>
 						</label>
-						<input type="number" name="tax_amount[{{ $payment->id }}]" value="0" data-real="0" min="0" max="{{ $due-1 }}" step="any" class="form-control tax_amount" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))" onkeypress="return isNumberKey(event)">
+						<input type="number" name="tax_amount[{{ $payment->id }}]" value="0" data-real="0" min="0" max="{{ $due }}" step="any" class="form-control tax_amount" onchange="deductTaxVat($(this))" onkeyup="deductTaxVat($(this))" onkeypress="return isNumberKey(event)">
 					</div>
 				</div>
 				<div class="col-md-4">

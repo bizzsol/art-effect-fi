@@ -293,6 +293,19 @@
 <script src="{{ asset('js/custom.js') }}"></script>
 
 <script>
+    // Let every number input accept decimals system-wide. A number input
+    // without a step attribute defaults to step="1" and rejects decimals
+    // (e.g. 0.1304). Default any such input to step="any".
+    (function ($) {
+        function enableDecimalInputs() {
+            $('input[type=number]:not([step])').attr('step', 'any');
+        }
+        $(document).ready(enableDecimalInputs);
+        $(document).ajaxComplete(enableDecimalInputs);
+    })(jQuery);
+</script>
+
+<script>
     (function ($) {
         "use script";
         let ulIqMenu = document.querySelector('.iq-menu');

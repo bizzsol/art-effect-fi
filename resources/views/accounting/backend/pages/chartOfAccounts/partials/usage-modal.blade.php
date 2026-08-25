@@ -187,6 +187,54 @@
         return html;
     }
 
+    /**
+     * The company-unassign blocker panel.
+     *
+     * Not a .alert: the theme makes .alert a flex container, so every bare text
+     * node inside one becomes its own flex column and the copy comes out
+     * shredded. This keeps the icon and the body as the only two flex children.
+     */
+    function blockerStat(label, value, cssClass) {
+        return '<div class="mr-4 mb-1">' +
+            '<div class="text-uppercase" style="font-size:10px;letter-spacing:.6px;color:#9a6068">' + label + '</div>' +
+            '<div class="' + (cssClass || '') + '" style="font-size:15px;font-weight:600;color:#7a1c26">' + value + '</div>' +
+            '</div>';
+    }
+
+    function renderUnassignBlocker(ledger, row) {
+        var html = '<div class="d-flex mb-4" style="background:#fdf3f4;border:1px solid #f3c2c7;' +
+            'border-left:4px solid #dc3545;border-radius:6px;padding:16px 18px">';
+
+        html += '<div class="mr-3" style="flex:0 0 auto;color:#dc3545;font-size:24px;line-height:1.2">' +
+            '<i class="las la-ban"></i></div>';
+
+        html += '<div style="flex:1 1 auto;min-width:0">';
+        html += '<div style="font-size:15px;font-weight:600;color:#7a1c26;line-height:1.4">' +
+            row.company_code + ' cannot be unassigned</div>';
+        html += '<p class="mt-1 mb-3" style="color:#6b4145;line-height:1.6">' +
+            'This ledger still holds postings for ' + row.company_code + '. Dropping the assignment would block ' +
+            'every future posting for that company while these entries stay in the reports.</p>';
+
+        html += '<div class="d-flex flex-wrap mb-3">' +
+            blockerStat('Entry items', row.total_items) +
+            blockerStat('Debit', money(row.total_debit)) +
+            blockerStat('Credit', money(row.total_credit)) +
+            '</div>';
+
+        html += '<div class="d-flex flex-wrap align-items-center" style="gap:12px;border-top:1px solid #f3c2c7;padding-top:12px">' +
+            '<span style="color:#6b4145"><strong>Next step:</strong> move the entries to another ledger in the same account class.</span>';
+
+        if (row.is_attributable && CAN_MIGRATE_LEDGER) {
+            html += '<a href="javascript:void(0)" class="btn btn-sm btn-danger" onclick="openLedgerTransfer(' +
+                ledger.id + ',' + row.company_id + ',\'' + row.company_code + '\')">' +
+                '<i class="las la-exchange-alt"></i>&nbsp;Transfer ' + row.company_code + ' entries</a>';
+        }
+
+        html += '</div></div></div>';
+
+        return html;
+    }
+
     function showLedgerUsage(ledgerId) {
         var body = $('#ledgerUsageBody');
         body.html('<h5 class="text-center py-4">Please wait...</h5>');
