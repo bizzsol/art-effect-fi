@@ -73,7 +73,7 @@
                                         <option value="{{ null }}">Choose User</option>
                                         @if(isset($users[0]))
                                         @foreach($users as $user)
-                                        <option value="{{ $user->id }}" {{ request()->get('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}</option>
+                                        <option value="{{ $user->id }}" {{ request()->get('user_id') == $user->id ? 'selected' : '' }}>{{ $user->name }}({{ $user->associate_id }})</option>
                                         @endforeach
                                         @endif
                                     </select>
