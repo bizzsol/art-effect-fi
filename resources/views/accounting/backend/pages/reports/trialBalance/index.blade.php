@@ -146,6 +146,7 @@
                                         @include('accounting.backend.pages.reports.buttons', [
                                             'title' => "Trial Balance",
                                             'url' => url('accounting/trial-balance'),
+                                            'normalExcel' => true,
                                         ])
                                     @endcan
                                 </div>

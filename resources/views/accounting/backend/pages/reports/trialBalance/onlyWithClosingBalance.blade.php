@@ -75,6 +75,7 @@
                                         @include('accounting.backend.pages.reports.buttons', [
                                             'title' => "Trial Balance (Balance) from ".date('M jS, y', strtotime($fiscalYear->start))." to ".date('M jS, y', strtotime($fiscalYear->end)),
                                             'url' => url('accounting/trial-balance-with-balance'),
+                                            'normalExcel' => true,
                                         ])
                                     @endcan
                                 </div>

@@ -275,8 +275,9 @@
             $.each($('.coa'), function (index, val) {
                 var code = $(this).attr('data-code').trim().toLowerCase();
                 var name = $(this).attr('data-name').trim().toLowerCase();
+                var tag = ($(this).attr('data-tag') || '').trim().toLowerCase();
 
-                if (code.indexOf(search) !== -1 || name.indexOf(search) !== -1) {
+                if (code.indexOf(search) !== -1 || name.indexOf(search) !== -1 || tag.indexOf(search) !== -1) {
                     $(this).show();
                 } else {
                     $(this).hide();

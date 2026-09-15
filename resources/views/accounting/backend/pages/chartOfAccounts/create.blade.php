@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="row pt-1">
-                                {{-- <div class="col-md-4">
+                                <div class="col-md-4">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
@@ -74,7 +74,7 @@
                                                 <p>Note: Select if the ledger account is a bank or a cash account.</p>
                                             </div>
                                         </div>
-                                        <div class="col-12">
+                                        {{-- <div class="col-12">
                                             <div class="form-group">
                                                 <h5 class="pl-2">
                                                     <label style="cursor: pointer"><input type="checkbox"
@@ -84,9 +84,9 @@
                                                 <p>Note : If selected the ledger account can be reconciled from Reports >
                                                     Reconciliation.</p>
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
-                                </div> --}}
+                                </div>
                                 {{-- <div class="col-md-7">
                                     <div class="row">
                                         <div class="col-md-6">
