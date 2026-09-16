@@ -16,7 +16,7 @@
       }
 
       html, body, p  {
-        font-size:  12px !important;
+        font-size:  11px !important;
         color: #000000;
       }
 
@@ -32,15 +32,15 @@
       table td {
         padding-top: 1px !important;
         padding-bottom: 1px !important;
-        padding-left: 7px !important;
-        padding-right: 7px !important;
+        padding-left: 5px !important;
+        padding-right: 5px !important;
       }
       .table-bordered {
         border-collapse: collapse;
       }
       .table-bordered td {
         border: 1px solid #000000;
-        padding: 5px;
+        padding: 4px;
       }
       .table-bordered tr:first-child td {
         border-top: 0;
@@ -95,54 +95,77 @@
     <div class="container">
       <table class="table table-bordered">
         <tr>
-          <td style="width: 20%;padding: 10px 10px 10px 10px !important">
-            <h5 style="font-size: 16px;"><strong>Codes</strong></h5>
-          </td>
-          <td style="width: 50%;padding: 10px 10px 10px 10px !important">
-            <h5 style="font-size: 16px;"><strong>Cash Flow from Operating Activities</strong></h5>
-          </td>
-          <td style="width: 30%;padding: 10px 10px 10px 10px !important" class="text-right">
-            <h5 style="font-size: 16px;"><strong>Amount ({{ $currency->code }})</strong></h5>
-          </td>
+          <td colspan="4" class="text-center" style="padding: 8px !important"><h5><strong>SUMMARY &ndash; ALL BANK LEDGERS</strong></h5></td>
         </tr>
         <tr>
+          <td style="width: 25%;padding: 8px !important" class="text-right"><strong>Total Opening</strong></td>
+          <td style="width: 25%;padding: 8px !important" class="text-right"><strong>Total Receipts</strong></td>
+          <td style="width: 25%;padding: 8px !important" class="text-right"><strong>Total Payments</strong></td>
+          <td style="width: 25%;padding: 8px !important" class="text-right"><strong>Total Closing</strong></td>
+        </tr>
+        <tr>
+          <td class="text-right">{{ systemMoneyFormat($totalOpening) }}</td>
+          <td class="text-right">{{ systemMoneyFormat($totalReceipts) }}</td>
+          <td class="text-right">{{ systemMoneyFormat($totalPayments) }}</td>
+          <td class="text-right">{{ systemMoneyFormat($totalClosing) }}</td>
+        </tr>
+      </table>
+
+      <h5><strong>LEDGER-WISE / TRANSACTION-WISE DETAIL</strong></h5>
+      <table class="table table-bordered">
+        <tr>
+          <td style="width: 14%"><strong>Bank Ledger Code</strong></td>
+          <td style="width: 9%"><strong>Transaction Date</strong></td>
+          <td style="width: 9%"><strong>Voucher Ref</strong></td>
+          <td style="width: 9%"><strong>Type</strong></td>
+          <td style="width: 6%" class="text-center"><strong>Currency</strong></td>
+          <td style="width: 9%" class="text-right"><strong>Opening</strong></td>
+          <td style="width: 9%" class="text-right"><strong>Receipts</strong></td>
+          <td style="width: 9%" class="text-right"><strong>Payments</strong></td>
+          <td style="width: 10%" class="text-right"><strong>Balance / Closing</strong></td>
+          <td style="width: 16%"><strong>Voucher Narration</strong></td>
+        </tr>
+        @forelse($ledgers as $ledger)
+            @php $ledgerLabel = $ledger['account']->code . ' - ' . $ledger['account']->name; @endphp
+            <tr>
+                <td>{{ $ledgerLabel }}</td>
+                <td></td>
+                <td></td>
+                <td>Opening Balance</td>
+                <td class="text-center">{{ $currencyCode }}</td>
+                <td class="text-right">{{ systemMoneyFormat($ledger['opening']) }}</td>
+                <td></td>
+                <td></td>
+                <td class="text-right">{{ systemMoneyFormat($ledger['opening']) }}</td>
+                <td></td>
+            </tr>
+            @foreach($ledger['rows'] as $row)
+                <tr>
+                    <td>{{ $ledgerLabel }}</td>
+                    <td>{{ date('d-M-Y', strtotime($row['date'])) }}</td>
+                    <td>{{ $row['voucher'] }}</td>
+                    <td>{{ $row['type'] }}</td>
+                    <td class="text-center">{{ $currencyCode }}</td>
+                    <td></td>
+                    <td class="text-right">{{ $row['receipts'] > 0 ? systemMoneyFormat($row['receipts']) : '' }}</td>
+                    <td class="text-right">{{ $row['payments'] > 0 ? systemMoneyFormat($row['payments']) : '' }}</td>
+                    <td class="text-right">{{ systemMoneyFormat($row['balance']) }}</td>
+                    <td>{{ $row['narration'] }}</td>
+                </tr>
+            @endforeach
+        @empty
+            <tr>
+                <td colspan="10" class="text-center">No bank/cash ledgers found for this company.</td>
+            </tr>
+        @endforelse
+        <tr>
+          <td colspan="5" class="text-right"><strong>GRAND TOTAL &ndash; ALL BANK LEDGERS</strong></td>
+          <td class="text-right"><strong>{{ systemMoneyFormat($totalOpening) }}</strong></td>
+          <td class="text-right"><strong>{{ systemMoneyFormat($totalReceipts) }}</strong></td>
+          <td class="text-right"><strong>{{ systemMoneyFormat($totalPayments) }}</strong></td>
+          <td class="text-right"><strong>{{ systemMoneyFormat($totalClosing) }}</strong></td>
           <td></td>
-          <td><strong>Net Profit for the Period</strong></td>
-          <td class="text-right"><strong>{{ systemMoneyFormat($netProfit) }}</strong></td>
         </tr>
-        <tr>
-          <td colspan="3"><strong>Adjustments for Changes in Working Capital:</strong></td>
-        </tr>
-        {!! $adjustments !!}
-        <tr>
-          <td colspan="2"><strong>Net Cash Generated from/(Used in) Operating Activities:</strong></td>
-          <td class="text-right"><strong>{{ systemMoneyFormat($netCashFromOperating) }}</strong></td>
-        </tr>
-      </table>
-
-      <table class="table table-bordered">
-        <tr>
-          <td style="width: 75%"><strong>Net Increase/(Decrease) in Cash and Cash Equivalents</strong></td>
-          <td style="width: 25%" class="text-right"><strong>{{ systemMoneyFormat($netCashFromOperating) }}</strong></td>
-        </tr>
-        <tr>
-          <td>Cash and Cash Equivalents at the Beginning of the Period</td>
-          <td class="text-right">{{ systemMoneyFormat($openingCash) }}</td>
-        </tr>
-        <tr>
-          <td><strong>Cash and Cash Equivalents at the End of the Period</strong></td>
-          <td class="text-right"><strong>{{ systemMoneyFormat($closingCash) }}</strong></td>
-        </tr>
-      </table>
-
-      <table class="table table-bordered">
-        <tr>
-          <td style="width: 15%;padding: 10px !important"><h5 style="font-size: 16px;"><strong>Code</strong></h5></td>
-          <td style="width: 45%;padding: 10px !important"><h5 style="font-size: 16px;"><strong>Cash & Bank Ledger</strong></h5></td>
-          <td style="width: 20%;padding: 10px !important" class="text-right"><h5 style="font-size: 16px;"><strong>Opening Balance</strong></h5></td>
-          <td style="width: 20%;padding: 10px !important" class="text-right"><h5 style="font-size: 16px;"><strong>Closing Balance</strong></h5></td>
-        </tr>
-        {!! $cashLedgers !!}
       </table>
     </div>
   </body>

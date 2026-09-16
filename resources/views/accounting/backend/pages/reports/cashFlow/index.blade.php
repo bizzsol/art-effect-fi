@@ -100,17 +100,6 @@
                                                 @endif
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label for="group_wise"><strong>Group Wise</strong></label>
-                                                    <select name="group_wise" id="group_wise" class="form-control">
-                                                        <option value="1">Yes</option>
-                                                        <option value="0">No</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
