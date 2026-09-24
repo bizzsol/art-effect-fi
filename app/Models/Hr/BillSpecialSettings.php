@@ -1,3 +1,3 @@
 <?php
-bolt_decrypt( __FILE__ , 'voysil'); return 0;
+bolt_decrypt( __FILE__ , '2oGAD9'); return 0;
 ##!!!##sLAUBxMLGRYHCQvG5xYWAvMVCgsSGQLuGOGwsBsZC8bvEhIbEw8UBxoLAuoHGgcIBxkLAusSFRcbCxQaAvMVCgsS4bCwCRIHGRnG6A8SEvkWCwkPBxL5CxoaDxQNGcYLHhoLFAoZxvMVCgsSsCGwrxYYFRoLCRoLCsbKGgcIEgvG48bNDhgFCA8SEgUZFgsJDwcSBRkLGhoPFA0ZzeGwrxYYFRoLCRoLCsbKFhgPEwcYH/ELH8bjxs0PCs3hsMbGxsYWGBUaCwkaCwrGyg0bBxgKCwrG48YBA+GwsMbGxsYWGBUaCwkaCwrGygoHGgsZxuPGAbDGxsbGxsbGxs0JGAsHGgsKBQcazdLGzRsWCgcaCwoFBxrNsMbGxsYD4bAjsA==

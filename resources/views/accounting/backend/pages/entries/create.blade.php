@@ -384,7 +384,7 @@
                         <div class="form-group">
                             <label for="excel_file"><strong>Choose Excel File <span
                                             class="text-danger">*</span></strong></label>
-                            <input type="file" name="excel_file" id="excel_file" class="form-control" accept=".xls,.xlsx,.csv">
+                            <input type="file" name="excel_file" id="excel_file" class="form-control">
                             <input type="hidden" name="company_id" id="company_id" value="{{$company->id}}">
                             <input type="hidden" name="entry_type_id" id="entry_type_id" value="{{$entryType->id}}">
                         </div>
@@ -875,12 +875,6 @@
             var excel_button = $('.excel-upload-button');
             var excel_button_content = excel_button.html();
 
-            var excel_input = document.getElementById('excel_file');
-            if (!excel_input.files.length) {
-                toastr.error('Please choose a file to upload.');
-                return;
-            }
-
             excel_button.prop('disabled', true).html("<i class='las la-spinner la-spin'></i>&nbsp;Please wait...");
 
             $.ajax({
@@ -901,33 +895,14 @@
                     excel_button.prop('disabled', false).html(excel_button_content);
                 })
                 .fail(function (response) {
-                    // Reset first so the button never stays stuck on the spinner
+                    var errors = '<ul class="">';
+                    $.each(response.responseJSON.errors, function (index, val) {
+                        errors += '<li class="text-white">' + val[0] + '</li>';
+                    });
+                    errors += '</ul>';
+                    toastr.error(errors);
+
                     excel_button.prop('disabled', false).html(excel_button_content);
-
-                    var json = response.responseJSON || {};
-                    var message;
-
-                    if (json.errors) {
-                        message = '<ul class="">';
-                        $.each(json.errors, function (index, val) {
-                            message += '<li class="text-white">' + (Array.isArray(val) ? val[0] : val) + '</li>';
-                        });
-                        message += '</ul>';
-                    } else if (json.message) {
-                        message = json.message;
-                    } else if (response.status === 413) {
-                        message = 'The file is too large for the server. Please upload a smaller file.';
-                    } else if (response.status === 419) {
-                        message = 'Your session has expired. Please refresh the page and try again.';
-                    } else if (response.status === 502 || response.status === 504 || response.statusText === 'timeout') {
-                        message = 'The server took too long to process the file. Please split it into smaller files and try again.';
-                    } else if (response.status === 0) {
-                        message = 'Could not reach the server. Please check your connection and try again.';
-                    } else {
-                        message = 'Upload failed (HTTP ' + response.status + '). Please try again or contact support.';
-                    }
-
-                    toastr.error(message);
                 });
         }
     </script>
